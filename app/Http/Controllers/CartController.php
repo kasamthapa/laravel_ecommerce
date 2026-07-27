@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CartController extends Controller
@@ -21,6 +21,10 @@ class CartController extends Controller
     {
         abort_unless($product->is_active, 404);
 
+        if ($product->stock < 1) {
+            return redirect()->route('products.show', $product)->with('status', "{$product->name} is currently sold out.");
+        }
+
         $validated = $request->validate([
             'size' => ['nullable', 'string', 'max:10'],
             'color' => ['nullable', 'string', 'max:30'],
@@ -30,6 +34,8 @@ class CartController extends Controller
         $cart = $this->cart();
         $key = $this->cartKey($product, $validated['size'] ?? null, $validated['color'] ?? null);
 
+        $requestedQuantity = ($cart['items'][$key]['quantity'] ?? 0) + (int) $validated['quantity'];
+
         $cart['items'][$key] = [
             'product_id' => $product->id,
             'name' => $product->name,
@@ -38,7 +44,7 @@ class CartController extends Controller
             'price' => (float) $product->price,
             'size' => $validated['size'] ?? null,
             'color' => $validated['color'] ?? null,
-            'quantity' => ($cart['items'][$key]['quantity'] ?? 0) + (int) $validated['quantity'],
+            'quantity' => min($requestedQuantity, $product->stock, 10),
         ];
 
         session(['cart' => $cart]);
@@ -55,7 +61,10 @@ class CartController extends Controller
         $cart = $this->cart();
 
         if (isset($cart['items'][$key])) {
-            $cart['items'][$key]['quantity'] = (int) $validated['quantity'];
+            $stock = Product::find($cart['items'][$key]['product_id'])?->stock;
+            $cart['items'][$key]['quantity'] = $stock !== null
+                ? min((int) $validated['quantity'], max($stock, 1))
+                : (int) $validated['quantity'];
             session(['cart' => $cart]);
         }
 

@@ -96,10 +96,24 @@ const bindScrollProgress = () => {
     window.addEventListener('resize', requestUpdate);
 };
 
+const bindFlashMessage = () => {
+    const flash = document.querySelector('[data-flash-message]');
+
+    if (!(flash instanceof HTMLElement)) {
+        return;
+    }
+
+    window.setTimeout(() => {
+        flash.style.opacity = '0';
+        window.setTimeout(() => flash.remove(), 500);
+    }, 4000);
+};
+
 const bindAppInteractions = () => {
     bindAutoSearch();
     bindMotionReveals();
     bindScrollProgress();
+    bindFlashMessage();
     bindGlassesViewer();
 };
 

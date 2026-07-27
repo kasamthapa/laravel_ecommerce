@@ -167,7 +167,12 @@
         @if ($products->isEmpty())
             <div class="mt-8 border border-dashed border-zinc-300 bg-white p-10 text-center">
                 <h3 class="text-2xl font-black">No frames found</h3>
-                <p class="mt-2 text-zinc-600">Try searching for “sun”, “black”, “medium”, “blue light”, or another frame detail.</p>
+                <p class="mt-2 text-zinc-600">Try one of these instead:</p>
+                <div class="mt-5 flex flex-wrap justify-center gap-2">
+                    @foreach (['sunglasses', 'tortoise', 'round', 'blue light', 'black'] as $suggestion)
+                        <a href="{{ route('products.index', ['q' => $suggestion]) }}#collection" class="motion-press rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm font-bold text-zinc-700 hover:border-[#092b83] hover:text-[#092b83]">{{ ucfirst($suggestion) }}</a>
+                    @endforeach
+                </div>
             </div>
         @else
             <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

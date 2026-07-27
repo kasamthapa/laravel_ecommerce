@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Product;
 use App\Services\KhaltiPaymentGateway;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -14,9 +14,7 @@ use RuntimeException;
 
 class OrderController extends Controller
 {
-    public function __construct(private readonly KhaltiPaymentGateway $khalti)
-    {
-    }
+    public function __construct(private readonly KhaltiPaymentGateway $khalti) {}
 
     public function create(): View|RedirectResponse
     {
@@ -125,12 +123,18 @@ class OrderController extends Controller
             return redirect()->route('cart.index')->with('status', 'Khalti payment was not completed. Your cart is still available.');
         }
 
-        $order->update([
-            'payment_status' => 'paid',
-            'status' => 'confirmed',
-            'khalti_transaction_id' => $payment['transaction_id'] ?? $request->string('transaction_id')->toString(),
-            'paid_at' => now(),
-        ]);
+        DB::transaction(function () use ($order, $payment, $request): void {
+            $order->update([
+                'payment_status' => 'paid',
+                'status' => 'confirmed',
+                'khalti_transaction_id' => $payment['transaction_id'] ?? $request->string('transaction_id')->toString(),
+                'paid_at' => now(),
+            ]);
+
+            foreach ($order->orderItems()->with('product')->get() as $item) {
+                $item->product?->decrement('stock', min($item->quantity, $item->product->stock));
+            }
+        });
 
         session()->forget('cart');
 

@@ -7,6 +7,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
+    /**
+     * @var array<int, string>
+     */
+    public const STATUSES = [
+        'pending',
+        'payment_pending',
+        'confirmed',
+        'shipped',
+        'delivered',
+        'cancelled',
+        'payment_failed',
+    ];
+
     protected $fillable = [
         'order_number',
         'customer_name',

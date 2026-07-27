@@ -34,59 +34,87 @@
                 </div>
             </div>
 
-            <header class="sticky top-0 z-30 border-b border-zinc-200 bg-white">
+            <header class="sticky top-0 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur">
                 <div data-scroll-progress class="scroll-progress"></div>
-                <div class="mx-auto flex max-w-[120rem] items-center justify-between gap-5 px-4 py-5 sm:px-8">
-                    <nav class="hidden items-center gap-6 text-base font-black text-zinc-800 min-[1800px]:flex">
-                        <a href="{{ route('products.index', ['category' => 'optical-frames']) }}#collection" class="hover:text-[#092b83]">Eyeglasses</a>
-                        <a href="{{ route('products.index', ['category' => 'sunglasses']) }}#collection" class="hover:text-[#092b83]">Sunglasses</a>
-                        <a href="{{ route('products.index', ['category' => 'blue-light']) }}#collection" class="hover:text-[#092b83]">Contacts</a>
-                        <a href="#materials" class="hover:text-[#092b83]">Eye exams</a>
-                        <a href="#materials" class="hover:text-[#092b83]">Insurance</a>
-                        <a href="#quiz" class="hover:text-[#092b83]">Accessories</a>
+                <div class="mx-auto flex max-w-[120rem] items-center justify-between gap-4 px-4 py-4 sm:px-8">
+                    <div class="flex shrink-0 items-center gap-3">
+                        <button type="button" data-mobile-menu-toggle aria-expanded="false" aria-controls="mobile-menu" class="motion-press grid h-10 w-10 place-items-center rounded-full border border-zinc-200 text-zinc-950 hover:border-[#092b83] hover:text-[#092b83] lg:hidden">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                            </svg>
+                            <span class="sr-only">Menu</span>
+                        </button>
+                        <a href="{{ route('products.index') }}" class="text-lg font-black uppercase tracking-[0.18em] text-[#092b83]">Luma Lens</a>
+                    </div>
+
+                    <nav class="hidden items-center gap-7 text-sm font-black text-zinc-700 lg:flex">
+                        <a href="{{ route('shop') }}" class="hover:text-[#092b83] {{ request()->routeIs('shop') && ! request('category') ? 'text-[#092b83]' : '' }}">Shop all</a>
+                        <a href="{{ route('shop', ['category' => 'optical-frames']) }}" class="hover:text-[#092b83]">Eyeglasses</a>
+                        <a href="{{ route('shop', ['category' => 'sunglasses']) }}" class="hover:text-[#092b83]">Sunglasses</a>
+                        <a href="{{ route('shop', ['category' => 'blue-light']) }}" class="hover:text-[#092b83]">Blue light</a>
                         <a href="{{ route('products.index') }}#shape" class="hover:text-[#092b83]">Style quiz</a>
-                        <a href="{{ route('products.index', ['q' => 'lightweight']) }}#collection" class="hover:text-[#092b83]">Intelligent Eyewear</a>
                     </nav>
 
-                    <a href="{{ route('products.index') }}" class="text-lg font-black uppercase tracking-[0.18em] text-[#092b83] min-[1800px]:hidden">Luma Lens</a>
-
-                    <nav class="flex shrink-0 items-center justify-end gap-4 text-sm font-semibold">
+                    <nav class="flex shrink-0 items-center justify-end gap-3 text-sm font-semibold">
                         @guest
-                            <a href="{{ route('login') }}" class="motion-press inline-flex items-center gap-2 rounded-full border-2 border-zinc-950 px-4 py-2 text-base font-black text-zinc-950 hover:border-[#092b83] hover:text-[#092b83]">
-                                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <a href="{{ route('login') }}" class="motion-press hidden items-center gap-2 rounded-full border-2 border-zinc-950 px-4 py-2 text-base font-black text-zinc-950 hover:border-[#092b83] hover:text-[#092b83] sm:inline-flex">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                     <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8" />
                                     <path d="M5 20c.8-3.7 3.4-5.8 7-5.8s6.2 2.1 7 5.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
                                 </svg>
-                                <span class="hidden sm:inline">Sign in</span>
+                                <span>Sign in</span>
                             </a>
                             <a href="{{ route('register') }}" class="motion-press hidden rounded-full bg-[#092b83] px-4 py-2 text-base font-black text-white hover:bg-[#0f5be8] md:inline-flex">Create account</a>
                         @endguest
                         @auth
-                            <span class="hidden max-w-72 shrink-0 overflow-hidden text-ellipsis whitespace-nowrap rounded-full border-2 border-zinc-950 px-4 py-2 text-base font-black text-zinc-950 lg:inline-flex">Hi, {{ auth()->user()->name }}</span>
+                            <span class="hidden max-w-56 shrink-0 overflow-hidden text-ellipsis whitespace-nowrap rounded-full border-2 border-zinc-950 px-4 py-2 text-base font-black text-zinc-950 xl:inline-flex">Hi, {{ auth()->user()->name }}</span>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button class="motion-press rounded-full px-3 py-2 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950">Logout</button>
+                                <button class="motion-press hidden rounded-full px-3 py-2 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950 sm:inline-flex">Logout</button>
                             </form>
                         @endauth
-                        <a href="{{ route('products.index') }}#collection" class="motion-press hidden text-zinc-950 hover:text-[#092b83] sm:inline-flex" aria-label="Search">
-                            <svg class="h-9 w-9" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <a href="{{ route('shop') }}" class="motion-press hidden text-zinc-950 hover:text-[#092b83] sm:inline-flex" aria-label="Search">
+                            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8" />
                                 <path d="M16 16l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
                             </svg>
                         </a>
-                        <a href="{{ route('products.index') }}#collection" class="motion-press hidden text-zinc-950 hover:text-[#092b83] sm:inline-flex" aria-label="Wishlist">
-                            <svg class="h-9 w-9" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <a href="{{ route('shop') }}" class="motion-press hidden text-zinc-950 hover:text-[#092b83] sm:inline-flex" aria-label="Wishlist">
+                            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M12 20s-7-4.3-8.7-9.1C2.1 7.4 4.5 4.5 7.7 4.5c1.8 0 3.4 1 4.3 2.4.9-1.4 2.5-2.4 4.3-2.4 3.2 0 5.6 2.9 4.4 6.4C19 15.7 12 20 12 20Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
                             </svg>
                         </a>
-                        <a href="{{ route('cart.index') }}" class="motion-press inline-flex items-center gap-2 text-zinc-950 hover:text-[#092b83]" aria-label="Cart">
-                            <svg class="h-9 w-9" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <a href="{{ route('cart.index') }}" class="motion-press inline-flex items-center gap-1.5 text-zinc-950 hover:text-[#092b83]" aria-label="Cart">
+                            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M5 6h15l-1.6 8.2a2 2 0 0 1-2 1.6H8.1a2 2 0 0 1-2-1.6L4.6 3H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                                 <circle cx="9" cy="20" r="1.5" fill="currentColor" />
                                 <circle cx="17" cy="20" r="1.5" fill="currentColor" />
                             </svg>
                             <span class="rounded-full bg-[#092b83] px-1.5 py-0.5 text-xs font-black text-white">{{ $cartCount ?? 0 }}</span>
                         </a>
+                    </nav>
+                </div>
+
+                <div id="mobile-menu" data-mobile-menu class="hidden border-t border-zinc-200 bg-white px-4 py-3 lg:hidden">
+                    <nav class="grid gap-1 text-base font-bold text-zinc-800">
+                        <a href="{{ route('shop') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Shop all</a>
+                        <a href="{{ route('shop', ['category' => 'optical-frames']) }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Eyeglasses</a>
+                        <a href="{{ route('shop', ['category' => 'sunglasses']) }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Sunglasses</a>
+                        <a href="{{ route('shop', ['category' => 'blue-light']) }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Blue light</a>
+                        <a href="{{ route('products.index') }}#shape" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Style quiz</a>
+                        <div class="my-1 border-t border-zinc-100"></div>
+                        <a href="{{ route('cart.index') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Cart ({{ $cartCount ?? 0 }})</a>
+                        @guest
+                            <a href="{{ route('login') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Sign in</a>
+                            <a href="{{ route('register') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Create account</a>
+                        @endguest
+                        @auth
+                            <span class="px-3 py-2 text-sm font-medium text-zinc-500">Signed in as {{ auth()->user()->name }}</span>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button class="w-full rounded-lg px-3 py-3 text-left hover:bg-zinc-50">Logout</button>
+                            </form>
+                        @endauth
                     </nav>
                 </div>
             </header>
@@ -130,15 +158,15 @@
                     <div data-motion-reveal>
                         <p class="text-sm font-black text-[#092b83]">Products</p>
                         <div class="mt-4 grid gap-2 text-sm text-zinc-600">
-                            <a href="{{ route('products.index') }}#collection" class="hover:text-zinc-950">Eyeglasses</a>
-                            <a href="{{ route('products.index', ['category' => 'sunglasses']) }}#collection" class="hover:text-zinc-950">Sunglasses</a>
-                            <a href="{{ route('products.index', ['category' => 'blue-light']) }}#collection" class="hover:text-zinc-950">Blue light</a>
+                            <a href="{{ route('shop', ['category' => 'optical-frames']) }}" class="hover:text-zinc-950">Eyeglasses</a>
+                            <a href="{{ route('shop', ['category' => 'sunglasses']) }}" class="hover:text-zinc-950">Sunglasses</a>
+                            <a href="{{ route('shop', ['category' => 'blue-light']) }}" class="hover:text-zinc-950">Blue light</a>
                         </div>
                     </div>
                     <div data-motion-reveal>
                         <p class="text-sm font-black text-[#092b83]">Shop online</p>
                         <div class="mt-4 grid gap-2 text-sm text-zinc-600">
-                            <a href="{{ route('products.index') }}#quiz" class="hover:text-zinc-950">Style quiz</a>
+                            <a href="{{ route('shop') }}" class="hover:text-zinc-950">Shop all</a>
                             <a href="{{ route('products.index') }}#shape" class="hover:text-zinc-950">Frame shapes</a>
                             <a href="{{ route('cart.index') }}" class="hover:text-zinc-950">Cart</a>
                             @guest

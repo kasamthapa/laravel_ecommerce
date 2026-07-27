@@ -1,6 +1,6 @@
 @props(['product'])
 
-<article {{ $attributes->merge(['class' => 'group motion-lift overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm hover:shadow-xl']) }}>
+<article {{ $attributes->merge(['class' => 'group motion-lift overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm hover:border-zinc-300 hover:shadow-xl']) }}>
     <a href="{{ route('products.show', $product) }}" class="block">
         <div class="relative aspect-[4/3] overflow-hidden bg-[#f3f3ef]">
             <img

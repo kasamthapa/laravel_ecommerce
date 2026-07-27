@@ -109,11 +109,26 @@ const bindFlashMessage = () => {
     }, 4000);
 };
 
+const bindMobileMenu = () => {
+    const toggle = document.querySelector('[data-mobile-menu-toggle]');
+    const menu = document.querySelector('[data-mobile-menu]');
+
+    if (!(toggle instanceof HTMLElement) || !(menu instanceof HTMLElement)) {
+        return;
+    }
+
+    toggle.addEventListener('click', () => {
+        const isNowHidden = menu.classList.toggle('hidden');
+        toggle.setAttribute('aria-expanded', isNowHidden ? 'false' : 'true');
+    });
+};
+
 const bindAppInteractions = () => {
     bindAutoSearch();
     bindMotionReveals();
     bindScrollProgress();
     bindFlashMessage();
+    bindMobileMenu();
     bindGlassesViewer();
 };
 

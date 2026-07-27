@@ -1,4 +1,5 @@
-<x-layouts.storefront title="Luma Lens - Independent Eyewear" :cart-count="$cartCount">
+<x-layouts.storefront :title="request()->routeIs('shop') ? 'Shop all frames - Luma Lens' : 'Luma Lens - Independent Eyewear'" :cart-count="$cartCount">
+    @unless (request()->routeIs('shop'))
     <section class="overflow-hidden bg-[#f7f8fa]">
         <div class="mx-auto grid min-h-[44rem] max-w-[120rem] items-center gap-8 px-4 py-8 sm:px-8 lg:grid-cols-[0.46fr_0.54fr] lg:py-16">
             <div class="motion-fade order-2 max-w-[34rem] lg:order-1">
@@ -120,6 +121,19 @@
             @endforeach
         </div>
     </section>
+    @endunless
+
+    @if (request()->routeIs('shop'))
+        <section class="border-b border-zinc-200 bg-[#f7f8fa] px-4 py-12 sm:px-8">
+            <div class="motion-fade mx-auto max-w-[120rem]">
+                <p class="text-sm font-black uppercase tracking-[0.16em] text-[#08765e]">Full collection</p>
+                <h1 class="wp-serif mt-3 text-4xl font-normal text-zinc-950 sm:text-5xl">Shop all frames</h1>
+                <p class="mt-3 max-w-xl text-lg text-zinc-600">Every optical, sunglass, and blue-light style in one place &mdash; filter by category or search by finish, fit, or shape.</p>
+            </div>
+        </section>
+    @endif
+
+    @php $catalogRoute = request()->routeIs('shop') ? 'shop' : 'products.index'; @endphp
 
     <section id="collection" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div data-motion-reveal class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -128,6 +142,8 @@
                 <h2 class="mt-2 max-w-2xl text-3xl font-black">
                     @if ($search !== '')
                         Results for “{{ $search }}”
+                    @elseif (request()->routeIs('shop'))
+                        All frames
                     @else
                         New arrivals
                     @endif
@@ -135,16 +151,16 @@
                 <p class="mt-3 max-w-xl text-sm leading-6 text-zinc-600">Try on the edit by browsing new frames, colors, and lens-ready styles.</p>
             </div>
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route('products.index', array_filter(['q' => $search ?: null])) }}#collection" class="rounded-full border px-4 py-2 text-sm font-bold {{ $selectedCategory === null ? 'border-[#092b83] bg-[#092b83] text-white' : 'border-zinc-300 bg-white text-zinc-700 hover:border-zinc-950' }}">All</a>
+                <a href="{{ route($catalogRoute, array_filter(['q' => $search ?: null])) }}#collection" class="rounded-full border px-4 py-2 text-sm font-bold {{ $selectedCategory === null ? 'border-[#092b83] bg-[#092b83] text-white' : 'border-zinc-300 bg-white text-zinc-700 hover:border-zinc-950' }}">All</a>
                 @foreach ($categories as $category)
-                    <a href="{{ route('products.index', array_filter(['category' => $category->slug, 'q' => $search ?: null])) }}#collection" class="rounded-full border px-4 py-2 text-sm font-bold {{ $selectedCategory?->is($category) ? 'border-[#092b83] bg-[#092b83] text-white' : 'border-zinc-300 bg-white text-zinc-700 hover:border-zinc-950' }}">
+                    <a href="{{ route($catalogRoute, array_filter(['category' => $category->slug, 'q' => $search ?: null])) }}#collection" class="rounded-full border px-4 py-2 text-sm font-bold {{ $selectedCategory?->is($category) ? 'border-[#092b83] bg-[#092b83] text-white' : 'border-zinc-300 bg-white text-zinc-700 hover:border-zinc-950' }}">
                         {{ $category->name }} ({{ $category->products_count }})
                     </a>
                 @endforeach
             </div>
         </div>
 
-        <form method="GET" action="{{ route('products.index') }}#collection" data-auto-search-form data-motion-reveal class="mt-8 grid gap-3 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:grid-cols-[1fr_auto_auto]">
+        <form method="GET" action="{{ route($catalogRoute) }}#collection" data-auto-search-form data-motion-reveal class="mt-8 grid gap-3 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:grid-cols-[1fr_auto_auto]">
             @if ($selectedCategory !== null)
                 <input type="hidden" name="category" value="{{ $selectedCategory->slug }}">
             @endif
@@ -160,7 +176,7 @@
             >
             <button class="motion-press rounded-full bg-[#092b83] px-5 py-3 text-sm font-black text-white hover:bg-zinc-950">Search</button>
             @if ($search !== '')
-                <a href="{{ route('products.index', array_filter(['category' => $selectedCategory?->slug])) }}#collection" class="rounded-full border border-zinc-300 px-5 py-3 text-center text-sm font-black text-zinc-700 transition hover:border-zinc-950 hover:text-zinc-950">Clear</a>
+                <a href="{{ route($catalogRoute, array_filter(['category' => $selectedCategory?->slug])) }}#collection" class="rounded-full border border-zinc-300 px-5 py-3 text-center text-sm font-black text-zinc-700 transition hover:border-zinc-950 hover:text-zinc-950">Clear</a>
             @endif
         </form>
 
@@ -170,7 +186,7 @@
                 <p class="mt-2 text-zinc-600">Try one of these instead:</p>
                 <div class="mt-5 flex flex-wrap justify-center gap-2">
                     @foreach (['sunglasses', 'tortoise', 'round', 'blue light', 'black'] as $suggestion)
-                        <a href="{{ route('products.index', ['q' => $suggestion]) }}#collection" class="motion-press rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm font-bold text-zinc-700 hover:border-[#092b83] hover:text-[#092b83]">{{ ucfirst($suggestion) }}</a>
+                        <a href="{{ route($catalogRoute, ['q' => $suggestion]) }}#collection" class="motion-press rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm font-bold text-zinc-700 hover:border-[#092b83] hover:text-[#092b83]">{{ ucfirst($suggestion) }}</a>
                     @endforeach
                 </div>
             </div>
@@ -187,6 +203,7 @@
         </div>
     </section>
 
+    @unless (request()->routeIs('shop'))
     <section class="bg-[#092b83] text-white">
         <div class="mx-auto grid max-w-7xl gap-6 px-4 py-12 sm:px-6 md:grid-cols-[1fr_1.2fr] lg:px-8">
             <div data-motion-reveal>
@@ -210,4 +227,5 @@
             </div>
         </div>
     </section>
+    @endunless
 </x-layouts.storefront>

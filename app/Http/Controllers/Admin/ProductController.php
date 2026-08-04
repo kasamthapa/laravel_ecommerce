@@ -70,6 +70,7 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'image_url' => ['required', 'url', 'max:2048'],
+            'images' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'compare_at_price' => ['nullable', 'numeric', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
@@ -77,6 +78,7 @@ class ProductController extends Controller
             'colors' => ['required', 'string'],
         ]);
 
+        $validated['images'] = $this->splitList($validated['images'] ?? '');
         $validated['sizes'] = $this->splitList($validated['sizes']);
         $validated['colors'] = $this->splitList($validated['colors']);
         $validated['is_featured'] = $request->boolean('is_featured');

@@ -18,15 +18,9 @@
             <span class="pointer-events-none absolute bottom-3 left-3 rounded-full bg-[#092b83] px-3 py-1 text-xs font-black uppercase text-white">Only {{ $product->stock }} left</span>
         @endif
         @auth
-            <form method="POST" action="{{ $wishlisted ? route('wishlist.destroy', $product) : route('wishlist.store', $product) }}" class="absolute right-3 top-3">
-                @csrf
-                @if ($wishlisted)
-                    @method('DELETE')
-                @endif
-                <button type="submit" aria-label="{{ $wishlisted ? 'Remove from wishlist' : 'Add to wishlist' }}" class="motion-press grid h-9 w-9 place-items-center rounded-full bg-white text-lg shadow-sm hover:bg-zinc-50">
-                    <span class="{{ $wishlisted ? 'text-[#e25822]' : 'text-zinc-400' }}">{{ $wishlisted ? '♥' : '♡' }}</span>
-                </button>
-            </form>
+            <div class="absolute right-3 top-3">
+                <livewire:wishlist-button :product="$product" :wishlisted="$wishlisted" :key="'wishlist-card-'.$product->id" />
+            </div>
         @else
             <span class="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white text-lg text-zinc-400 shadow-sm">♡</span>
         @endauth

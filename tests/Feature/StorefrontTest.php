@@ -24,7 +24,7 @@ test('a shopper can search the product catalog', function () {
 
     $this->get(route('products.index', ['q' => 'Solar']))
         ->assertSuccessful()
-        ->assertSee('data-auto-search-form', false)
+        ->assertSee('wire:model.live.debounce.400ms', false)
         ->assertSee('Results for')
         ->assertSee('Solar Round')
         ->assertDontSee('Noir Keyhole');

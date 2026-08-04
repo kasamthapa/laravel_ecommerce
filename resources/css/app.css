@@ -71,6 +71,16 @@
         display: none;
     }
 
+    .gallery-stage {
+        cursor: zoom-in;
+        overflow: hidden;
+    }
+
+    .gallery-stage img {
+        transition: transform 200ms ease;
+        will-change: transform;
+    }
+
     .motion-reveal {
         opacity: 0;
         transform: translate3d(0, 24px, 0);

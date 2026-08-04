@@ -8,6 +8,7 @@
         <title>{{ $title }}</title>
         @fonts
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @livewireStyles
     </head>
     <body class="bg-[#f5f6f9] text-zinc-950 antialiased">
         <div class="flex min-h-screen flex-col lg:flex-row">
@@ -65,6 +66,15 @@
                             </svg>
                             Customers
                         </a>
+                        <a href="{{ route('admin.chat-messages.index') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 transition {{ request()->routeIs('admin.chat-messages.*') ? 'bg-white text-[#092b83] shadow-sm' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v9a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 14.5v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                            </svg>
+                            Messages
+                            @if (($unreadMessageCount ?? 0) > 0)
+                                <span class="ml-auto rounded-full bg-[#e25822] px-2 py-0.5 text-xs font-black text-white">{{ $unreadMessageCount }}</span>
+                            @endif
+                        </a>
                     </nav>
                 </div>
 
@@ -100,5 +110,7 @@
                 </main>
             </div>
         </div>
+
+        @livewireScripts
     </body>
 </html>

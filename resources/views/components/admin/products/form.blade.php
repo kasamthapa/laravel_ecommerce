@@ -3,6 +3,7 @@
 @php
     $sizesValue = $product ? implode(', ', $product->sizes ?? []) : '';
     $colorsValue = $product ? implode(', ', $product->colors ?? []) : '';
+    $imagesValue = $product ? implode(', ', $product->images ?? []) : '';
     $inputClass = 'rounded-xl border border-zinc-300 px-4 py-3 font-medium outline-none transition focus:border-[#092b83] focus:ring-2 focus:ring-[#092b83]/20';
 @endphp
 
@@ -29,8 +30,14 @@
     </label>
 
     <label class="grid gap-2 text-sm font-bold text-zinc-700">
-        Image URL
+        Primary image URL
         <input type="url" name="image_url" value="{{ old('image_url', $product->image_url ?? '') }}" required placeholder="https://images.unsplash.com/..." class="{{ $inputClass }}">
+    </label>
+
+    <label class="grid gap-2 text-sm font-bold text-zinc-700">
+        Gallery images (comma separated URLs, optional)
+        <textarea name="images" rows="2" placeholder="https://.../angle-1.jpg, https://.../angle-2.jpg" class="{{ $inputClass }}">{{ old('images', $imagesValue) }}</textarea>
+        <span class="text-xs font-medium text-zinc-500">Falls back to the primary image when left empty.</span>
     </label>
 
     <div class="grid gap-5 sm:grid-cols-3">

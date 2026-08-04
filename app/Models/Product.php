@@ -16,6 +16,7 @@ class Product extends Model
         'slug',
         'description',
         'image_url',
+        'images',
         'price',
         'compare_at_price',
         'stock',
@@ -33,6 +34,7 @@ class Product extends Model
             'stock' => 'integer',
             'sizes' => 'array',
             'colors' => 'array',
+            'images' => 'array',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
         ];
@@ -41,6 +43,16 @@ class Product extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function gallery(): array
+    {
+        $images = array_values(array_filter($this->images ?? []));
+
+        return $images !== [] ? $images : [$this->image_url];
     }
 
     public function category(): BelongsTo

@@ -8,6 +8,7 @@
         <title>{{ $title ?? 'Luma Lens - Independent Eyewear' }}</title>
         @fonts
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @livewireStyles
     </head>
     <body class="bg-white text-zinc-950 antialiased">
         <div class="min-h-screen">
@@ -97,7 +98,7 @@
                                 <circle cx="9" cy="20" r="1.5" fill="currentColor" />
                                 <circle cx="17" cy="20" r="1.5" fill="currentColor" />
                             </svg>
-                            <span class="rounded-full bg-[#092b83] px-1.5 py-0.5 text-xs font-black text-white">{{ $cartCount ?? 0 }}</span>
+                            <livewire:cart-count :count="$cartCount ?? 0" />
                         </a>
                     </nav>
                 </div>
@@ -110,7 +111,7 @@
                         <a href="{{ route('shop', ['category' => 'blue-light']) }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Blue light</a>
                         <a href="{{ route('products.index') }}#shape" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Style quiz</a>
                         <div class="my-1 border-t border-zinc-100"></div>
-                        <a href="{{ route('cart.index') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Cart ({{ $cartCount ?? 0 }})</a>
+                        <a href="{{ route('cart.index') }}" class="flex items-center gap-2 rounded-lg px-3 py-3 hover:bg-zinc-50">Cart <livewire:cart-count :count="$cartCount ?? 0" /></a>
                         <a href="{{ route('track.create') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Track an order</a>
                         @guest
                             <a href="{{ route('login') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Sign in</a>
@@ -210,5 +211,9 @@
                 </div>
             </footer>
         </div>
+
+        <livewire:chat-widget />
+
+        @livewireScripts
     </body>
 </html>

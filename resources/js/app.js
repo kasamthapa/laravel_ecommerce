@@ -123,6 +123,122 @@ const bindMobileMenu = () => {
     });
 };
 
+let lightboxEl = null;
+
+const closeLightbox = () => {
+    if (!lightboxEl) {
+        return;
+    }
+
+    lightboxEl.classList.add('hidden');
+    lightboxEl.classList.remove('flex');
+    document.body.style.overflow = '';
+};
+
+const openLightbox = (images, startIndex) => {
+    if (!lightboxEl) {
+        lightboxEl = document.createElement('div');
+        lightboxEl.className = 'fixed inset-0 z-50 hidden items-center justify-center bg-zinc-950/90 p-4';
+        lightboxEl.innerHTML = `
+            <button type="button" data-lightbox-close aria-label="Close" class="motion-press absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+            </button>
+            <button type="button" data-lightbox-prev aria-label="Previous image" class="motion-press absolute left-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </button>
+            <img data-lightbox-image alt="" class="max-h-[85vh] max-w-[85vw] rounded-lg object-contain">
+            <button type="button" data-lightbox-next aria-label="Next image" class="motion-press absolute right-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </button>
+        `;
+        document.body.append(lightboxEl);
+
+        lightboxEl.querySelector('[data-lightbox-close]').addEventListener('click', closeLightbox);
+        lightboxEl.addEventListener('click', (event) => {
+            if (event.target === lightboxEl) {
+                closeLightbox();
+            }
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    }
+
+    let index = startIndex;
+    const imageEl = lightboxEl.querySelector('[data-lightbox-image]');
+    const prevBtn = lightboxEl.querySelector('[data-lightbox-prev]');
+    const nextBtn = lightboxEl.querySelector('[data-lightbox-next]');
+
+    const render = () => {
+        imageEl.src = images[index];
+    };
+    render();
+
+    prevBtn.classList.toggle('hidden', images.length < 2);
+    nextBtn.classList.toggle('hidden', images.length < 2);
+    prevBtn.onclick = () => {
+        index = (index - 1 + images.length) % images.length;
+        render();
+    };
+    nextBtn.onclick = () => {
+        index = (index + 1) % images.length;
+        render();
+    };
+
+    lightboxEl.classList.remove('hidden');
+    lightboxEl.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+};
+
+const bindProductGallery = () => {
+    document.querySelectorAll('[data-gallery]').forEach((gallery) => {
+        const images = JSON.parse(gallery.dataset.images ?? '[]');
+        const mainImage = gallery.querySelector('[data-gallery-main]');
+        const stage = gallery.querySelector('[data-gallery-stage]');
+        const thumbs = gallery.querySelectorAll('[data-gallery-thumb]');
+
+        if (!(mainImage instanceof HTMLImageElement) || images.length === 0) {
+            return;
+        }
+
+        let currentIndex = 0;
+
+        const setActive = (index) => {
+            currentIndex = index;
+            mainImage.src = images[index];
+
+            thumbs.forEach((thumb) => {
+                const isActive = Number(thumb.dataset.index) === index;
+                thumb.classList.toggle('border-[#092b83]', isActive);
+                thumb.classList.toggle('border-zinc-200', !isActive);
+            });
+        };
+
+        thumbs.forEach((thumb) => {
+            thumb.addEventListener('click', () => setActive(Number(thumb.dataset.index)));
+        });
+
+        if (stage instanceof HTMLElement && window.matchMedia('(hover: hover)').matches) {
+            stage.addEventListener('mousemove', (event) => {
+                const rect = stage.getBoundingClientRect();
+                const x = ((event.clientX - rect.left) / rect.width) * 100;
+                const y = ((event.clientY - rect.top) / rect.height) * 100;
+
+                mainImage.style.transformOrigin = `${x}% ${y}%`;
+                mainImage.style.transform = 'scale(1.8)';
+            });
+
+            stage.addEventListener('mouseleave', () => {
+                mainImage.style.transform = 'scale(1)';
+            });
+        }
+
+        mainImage.addEventListener('click', () => openLightbox(images, currentIndex));
+    });
+};
+
 const bindAdminCharts = async () => {
     const revenueCanvas = document.querySelector('[data-chart="revenue"]');
     const statusCanvas = document.querySelector('[data-chart="status"]');
@@ -185,6 +301,7 @@ const bindAppInteractions = () => {
     bindFlashMessage();
     bindMobileMenu();
     bindGlassesViewer();
+    bindProductGallery();
     bindAdminCharts();
 };
 

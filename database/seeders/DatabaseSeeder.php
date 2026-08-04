@@ -62,6 +62,11 @@ class DatabaseSeeder extends Seeder
                 'slug' => 'noir-keyhole',
                 'description' => 'A confident black acetate frame with a softened keyhole bridge and clean rectangular lens shape.',
                 'image_url' => 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=900&q=85',
+                'images' => [
+                    'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=900&q=85',
+                    'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=900&q=85',
+                    'https://images.unsplash.com/photo-1556306510-31ca015374b0?auto=format&fit=crop&w=900&q=85',
+                ],
                 'price' => 11800.00,
                 'compare_at_price' => 14800.00,
                 'stock' => 32,
@@ -88,6 +93,11 @@ class DatabaseSeeder extends Seeder
                 'slug' => 'solar-round',
                 'description' => 'Round sun frames with a smoky lens, polished metal bridge, and vintage holiday energy.',
                 'image_url' => 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=900&q=85',
+                'images' => [
+                    'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=900&q=85',
+                    'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?auto=format&fit=crop&w=900&q=85',
+                    'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=900&q=85',
+                ],
                 'price' => 9600.00,
                 'compare_at_price' => 11900.00,
                 'stock' => 46,

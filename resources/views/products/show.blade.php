@@ -1,17 +1,28 @@
 <x-layouts.storefront :title="$product->name.' - Luma Lens'" :cart-count="$cartCount">
     <section class="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1.04fr_0.96fr] lg:px-8">
-        <div class="grid gap-4 motion-fade">
-            <div class="motion-glow relative overflow-hidden rounded-lg border border-zinc-200 bg-[#f3f3ef]">
-                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="motion-float h-full min-h-96 w-full object-cover mix-blend-multiply {{ $product->stock < 1 ? 'grayscale' : '' }}">
+        <div class="grid gap-4 motion-fade" data-gallery data-images="{{ json_encode($product->gallery()) }}">
+            <div data-gallery-stage class="gallery-stage motion-glow relative overflow-hidden rounded-lg border border-zinc-200 bg-[#f3f3ef]">
+                <img data-gallery-main src="{{ $product->gallery()[0] }}" alt="{{ $product->name }}" class="h-full min-h-96 w-full object-cover mix-blend-multiply {{ $product->stock < 1 ? 'grayscale' : '' }}">
                 @if ($product->stock < 1)
-                    <span class="absolute left-5 top-5 rounded-full bg-zinc-950 px-3 py-1 text-xs font-black uppercase text-white">Sold out</span>
+                    <span class="pointer-events-none absolute left-5 top-5 rounded-full bg-zinc-950 px-3 py-1 text-xs font-black uppercase text-white">Sold out</span>
                 @elseif ($product->compare_at_price)
-                    <span class="absolute left-5 top-5 rounded-full bg-[#e25822] px-3 py-1 text-xs font-black uppercase text-white">Limited offer</span>
+                    <span class="pointer-events-none absolute left-5 top-5 rounded-full bg-[#e25822] px-3 py-1 text-xs font-black uppercase text-white">Limited offer</span>
                 @elseif ($product->stock <= 5)
-                    <span class="absolute left-5 top-5 rounded-full bg-[#092b83] px-3 py-1 text-xs font-black uppercase text-white">Only {{ $product->stock }} left</span>
+                    <span class="pointer-events-none absolute left-5 top-5 rounded-full bg-[#092b83] px-3 py-1 text-xs font-black uppercase text-white">Only {{ $product->stock }} left</span>
                 @endif
-                <span class="absolute right-5 top-5 rounded-full bg-white px-4 py-2 text-xs font-black text-[#092b83] shadow-sm">Try on</span>
+                <span class="pointer-events-none absolute right-5 top-5 rounded-full bg-white px-4 py-2 text-xs font-black text-[#092b83] shadow-sm">Try on &middot; Click to zoom</span>
             </div>
+
+            @if (count($product->gallery()) > 1)
+                <div class="flex gap-3">
+                    @foreach ($product->gallery() as $index => $image)
+                        <button type="button" data-gallery-thumb data-index="{{ $index }}" class="h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 {{ $index === 0 ? 'border-[#092b83]' : 'border-zinc-200' }}">
+                            <img src="{{ $image }}" alt="{{ $product->name }} angle {{ $index + 1 }}" class="h-full w-full object-cover">
+                        </button>
+                    @endforeach
+                </div>
+            @endif
+
             <div class="grid gap-3 sm:grid-cols-3">
                 <div data-motion-reveal class="motion-lift rounded-lg border border-zinc-200 bg-white p-4">
                     <p class="text-xs font-black uppercase text-[#092b83]">Fit range</p>
@@ -36,15 +47,7 @@
                 <div class="mt-3 flex items-start justify-between gap-4">
                     <h1 class="text-5xl font-black leading-none text-[#092b83]">{{ $product->name }}</h1>
                     @auth
-                        <form method="POST" action="{{ in_array($product->id, $wishlistedProductIds, true) ? route('wishlist.destroy', $product) : route('wishlist.store', $product) }}">
-                            @csrf
-                            @if (in_array($product->id, $wishlistedProductIds, true))
-                                @method('DELETE')
-                            @endif
-                            <button type="submit" class="motion-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-zinc-200 text-xl shadow-sm hover:bg-zinc-50" aria-label="Toggle wishlist">
-                                <span class="{{ in_array($product->id, $wishlistedProductIds, true) ? 'text-[#e25822]' : 'text-zinc-400' }}">{{ in_array($product->id, $wishlistedProductIds, true) ? '♥' : '♡' }}</span>
-                            </button>
-                        </form>
+                        <livewire:wishlist-button :product="$product" :wishlisted="in_array($product->id, $wishlistedProductIds, true)" size="h-12 w-12 shrink-0 border border-zinc-200 text-xl" :key="'wishlist-main-'.$product->id" />
                     @endauth
                 </div>
                 <a href="#reviews" class="mt-2 inline-block">
@@ -82,47 +85,7 @@
                     <a href="{{ route('products.index', ['category' => $product->category->slug]) }}#collection" class="motion-press rounded-full bg-[#092b83] px-5 py-3 text-center font-black text-white hover:bg-zinc-950">Browse similar frames</a>
                 </div>
             @else
-                <form method="POST" action="{{ route('cart.store', $product) }}" class="motion-glow grid gap-5 rounded-lg border border-zinc-950/10 bg-white p-5 shadow-sm">
-                    @csrf
-                    <div class="rounded-lg bg-[#eef7fb] p-4 text-sm leading-6 text-zinc-700">
-                        <p class="font-black text-[#092b83]">Select lenses and buy</p>
-                        <p class="mt-1">Choose your fit and finish here. You will review cart totals before Khalti checkout.</p>
-                    </div>
-                    @if ($product->stock <= 5)
-                        <p class="-mt-2 text-sm font-bold text-[#e25822]">Only {{ $product->stock }} left in stock &mdash; order soon.</p>
-                    @endif
-                    <div class="grid gap-4 sm:grid-cols-3">
-                        <label class="grid gap-2 text-sm font-bold">
-                            Fit
-                            <select name="size" class="rounded-full border border-zinc-300 px-4 py-3 font-medium">
-                                @foreach ($product->sizes as $size)
-                                    <option value="{{ $size }}">{{ $size }}</option>
-                                @endforeach
-                            </select>
-                        </label>
-                        <label class="grid gap-2 text-sm font-bold">
-                            Finish
-                            <select name="color" class="rounded-full border border-zinc-300 px-4 py-3 font-medium">
-                                @foreach ($product->colors as $color)
-                                    <option value="{{ $color }}">{{ $color }}</option>
-                                @endforeach
-                            </select>
-                        </label>
-                        <label class="grid gap-2 text-sm font-bold">
-                            Qty
-                            <input type="number" name="quantity" value="1" min="1" max="{{ min(10, $product->stock) }}" class="rounded-full border border-zinc-300 px-4 py-3 font-medium">
-                        </label>
-                    </div>
-
-                    @if ($errors->any())
-                        <div class="rounded-md bg-red-50 p-3 text-sm font-medium text-red-700">
-                            {{ $errors->first() }}
-                        </div>
-                    @endif
-
-                    <button class="motion-press rounded-full bg-[#092b83] px-5 py-3 font-black text-white hover:bg-zinc-950">Select lenses and buy</button>
-                    <p class="text-center text-xs font-medium text-zinc-500">Checkout is available after login and payment is confirmed through Khalti.</p>
-                </form>
+                <livewire:add-to-cart-form :product="$product" />
             @endif
         </div>
     </section>

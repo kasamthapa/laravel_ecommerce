@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Account\OrderController as AccountOrderController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\ChatMessageController as AdminChatMessageController;
 use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -68,4 +69,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/customers', [AdminCustomerController::class, 'index'])->name('customers.index');
     Route::get('/customers/{user}', [AdminCustomerController::class, 'show'])->name('customers.show');
+
+    Route::get('/messages', [AdminChatMessageController::class, 'index'])->name('chat-messages.index');
+    Route::delete('/messages/{chatMessage}', [AdminChatMessageController::class, 'destroy'])->name('chat-messages.destroy');
 });

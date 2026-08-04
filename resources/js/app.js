@@ -123,6 +123,61 @@ const bindMobileMenu = () => {
     });
 };
 
+const bindAdminCharts = async () => {
+    const revenueCanvas = document.querySelector('[data-chart="revenue"]');
+    const statusCanvas = document.querySelector('[data-chart="status"]');
+
+    if (!(revenueCanvas instanceof HTMLCanvasElement) && !(statusCanvas instanceof HTMLCanvasElement)) {
+        return;
+    }
+
+    const { Chart, registerables } = await import('chart.js');
+    Chart.register(...registerables);
+
+    if (revenueCanvas instanceof HTMLCanvasElement) {
+        new Chart(revenueCanvas, {
+            type: 'line',
+            data: {
+                labels: JSON.parse(revenueCanvas.dataset.labels ?? '[]'),
+                datasets: [
+                    {
+                        label: 'Revenue (Rs.)',
+                        data: JSON.parse(revenueCanvas.dataset.values ?? '[]'),
+                        borderColor: '#092b83',
+                        backgroundColor: 'rgba(9, 43, 131, 0.08)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 0,
+                        borderWidth: 2,
+                    },
+                ],
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } },
+            },
+        });
+    }
+
+    if (statusCanvas instanceof HTMLCanvasElement) {
+        new Chart(statusCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: JSON.parse(statusCanvas.dataset.labels ?? '[]'),
+                datasets: [
+                    {
+                        data: JSON.parse(statusCanvas.dataset.values ?? '[]'),
+                        backgroundColor: ['#092b83', '#115be8', '#08765e', '#e25822', '#a855f7', '#71717a', '#dc2626'],
+                    },
+                ],
+            },
+            options: {
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } },
+            },
+        });
+    }
+};
+
 const bindAppInteractions = () => {
     bindAutoSearch();
     bindMotionReveals();
@@ -130,6 +185,7 @@ const bindAppInteractions = () => {
     bindFlashMessage();
     bindMobileMenu();
     bindGlassesViewer();
+    bindAdminCharts();
 };
 
 if (document.readyState === 'loading') {

@@ -70,6 +70,12 @@
                     <dt class="text-zinc-600">Shipping</dt>
                     <dd class="font-bold">Rs. {{ number_format($cart['shipping']) }}</dd>
                 </div>
+                @if ($cart['discount'] > 0)
+                    <div class="flex justify-between gap-4">
+                        <dt class="text-emerald-700">Discount ({{ $cart['coupon']->code }})</dt>
+                        <dd class="font-bold text-emerald-700">&minus;Rs. {{ number_format($cart['discount']) }}</dd>
+                    </div>
+                @endif
                 <div class="flex justify-between gap-4 text-base">
                     <dt class="font-black">Total</dt>
                     <dd class="font-black">Rs. {{ number_format($cart['total']) }}</dd>

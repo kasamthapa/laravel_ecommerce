@@ -38,7 +38,52 @@
         </x-admin.stat-card>
     </div>
 
-    <div class="mt-8 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+    <div class="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+        <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <h2 class="font-black text-zinc-950">Revenue &mdash; last 14 days</h2>
+            <div class="mt-4 h-64">
+                <canvas data-chart="revenue" data-labels="{{ json_encode($revenueChart['labels']) }}" data-values="{{ json_encode($revenueChart['values']) }}"></canvas>
+            </div>
+        </div>
+        <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <h2 class="font-black text-zinc-950">Orders by status</h2>
+            <div class="mt-4 h-64">
+                <canvas data-chart="status" data-labels="{{ json_encode($statusChart['labels']) }}" data-values="{{ json_encode($statusChart['values']) }}"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <div class="border-b border-zinc-200 px-6 py-4">
+            <h2 class="font-black text-zinc-950">Top products</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead>
+                    <tr class="border-b border-zinc-200 bg-zinc-50/60 text-xs font-black uppercase tracking-wide text-zinc-500">
+                        <th class="px-6 py-3">Product</th>
+                        <th class="px-6 py-3">Units sold</th>
+                        <th class="px-6 py-3 text-right">Revenue</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100">
+                    @forelse ($topProducts as $item)
+                        <tr class="transition hover:bg-zinc-50">
+                            <td class="px-6 py-3.5 font-bold text-zinc-950">{{ $item->product_name }}</td>
+                            <td class="px-6 py-3.5 text-zinc-700">{{ $item->units }}</td>
+                            <td class="px-6 py-3.5 text-right font-bold">Rs. {{ number_format((float) $item->revenue) }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-10 text-center text-zinc-500">No sales yet.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
         <div class="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
             <h2 class="font-black text-zinc-950">Recent orders</h2>
             <a href="{{ route('admin.orders.index') }}" class="text-sm font-bold text-[#092b83] hover:underline">View all &rarr;</a>

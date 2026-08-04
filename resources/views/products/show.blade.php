@@ -33,7 +33,23 @@
         <div class="flex flex-col justify-center gap-7 motion-fade-slow">
             <div>
                 <a href="{{ route('products.index', ['category' => $product->category->slug]) }}" class="text-sm font-bold uppercase text-[#092b83]">{{ $product->category->name }}</a>
-                <h1 class="mt-3 text-5xl font-black leading-none text-[#092b83]">{{ $product->name }}</h1>
+                <div class="mt-3 flex items-start justify-between gap-4">
+                    <h1 class="text-5xl font-black leading-none text-[#092b83]">{{ $product->name }}</h1>
+                    @auth
+                        <form method="POST" action="{{ in_array($product->id, $wishlistedProductIds, true) ? route('wishlist.destroy', $product) : route('wishlist.store', $product) }}">
+                            @csrf
+                            @if (in_array($product->id, $wishlistedProductIds, true))
+                                @method('DELETE')
+                            @endif
+                            <button type="submit" class="motion-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-zinc-200 text-xl shadow-sm hover:bg-zinc-50" aria-label="Toggle wishlist">
+                                <span class="{{ in_array($product->id, $wishlistedProductIds, true) ? 'text-[#e25822]' : 'text-zinc-400' }}">{{ in_array($product->id, $wishlistedProductIds, true) ? '♥' : '♡' }}</span>
+                            </button>
+                        </form>
+                    @endauth
+                </div>
+                <a href="#reviews" class="mt-2 inline-block">
+                    <x-star-rating :rating="(float) ($product->reviews_avg_rating ?? 0)" :count="$product->reviews_count ?? 0" size="h-5 w-5" />
+                </a>
                 <p class="mt-4 text-lg leading-8 text-zinc-600">{{ $product->description }}</p>
             </div>
 
@@ -111,6 +127,63 @@
         </div>
     </section>
 
+    <section id="reviews" class="mx-auto max-w-4xl px-4 pb-12 sm:px-6 lg:px-8">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+                <p class="text-sm font-black uppercase text-[#092b83]">Customer reviews</p>
+                <h2 class="text-2xl font-black">What shoppers say</h2>
+            </div>
+            <x-star-rating :rating="(float) ($product->reviews_avg_rating ?? 0)" :count="$product->reviews_count ?? 0" size="h-5 w-5" />
+        </div>
+
+        @auth
+            <form method="POST" action="{{ route('reviews.store', $product) }}" class="mt-6 grid gap-4 rounded-lg border border-zinc-200 bg-white p-5">
+                @csrf
+                <p class="text-sm font-black text-zinc-950">{{ $userReview ? 'Update your review' : 'Write a review' }}</p>
+                <label class="grid gap-2 text-sm font-bold">
+                    Rating
+                    <select name="rating" class="w-32 rounded-full border border-zinc-300 px-4 py-2 font-medium">
+                        @for ($i = 5; $i >= 1; $i--)
+                            <option value="{{ $i }}" @selected(old('rating', $userReview->rating ?? 5) == $i)>{{ $i }} star{{ $i > 1 ? 's' : '' }}</option>
+                        @endfor
+                    </select>
+                </label>
+                <label class="grid gap-2 text-sm font-bold">
+                    Title (optional)
+                    <input name="title" value="{{ old('title', $userReview->title ?? '') }}" maxlength="120" class="rounded-md border border-zinc-300 px-3 py-2 font-medium">
+                </label>
+                <label class="grid gap-2 text-sm font-bold">
+                    Review
+                    <textarea name="body" rows="3" required maxlength="2000" class="rounded-md border border-zinc-300 px-3 py-2 font-medium">{{ old('body', $userReview->body ?? '') }}</textarea>
+                </label>
+                @if ($errors->any())
+                    <div class="rounded-md bg-red-50 p-3 text-sm font-medium text-red-700">{{ $errors->first() }}</div>
+                @endif
+                <button class="motion-press w-fit rounded-full bg-[#092b83] px-5 py-2.5 text-sm font-black text-white hover:bg-zinc-950">{{ $userReview ? 'Update review' : 'Submit review' }}</button>
+            </form>
+        @else
+            <p class="mt-6 rounded-lg border border-dashed border-zinc-300 bg-white p-5 text-sm text-zinc-600"><a href="{{ route('login') }}" class="font-bold text-[#092b83] hover:underline">Sign in</a> to write a review.</p>
+        @endauth
+
+        <div class="mt-8 grid gap-5">
+            @forelse ($product->reviews as $review)
+                <div class="border-b border-zinc-100 pb-5 last:border-0">
+                    <div class="flex items-center justify-between gap-3">
+                        <p class="font-black text-zinc-950">{{ $review->user->name }}</p>
+                        <x-star-rating :rating="$review->rating" />
+                    </div>
+                    @if ($review->title)
+                        <p class="mt-2 font-bold text-zinc-950">{{ $review->title }}</p>
+                    @endif
+                    <p class="mt-1 text-sm leading-6 text-zinc-600">{{ $review->body }}</p>
+                    <p class="mt-2 text-xs font-medium text-zinc-400">{{ $review->created_at->format('d M Y') }}</p>
+                </div>
+            @empty
+                <p class="text-sm text-zinc-500">No reviews yet &mdash; be the first to share your fit.</p>
+            @endforelse
+        </div>
+    </section>
+
     @if ($relatedProducts->isNotEmpty())
         <section class="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
             <div data-motion-reveal class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -122,7 +195,7 @@
             </div>
             <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 @foreach ($relatedProducts as $relatedProduct)
-                    <x-product-card :product="$relatedProduct" data-motion-reveal />
+                    <x-product-card :product="$relatedProduct" :wishlisted="in_array($relatedProduct->id, $wishlistedProductIds, true)" data-motion-reveal />
                 @endforeach
             </div>
         </section>

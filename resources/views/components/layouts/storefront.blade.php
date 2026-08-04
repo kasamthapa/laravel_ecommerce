@@ -67,7 +67,14 @@
                             <a href="{{ route('register') }}" class="motion-press hidden rounded-full bg-[#092b83] px-4 py-2 text-base font-black text-white hover:bg-[#0f5be8] md:inline-flex">Create account</a>
                         @endguest
                         @auth
-                            <span class="hidden max-w-56 shrink-0 overflow-hidden text-ellipsis whitespace-nowrap rounded-full border-2 border-zinc-950 px-4 py-2 text-base font-black text-zinc-950 xl:inline-flex">Hi, {{ auth()->user()->name }}</span>
+                            <div class="group relative hidden xl:inline-flex">
+                                <button type="button" class="motion-press max-w-56 shrink-0 overflow-hidden text-ellipsis whitespace-nowrap rounded-full border-2 border-zinc-950 px-4 py-2 text-base font-black text-zinc-950">Hi, {{ auth()->user()->name }}</button>
+                                <div class="invisible absolute right-0 top-full z-40 mt-2 w-48 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100">
+                                    <a href="{{ route('account.orders.index') }}" class="block rounded-lg px-3 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50">My orders</a>
+                                    <a href="{{ route('wishlist.index') }}" class="block rounded-lg px-3 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50">Wishlist</a>
+                                    <a href="{{ route('track.create') }}" class="block rounded-lg px-3 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50">Track an order</a>
+                                </div>
+                            </div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button class="motion-press hidden rounded-full px-3 py-2 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950 sm:inline-flex">Logout</button>
@@ -79,7 +86,7 @@
                                 <path d="M16 16l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
                             </svg>
                         </a>
-                        <a href="{{ route('shop') }}" class="motion-press hidden text-zinc-950 hover:text-[#092b83] sm:inline-flex" aria-label="Wishlist">
+                        <a href="{{ auth()->check() ? route('wishlist.index') : route('login') }}" class="motion-press hidden text-zinc-950 hover:text-[#092b83] sm:inline-flex" aria-label="Wishlist">
                             <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M12 20s-7-4.3-8.7-9.1C2.1 7.4 4.5 4.5 7.7 4.5c1.8 0 3.4 1 4.3 2.4.9-1.4 2.5-2.4 4.3-2.4 3.2 0 5.6 2.9 4.4 6.4C19 15.7 12 20 12 20Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
                             </svg>
@@ -104,11 +111,14 @@
                         <a href="{{ route('products.index') }}#shape" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Style quiz</a>
                         <div class="my-1 border-t border-zinc-100"></div>
                         <a href="{{ route('cart.index') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Cart ({{ $cartCount ?? 0 }})</a>
+                        <a href="{{ route('track.create') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Track an order</a>
                         @guest
                             <a href="{{ route('login') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Sign in</a>
                             <a href="{{ route('register') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Create account</a>
                         @endguest
                         @auth
+                            <a href="{{ route('account.orders.index') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">My orders</a>
+                            <a href="{{ route('wishlist.index') }}" class="rounded-lg px-3 py-3 hover:bg-zinc-50">Wishlist</a>
                             <span class="px-3 py-2 text-sm font-medium text-zinc-500">Signed in as {{ auth()->user()->name }}</span>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -169,6 +179,7 @@
                             <a href="{{ route('shop') }}" class="hover:text-zinc-950">Shop all</a>
                             <a href="{{ route('products.index') }}#shape" class="hover:text-zinc-950">Frame shapes</a>
                             <a href="{{ route('cart.index') }}" class="hover:text-zinc-950">Cart</a>
+                            <a href="{{ route('track.create') }}" class="hover:text-zinc-950">Track an order</a>
                             @guest
                                 <a href="{{ route('login') }}" class="hover:text-zinc-950">Login</a>
                             @endguest

@@ -3,17 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\CartService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CartController extends Controller
 {
+    public function __construct(private readonly CartService $cart) {}
+
     public function index(): View
     {
         return view('cart.index', [
-            'cart' => $this->cart(),
-            'cartCount' => $this->cartCount(),
+            'cart' => $this->cart->snapshot(),
+            'cartCount' => $this->cart->count(),
         ]);
     }
 
@@ -31,12 +34,12 @@ class CartController extends Controller
             'quantity' => ['required', 'integer', 'min:1', 'max:10'],
         ]);
 
-        $cart = $this->cart();
+        $items = session('cart.items', []);
         $key = $this->cartKey($product, $validated['size'] ?? null, $validated['color'] ?? null);
 
-        $requestedQuantity = ($cart['items'][$key]['quantity'] ?? 0) + (int) $validated['quantity'];
+        $requestedQuantity = ($items[$key]['quantity'] ?? 0) + (int) $validated['quantity'];
 
-        $cart['items'][$key] = [
+        $items[$key] = [
             'product_id' => $product->id,
             'name' => $product->name,
             'slug' => $product->slug,
@@ -47,7 +50,7 @@ class CartController extends Controller
             'quantity' => min($requestedQuantity, $product->stock, 10),
         ];
 
-        session(['cart' => $cart]);
+        session(['cart.items' => $items]);
 
         return redirect()->route('cart.index')->with('status', "{$product->name} added to your cart.");
     }
@@ -58,14 +61,14 @@ class CartController extends Controller
             'quantity' => ['required', 'integer', 'min:1', 'max:10'],
         ]);
 
-        $cart = $this->cart();
+        $items = session('cart.items', []);
 
-        if (isset($cart['items'][$key])) {
-            $stock = Product::find($cart['items'][$key]['product_id'])?->stock;
-            $cart['items'][$key]['quantity'] = $stock !== null
+        if (isset($items[$key])) {
+            $stock = Product::find($items[$key]['product_id'])?->stock;
+            $items[$key]['quantity'] = $stock !== null
                 ? min((int) $validated['quantity'], max($stock, 1))
                 : (int) $validated['quantity'];
-            session(['cart' => $cart]);
+            session(['cart.items' => $items]);
         }
 
         return redirect()->route('cart.index')->with('status', 'Cart updated.');
@@ -73,26 +76,31 @@ class CartController extends Controller
 
     public function destroy(string $key): RedirectResponse
     {
-        $cart = $this->cart();
-        unset($cart['items'][$key]);
-        session(['cart' => $cart]);
+        $items = session('cart.items', []);
+        unset($items[$key]);
+        session(['cart.items' => $items]);
 
         return redirect()->route('cart.index')->with('status', 'Item removed from your cart.');
     }
 
-    private function cart(): array
+    public function applyCoupon(Request $request): RedirectResponse
     {
-        $cart = session('cart', ['items' => []]);
-        $cart['subtotal'] = collect($cart['items'])->sum(fn (array $item): float => $item['price'] * $item['quantity']);
-        $cart['shipping'] = $cart['subtotal'] > 0 ? 250.00 : 0.00;
-        $cart['total'] = $cart['subtotal'] + $cart['shipping'];
+        $validated = $request->validate([
+            'code' => ['required', 'string', 'max:40'],
+        ]);
 
-        return $cart;
+        if (! $this->cart->applyCoupon($validated['code'])) {
+            return redirect()->route('cart.index')->with('status', 'That coupon code is invalid or expired.');
+        }
+
+        return redirect()->route('cart.index')->with('status', 'Coupon applied.');
     }
 
-    private function cartCount(): int
+    public function removeCoupon(): RedirectResponse
     {
-        return (int) collect(session('cart.items', []))->sum('quantity');
+        $this->cart->removeCoupon();
+
+        return redirect()->route('cart.index')->with('status', 'Coupon removed.');
     }
 
     private function cartKey(Product $product, ?string $size, ?string $color): string

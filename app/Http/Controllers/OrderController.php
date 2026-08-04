@@ -2,23 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Product;
+use App\Notifications\OrderConfirmed;
+use App\Services\CartService;
 use App\Services\KhaltiPaymentGateway;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use RuntimeException;
 
 class OrderController extends Controller
 {
-    public function __construct(private readonly KhaltiPaymentGateway $khalti) {}
+    public function __construct(
+        private readonly KhaltiPaymentGateway $khalti,
+        private readonly CartService $cart,
+    ) {}
 
     public function create(): View|RedirectResponse
     {
-        $cart = $this->cart();
+        $cart = $this->cart->snapshot();
 
         if (count($cart['items']) === 0) {
             return redirect()->route('cart.index')->with('status', 'Add a pair to your cart before checkout.');
@@ -32,7 +39,7 @@ class OrderController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $cart = $this->cart();
+        $cart = $this->cart->snapshot();
 
         if (count($cart['items']) === 0) {
             return redirect()->route('products.index')->with('status', 'Your cart is empty.');
@@ -47,12 +54,15 @@ class OrderController extends Controller
             'notes' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $order = DB::transaction(function () use ($validated, $cart): Order {
+        $order = DB::transaction(function () use ($validated, $cart, $request): Order {
             $order = Order::create([
                 ...$validated,
+                'user_id' => $request->user()?->id,
                 'order_number' => 'LUM-'.now()->format('ymd').'-'.Str::upper(Str::random(6)),
                 'subtotal' => $cart['subtotal'],
                 'shipping_total' => $cart['shipping'],
+                'coupon_code' => $cart['coupon_code'],
+                'discount_total' => $cart['discount'],
                 'total' => $cart['total'],
                 'status' => 'payment_pending',
                 'payment_method' => 'khalti',
@@ -134,9 +144,15 @@ class OrderController extends Controller
             foreach ($order->orderItems()->with('product')->get() as $item) {
                 $item->product?->decrement('stock', min($item->quantity, $item->product->stock));
             }
+
+            if ($order->coupon_code !== null) {
+                Coupon::where('code', $order->coupon_code)->increment('used_count');
+            }
         });
 
         session()->forget('cart');
+
+        Notification::route('mail', $order->customer_email)->notify(new OrderConfirmed($order));
 
         return redirect()->route('checkout.confirmation', $order)->with('status', 'Khalti payment confirmed. Order placed successfully.');
     }
@@ -147,15 +163,5 @@ class OrderController extends Controller
             'order' => $order->load('orderItems'),
             'cartCount' => collect(session('cart.items', []))->sum('quantity'),
         ]);
-    }
-
-    private function cart(): array
-    {
-        $cart = session('cart', ['items' => []]);
-        $cart['subtotal'] = collect($cart['items'])->sum(fn (array $item): float => $item['price'] * $item['quantity']);
-        $cart['shipping'] = $cart['subtotal'] > 0 ? 250.00 : 0.00;
-        $cart['total'] = $cart['subtotal'] + $cart['shipping'];
-
-        return $cart;
     }
 }

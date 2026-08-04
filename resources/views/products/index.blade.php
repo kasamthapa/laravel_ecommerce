@@ -178,6 +178,26 @@
             @if ($search !== '')
                 <a href="{{ route($catalogRoute, array_filter(['category' => $selectedCategory?->slug])) }}#collection" class="rounded-full border border-zinc-300 px-5 py-3 text-center text-sm font-black text-zinc-700 transition hover:border-zinc-950 hover:text-zinc-950">Clear</a>
             @endif
+
+            <div class="flex flex-wrap items-center gap-3 sm:col-span-3">
+                <label class="flex items-center gap-2 text-sm font-bold text-zinc-600">
+                    Sort
+                    <select name="sort" onchange="this.form.submit()" class="rounded-full border border-zinc-300 px-3 py-2 text-sm font-bold outline-none focus:border-[#092b83]">
+                        <option value="" @selected($sort === '')>Newest</option>
+                        <option value="price_asc" @selected($sort === 'price_asc')>Price: Low to high</option>
+                        <option value="price_desc" @selected($sort === 'price_desc')>Price: High to low</option>
+                    </select>
+                </label>
+                <label class="flex items-center gap-2 text-sm font-bold text-zinc-600">
+                    Min Rs.
+                    <input type="number" name="min_price" value="{{ $minPrice }}" min="0" class="w-24 rounded-full border border-zinc-300 px-3 py-2 text-sm font-medium outline-none focus:border-[#092b83]">
+                </label>
+                <label class="flex items-center gap-2 text-sm font-bold text-zinc-600">
+                    Max Rs.
+                    <input type="number" name="max_price" value="{{ $maxPrice }}" min="0" class="w-24 rounded-full border border-zinc-300 px-3 py-2 text-sm font-medium outline-none focus:border-[#092b83]">
+                </label>
+                <button class="motion-press rounded-full border border-zinc-300 px-4 py-2 text-sm font-bold text-zinc-700 hover:border-zinc-950">Apply</button>
+            </div>
         </form>
 
         @if ($products->isEmpty())
@@ -193,7 +213,7 @@
         @else
             <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($products as $product)
-                    <x-product-card :product="$product" data-motion-reveal />
+                    <x-product-card :product="$product" :wishlisted="in_array($product->id, $wishlistedProductIds, true)" data-motion-reveal />
                 @endforeach
             </div>
         @endif

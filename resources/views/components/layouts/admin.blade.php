@@ -42,6 +42,29 @@
                             </svg>
                             Orders
                         </a>
+                        <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 transition {{ request()->routeIs('admin.categories.*') ? 'bg-white text-[#092b83] shadow-sm' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <rect x="3.5" y="3.5" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.8" />
+                                <rect x="13.5" y="3.5" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.8" />
+                                <rect x="3.5" y="13.5" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.8" />
+                                <rect x="13.5" y="13.5" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.8" />
+                            </svg>
+                            Categories
+                        </a>
+                        <a href="{{ route('admin.coupons.index') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 transition {{ request()->routeIs('admin.coupons.*') ? 'bg-white text-[#092b83] shadow-sm' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M4 10.5V6a1.5 1.5 0 0 1 1.5-1.5H10l10 10-6 6L4 10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                                <circle cx="8" cy="8" r="1.25" fill="currentColor" />
+                            </svg>
+                            Coupons
+                        </a>
+                        <a href="{{ route('admin.customers.index') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 transition {{ request()->routeIs('admin.customers.*') ? 'bg-white text-[#092b83] shadow-sm' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.8" />
+                                <path d="M3.5 19c.6-3.4 3-5.3 5.5-5.3s4.9 1.9 5.5 5.3M16 8.5a2.5 2.5 0 1 0 0-5M18.5 19c-.4-2.3-1.6-3.9-3.3-4.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                            </svg>
+                            Customers
+                        </a>
                     </nav>
                 </div>
 

@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Coupon;
 use App\Models\Product;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -17,10 +19,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
+        $testUser = User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        collect([
+            ['code' => 'WELCOME10', 'type' => 'percent', 'value' => 10, 'max_uses' => null, 'expires_at' => null],
+            ['code' => 'LUMA500', 'type' => 'fixed', 'value' => 500, 'max_uses' => 100, 'expires_at' => now()->addMonths(3)],
+        ])->each(fn (array $coupon): Coupon => Coupon::updateOrCreate(
+            ['code' => $coupon['code']],
+            [...$coupon, 'is_active' => true],
+        ));
 
         $categories = collect([
             [
@@ -297,5 +307,22 @@ class DatabaseSeeder extends Seeder
             ['slug' => $product['slug']],
             $product,
         ));
+
+        collect([
+            ['slug' => 'noir-keyhole', 'rating' => 5, 'title' => 'Exactly as pictured', 'body' => 'Lightweight and the fit is spot on. Ordered the medium and it sits perfectly.'],
+            ['slug' => 'solar-round', 'rating' => 4, 'title' => 'Great for summer', 'body' => 'Love the tint, wish the case was a bit sturdier.'],
+            ['slug' => 'studio-screen', 'rating' => 5, 'title' => null, 'body' => 'Barely notice I am wearing them during long work days.'],
+        ])->each(function (array $review) use ($testUser): void {
+            $product = Product::where('slug', $review['slug'])->first();
+
+            if ($product === null) {
+                return;
+            }
+
+            Review::updateOrCreate(
+                ['user_id' => $testUser->id, 'product_id' => $product->id],
+                ['rating' => $review['rating'], 'title' => $review['title'], 'body' => $review['body']],
+            );
+        });
     }
 }

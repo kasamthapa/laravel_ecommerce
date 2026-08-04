@@ -43,6 +43,24 @@
 
                 <aside class="h-fit rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
                     <h2 class="text-xl font-black">Order summary</h2>
+
+                    @if ($cart['coupon'])
+                        <div class="mt-4 flex items-center justify-between gap-3 rounded-md bg-emerald-50 px-3 py-2.5 text-sm">
+                            <span class="font-bold text-emerald-800">Coupon {{ $cart['coupon']->code }} applied</span>
+                            <form method="POST" action="{{ route('cart.coupon.remove') }}">
+                                @csrf
+                                @method('DELETE')
+                                <button class="font-bold text-emerald-800 underline-offset-2 hover:underline">Remove</button>
+                            </form>
+                        </div>
+                    @else
+                        <form method="POST" action="{{ route('cart.coupon.apply') }}" class="mt-4 flex gap-2">
+                            @csrf
+                            <input type="text" name="code" placeholder="Promo code" class="min-w-0 flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium uppercase outline-none focus:border-[#092b83]">
+                            <button class="motion-press shrink-0 rounded-md border border-zinc-950 px-3 py-2 text-sm font-bold hover:bg-zinc-950 hover:text-white">Apply</button>
+                        </form>
+                    @endif
+
                     <dl class="mt-5 grid gap-3 text-sm">
                         <div class="flex justify-between gap-4">
                             <dt class="text-zinc-600">Subtotal</dt>
@@ -52,6 +70,12 @@
                             <dt class="text-zinc-600">Shipping</dt>
                             <dd class="font-bold">Rs. {{ number_format($cart['shipping']) }}</dd>
                         </div>
+                        @if ($cart['discount'] > 0)
+                            <div class="flex justify-between gap-4">
+                                <dt class="text-emerald-700">Discount</dt>
+                                <dd class="font-bold text-emerald-700">&minus;Rs. {{ number_format($cart['discount']) }}</dd>
+                            </div>
+                        @endif
                         <div class="flex justify-between gap-4 border-t border-zinc-200 pt-3 text-base">
                             <dt class="font-black">Total</dt>
                             <dd class="font-black">Rs. {{ number_format($cart['total']) }}</dd>

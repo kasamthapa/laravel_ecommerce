@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Frame image unavailable">
+    <rect width="400" height="300" fill="#F3EFE7"/>
+    <g fill="none" stroke="#A8A49B" stroke-width="2.5">
+        <circle cx="140" cy="150" r="52"/>
+        <circle cx="260" cy="150" r="52"/>
+        <path d="M192 150h16"/>
+        <path d="M88 150 60 132"/>
+        <path d="M312 150 340 132"/>
+    </g>
+</svg>

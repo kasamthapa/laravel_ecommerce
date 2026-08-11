@@ -26,6 +26,21 @@ const bindAutoSearch = () => {
     });
 };
 
+const bindFormLoadingState = () => {
+    document.querySelectorAll('form[data-loading-form]').forEach((form) => {
+        form.addEventListener('submit', () => {
+            const button = form.querySelector('button[type="submit"]');
+
+            if (!(button instanceof HTMLButtonElement) || button.disabled) {
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = button.dataset.loadingLabel || 'Please wait…';
+        });
+    });
+};
+
 const bindFlashMessage = () => {
     const flash = document.querySelector('[data-flash-message]');
 
@@ -226,6 +241,7 @@ const bindAdminCharts = async () => {
 
 const bindAppInteractions = () => {
     bindAutoSearch();
+    bindFormLoadingState();
     bindFlashMessage();
     bindMobileMenu();
     bindGlassesViewer();

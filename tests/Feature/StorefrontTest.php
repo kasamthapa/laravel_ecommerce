@@ -22,14 +22,14 @@ test('the storefront shows seeded products', function () {
 test('a shopper can search the product catalog', function () {
     $this->seed();
 
-    $this->get(route('products.index', ['q' => 'Solar']))
+    $this->get(route('shop', ['q' => 'Solar']))
         ->assertSuccessful()
         ->assertSee('wire:model.live.debounce.400ms', false)
         ->assertSee('Results for')
         ->assertSee('Solar Round')
         ->assertDontSee('Noir Keyhole');
 
-    $this->get(route('products.index', ['q' => 'not-a-frame']))
+    $this->get(route('shop', ['q' => 'not-a-frame']))
         ->assertSuccessful()
         ->assertSee('No frames found');
 });

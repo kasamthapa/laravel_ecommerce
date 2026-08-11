@@ -37,7 +37,6 @@
                         <a href="{{ route('shop', ['category' => 'optical-frames']) }}" class="motion-press border-b border-transparent pb-0.5 hover:border-ink">Eyeglasses</a>
                         <a href="{{ route('shop', ['category' => 'sunglasses']) }}" class="motion-press border-b border-transparent pb-0.5 hover:border-ink">Sunglasses</a>
                         <a href="{{ route('shop', ['category' => 'blue-light']) }}" class="motion-press border-b border-transparent pb-0.5 hover:border-ink">Blue light</a>
-                        <a href="{{ route('products.index') }}#shape" class="motion-press border-b border-transparent pb-0.5 hover:border-ink">Style quiz</a>
                     </nav>
 
                     <nav aria-label="Account" class="flex shrink-0 items-center justify-end gap-5 text-sm font-medium">
@@ -80,7 +79,6 @@
                         <a href="{{ route('shop', ['category' => 'optical-frames']) }}" class="px-3 py-3 hover:bg-cream-dim">Eyeglasses</a>
                         <a href="{{ route('shop', ['category' => 'sunglasses']) }}" class="px-3 py-3 hover:bg-cream-dim">Sunglasses</a>
                         <a href="{{ route('shop', ['category' => 'blue-light']) }}" class="px-3 py-3 hover:bg-cream-dim">Blue light</a>
-                        <a href="{{ route('products.index') }}#shape" class="px-3 py-3 hover:bg-cream-dim">Style quiz</a>
                         <div class="my-1 border-t border-line"></div>
                         <a href="{{ route('cart.index') }}" class="flex items-center gap-2 px-3 py-3 hover:bg-cream-dim">Cart <livewire:cart-count :count="$cartCount ?? 0" /></a>
                         <a href="{{ route('track.create') }}" class="px-3 py-3 hover:bg-cream-dim">Track an order</a>

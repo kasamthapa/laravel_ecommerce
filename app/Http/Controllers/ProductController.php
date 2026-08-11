@@ -8,9 +8,11 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         return view('products.index', [
+            'featuredProducts' => Product::active()->featured()->with('category')->withAvg('reviews', 'rating')->withCount('reviews')->limit(4)->get(),
+            'wishlistedProductIds' => $this->wishlistedProductIds($request),
             'cartCount' => collect(session('cart.items', []))->sum('quantity'),
         ]);
     }

@@ -1,77 +1,96 @@
 <div>
     @if (count($this->cart['items']) === 0)
-        <div class="mt-8 rounded-lg border border-dashed border-zinc-300 bg-white p-10 text-center">
-            <h2 class="text-2xl font-black">Your cart is empty</h2>
-            <p class="mt-2 text-zinc-600">Add a frame to begin your order.</p>
+        <div class="mt-10 border border-dashed border-line p-12 text-center">
+            <p class="font-serif text-2xl text-ink">Your cart is empty</p>
+            <p class="mt-2 text-sm text-stone">Add a frame to begin your order.</p>
+            <x-ui.button :href="route('shop')" class="mt-6">Shop the collection</x-ui.button>
         </div>
     @else
-        <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_22rem]">
-            <div class="grid gap-4" wire:loading.class="opacity-60">
+        <div class="mt-10 grid gap-12 lg:grid-cols-[1fr_22rem] lg:items-start">
+            <div class="grid gap-6" wire:loading.class="opacity-60">
                 @foreach ($this->cart['items'] as $key => $item)
-                    <div wire:key="cart-item-{{ $key }}" class="motion-lift grid gap-4 rounded-lg border border-zinc-200 bg-white p-4 sm:grid-cols-[7rem_1fr_auto]">
-                        <img src="{{ $item['image_url'] }}" alt="{{ $item['name'] }}" class="h-28 w-28 rounded-md object-cover">
+                    <div wire:key="cart-item-{{ $key }}" class="grid gap-4 border-b border-line pb-6 last:border-0 sm:grid-cols-[7rem_1fr_auto]">
+                        <img src="{{ $item['image_url'] }}" alt="{{ $item['name'] }}" class="h-28 w-28 bg-cream-dim object-cover">
                         <div>
-                            <a href="{{ route('products.show', $item['slug']) }}" class="text-lg font-black hover:text-emerald-700">{{ $item['name'] }}</a>
-                            <p class="mt-1 text-sm text-zinc-600">Fit {{ $item['size'] ?? 'Any' }} &middot; {{ $item['color'] ?? 'Any finish' }}</p>
-                            <p class="mt-2 font-black">Rs. {{ number_format($item['price']) }}</p>
+                            <a href="{{ route('products.show', $item['slug']) }}" class="motion-press font-serif text-lg text-ink">{{ $item['name'] }}</a>
+                            <p class="mt-1 text-sm text-stone">Fit {{ $item['size'] ?? 'Any' }} &middot; {{ $item['color'] ?? 'Any finish' }}</p>
+                            <p class="mt-2 text-ink">Rs. {{ number_format($item['price']) }}</p>
                         </div>
-                        <div class="flex items-center gap-2 sm:flex-col sm:items-end">
-                            <div class="flex items-center gap-2">
-                                <button type="button" wire:click="updateQuantity('{{ $key }}', {{ $item['quantity'] - 1 }})" class="grid h-9 w-9 place-items-center rounded-full border border-zinc-300 font-black hover:border-zinc-950" aria-label="Decrease quantity">&minus;</button>
-                                <span class="w-8 text-center font-black">{{ $item['quantity'] }}</span>
-                                <button type="button" wire:click="updateQuantity('{{ $key }}', {{ $item['quantity'] + 1 }})" class="grid h-9 w-9 place-items-center rounded-full border border-zinc-300 font-black hover:border-zinc-950" aria-label="Increase quantity">+</button>
+                        <div class="flex items-center gap-3 sm:flex-col sm:items-end sm:justify-between">
+                            <div class="flex items-center gap-3">
+                                <button type="button" wire:click="updateQuantity('{{ $key }}', {{ $item['quantity'] - 1 }})" class="motion-press grid h-8 w-8 place-items-center border border-line text-ink" aria-label="Decrease quantity of {{ $item['name'] }}">&minus;</button>
+                                <span class="w-6 text-center text-ink" aria-live="polite">{{ $item['quantity'] }}</span>
+                                <button type="button" wire:click="updateQuantity('{{ $key }}', {{ $item['quantity'] + 1 }})" class="motion-press grid h-8 w-8 place-items-center border border-line text-ink" aria-label="Increase quantity of {{ $item['name'] }}">+</button>
                             </div>
-                            <button type="button" wire:click="removeItem('{{ $key }}')" wire:confirm="Remove this item from your cart?" class="rounded-md px-3 py-2 text-sm font-bold text-red-700 hover:bg-red-50">Remove</button>
+                            <button type="button" wire:click="removeItem('{{ $key }}')" wire:confirm="Remove this item from your cart?" class="motion-press text-xs font-medium uppercase tracking-wide text-stone hover:text-error">Remove</button>
                         </div>
                     </div>
                 @endforeach
             </div>
 
-            <aside class="h-fit rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
-                <h2 class="text-xl font-black">Order summary</h2>
+            <aside class="border border-line p-6 lg:sticky lg:top-24">
+                <h2 class="font-serif text-xl text-ink">Order summary</h2>
 
                 @if ($this->cart['coupon'])
-                    <div class="mt-4 flex items-center justify-between gap-3 rounded-md bg-emerald-50 px-3 py-2.5 text-sm">
-                        <span class="font-bold text-emerald-800">Coupon {{ $this->cart['coupon']->code }} applied</span>
-                        <button type="button" wire:click="removeCoupon" class="font-bold text-emerald-800 underline-offset-2 hover:underline">Remove</button>
+                    <div class="mt-4 flex items-center justify-between gap-3 border border-line bg-success-tint px-3 py-2.5 text-sm">
+                        <span class="text-success">Coupon {{ $this->cart['coupon']->code }} applied</span>
+                        <button type="button" wire:click="removeCoupon" class="motion-press font-medium text-success underline-offset-2 hover:underline">Remove</button>
                     </div>
                 @else
-                    <form wire:submit="applyCoupon" class="mt-4 flex gap-2">
-                        <input type="text" wire:model="couponCode" placeholder="Promo code" class="min-w-0 flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium uppercase outline-none focus:border-[#092b83]">
-                        <button type="submit" class="motion-press shrink-0 rounded-md border border-zinc-950 px-3 py-2 text-sm font-bold hover:bg-zinc-950 hover:text-white">Apply</button>
+                    <form wire:submit="applyCoupon" class="mt-4 flex items-end gap-3">
+                        <label class="grid flex-1 gap-1 text-xs font-medium text-stone">
+                            Promo code
+                            <input type="text" wire:model="couponCode" class="w-full border-0 border-b border-line bg-transparent py-2 text-sm uppercase text-ink outline-none focus:border-accent">
+                        </label>
+                        <button type="submit" class="motion-press shrink-0 border border-ink px-4 py-2 text-sm text-ink">Apply</button>
                     </form>
                 @endif
 
                 @if ($flash)
-                    <p class="mt-2 text-xs font-bold text-zinc-500">{{ $flash }}</p>
+                    <p class="mt-2 text-xs text-stone">{{ $flash }}</p>
                 @endif
 
-                <dl class="mt-5 grid gap-3 text-sm">
+                <dl class="mt-6 grid gap-3 text-sm">
                     <div class="flex justify-between gap-4">
-                        <dt class="text-zinc-600">Subtotal</dt>
-                        <dd class="font-bold">Rs. {{ number_format($this->cart['subtotal']) }}</dd>
+                        <dt class="text-stone">Subtotal</dt>
+                        <dd class="text-ink">Rs. {{ number_format($this->cart['subtotal']) }}</dd>
                     </div>
                     <div class="flex justify-between gap-4">
-                        <dt class="text-zinc-600">Shipping</dt>
-                        <dd class="font-bold">Rs. {{ number_format($this->cart['shipping']) }}</dd>
+                        <dt class="text-stone">Shipping</dt>
+                        <dd class="text-ink">Rs. {{ number_format($this->cart['shipping']) }}</dd>
                     </div>
                     @if ($this->cart['discount'] > 0)
                         <div class="flex justify-between gap-4">
-                            <dt class="text-emerald-700">Discount</dt>
-                            <dd class="font-bold text-emerald-700">&minus;Rs. {{ number_format($this->cart['discount']) }}</dd>
+                            <dt class="text-success">Discount</dt>
+                            <dd class="text-success">&minus;Rs. {{ number_format($this->cart['discount']) }}</dd>
                         </div>
                     @endif
-                    <div class="flex justify-between gap-4 border-t border-zinc-200 pt-3 text-base">
-                        <dt class="font-black">Total</dt>
-                        <dd class="font-black">Rs. {{ number_format($this->cart['total']) }}</dd>
+                    <div class="flex justify-between gap-4 border-t border-line pt-3 text-base">
+                        <dt class="font-medium text-ink">Total</dt>
+                        <dd class="font-medium text-ink">Rs. {{ number_format($this->cart['total']) }}</dd>
                     </div>
                 </dl>
                 @auth
-                    <a href="{{ route('checkout.create') }}" class="motion-press mt-6 block rounded-full bg-[#092b83] px-5 py-3 text-center font-black text-white hover:bg-zinc-950">Checkout</a>
+                    <x-ui.button :href="route('checkout.create')" class="mt-6 w-full">Checkout</x-ui.button>
                 @else
-                    <a href="{{ route('login') }}" class="motion-press mt-6 block rounded-full bg-[#092b83] px-5 py-3 text-center font-black text-white hover:bg-zinc-950">Login to checkout</a>
-                    <p class="mt-3 text-center text-xs font-medium text-zinc-500">Create an account or sign in before placing an order.</p>
+                    <x-ui.button :href="route('login')" class="mt-6 w-full">Login to checkout</x-ui.button>
+                    <p class="mt-3 text-center text-xs text-stone">Create an account or sign in before placing an order.</p>
                 @endauth
+
+                <ul class="mt-6 grid gap-2 border-t border-line pt-6 text-xs text-stone">
+                    <li class="flex items-center gap-2">
+                        <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5 20 7v5.5c0 4.6-3.4 8.2-8 9-4.6-.8-8-4.4-8-9V7l8-3.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" /></svg>
+                        Secure payment with Khalti
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 1 0 8-8M4 12h4M4 12l3-3M4 12l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        14-day returns and exchanges
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" /><circle cx="7.5" cy="18" r="1.5" fill="currentColor" /><circle cx="17.5" cy="18" r="1.5" fill="currentColor" /></svg>
+                        Free shipping over Rs. 10,000, otherwise Rs. 250
+                    </li>
+                </ul>
             </aside>
         </div>
     @endif

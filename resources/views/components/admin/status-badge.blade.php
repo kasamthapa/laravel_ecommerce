@@ -2,15 +2,15 @@
 
 @php
     $tone = match ($status) {
-        'delivered', 'confirmed' => ['bg-emerald-50 text-emerald-700 border-emerald-200', 'bg-emerald-500'],
-        'shipped' => ['bg-blue-50 text-blue-700 border-blue-200', 'bg-blue-500'],
-        'cancelled', 'payment_failed' => ['bg-red-50 text-red-700 border-red-200', 'bg-red-500'],
-        default => ['bg-zinc-100 text-zinc-700 border-zinc-200', 'bg-zinc-400'],
+        'delivered', 'confirmed' => ['border-success/30 bg-success-tint text-success', 'bg-success'],
+        'shipped' => ['border-line bg-cream-dim text-ink', 'bg-ink'],
+        'cancelled', 'payment_failed' => ['border-error/30 bg-error-tint text-error', 'bg-error'],
+        default => ['border-line bg-cream-dim text-stone', 'bg-stone'],
     };
     [$badgeTone, $dotTone] = $tone;
 @endphp
 
-<span {{ $attributes->merge(['class' => "inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-black uppercase {$badgeTone}"]) }}>
+<span {{ $attributes->merge(['class' => "inline-flex w-fit items-center gap-1.5 rounded-sm border px-3 py-1 text-xs font-medium uppercase tracking-wide {$badgeTone}"]) }}>
     <span class="h-1.5 w-1.5 shrink-0 rounded-full {{ $dotTone }}"></span>
     {{ str_replace('_', ' ', $status) }}
 </span>

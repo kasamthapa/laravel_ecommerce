@@ -21,6 +21,9 @@ class ProductCatalog extends Component
     #[Url(as: 'category')]
     public string $category = '';
 
+    #[Url(as: 'color')]
+    public string $color = '';
+
     #[Url(as: 'sort')]
     public string $sort = '';
 
@@ -30,6 +33,8 @@ class ProductCatalog extends Component
     #[Url(as: 'max_price')]
     public string $maxPrice = '';
 
+    public bool $filtersOpen = false;
+
     public function mount(bool $isShopPage = false): void
     {
         $this->isShopPage = $isShopPage;
@@ -37,7 +42,7 @@ class ProductCatalog extends Component
 
     public function updated(string $property): void
     {
-        if (in_array($property, ['search', 'category', 'sort', 'minPrice', 'maxPrice'], true)) {
+        if (in_array($property, ['search', 'category', 'color', 'sort', 'minPrice', 'maxPrice'], true)) {
             $this->resetPage();
         }
     }
@@ -48,10 +53,21 @@ class ProductCatalog extends Component
         $this->resetPage();
     }
 
-    public function clearSearch(): void
+    public function selectColor(string $color): void
     {
-        $this->search = '';
+        $this->color = $this->color === $color ? '' : $color;
         $this->resetPage();
+    }
+
+    public function clearFilters(): void
+    {
+        $this->reset(['search', 'category', 'color', 'minPrice', 'maxPrice']);
+        $this->resetPage();
+    }
+
+    public function toggleFilters(): void
+    {
+        $this->filtersOpen = ! $this->filtersOpen;
     }
 
     public function render(): View
@@ -81,6 +97,7 @@ class ProductCatalog extends Component
                 });
             })
             ->when($selectedCategory !== null, fn ($query) => $query->whereBelongsTo($selectedCategory))
+            ->when($this->color !== '', fn ($query) => $query->whereJsonContains('colors', $this->color))
             ->when($minPrice !== null, fn ($query) => $query->where('price', '>=', $minPrice))
             ->when($maxPrice !== null, fn ($query) => $query->where('price', '<=', $maxPrice))
             ->when($this->sort === 'price_asc', fn ($query) => $query->orderBy('price'))
@@ -91,6 +108,7 @@ class ProductCatalog extends Component
         return view('livewire.product-catalog', [
             'products' => $products,
             'categories' => Category::withCount(['products' => fn ($query) => $query->active()])->get(),
+            'availableColors' => Product::active()->pluck('colors')->flatten()->unique()->sort()->values(),
             'selectedCategory' => $selectedCategory,
             'wishlistedProductIds' => auth()->user()?->wishlistedProducts()->pluck('products.id')->all() ?? [],
         ]);

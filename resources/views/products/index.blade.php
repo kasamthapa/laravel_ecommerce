@@ -1,8 +1,10 @@
 <x-layouts.storefront :title="request()->routeIs('shop') ? 'Shop all frames - Luma Lens' : 'Luma Lens - Independent Eyewear'" :cart-count="$cartCount">
     @if (request()->routeIs('shop'))
         <section class="mx-auto max-w-[100rem] px-4 py-10 sm:px-8 lg:py-14">
-            <h1 class="sr-only">Shop all frames</h1>
-            <livewire:product-catalog :is-shop-page="true" />
+            <h1 class="font-serif text-3xl text-ink sm:text-4xl">Shop all frames</h1>
+            <div class="mt-8">
+                <livewire:product-catalog :is-shop-page="true" />
+            </div>
         </section>
     @else
         <section class="motion-fade">

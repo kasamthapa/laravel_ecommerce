@@ -3,9 +3,58 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/*
+ * Design tokens — Luma Lens editorial redesign.
+ * Palette: warm cream / near-black / single forest-green accent.
+ * Type: Fraunces (editorial serif, headings) + Inter (humanist sans, body).
+ * Scale: modular 1.25 ratio from a 16px base. Spacing stays on Tailwind's
+ * default 4px grid (already a multiple of 4/8, so no override needed there).
+ */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-serif: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+
+    /* Palette */
+    --color-cream: #faf7f2;
+    --color-cream-dim: #f3efe7;
+    --color-ink: #1a1a1a;
+    --color-ink-soft: #33322f;
+    --color-stone: #6b6b66;
+    --color-stone-light: #a8a49b;
+    --color-line: #e4ded2;
+    --color-accent: #2f4f3e;
+    --color-accent-dark: #22392c;
+    --color-accent-tint: #e9efe9;
+    --color-success: #4a7c4e;
+    --color-success-tint: #e9f1ea;
+    --color-error: #a64d3a;
+    --color-error-tint: #f6e9e6;
+
+    /* Corners: near-square, a hint of softening only */
+    --radius-sm: 2px;
+    --radius-md: 2px;
+    --radius-lg: 3px;
+
+    /* Modular type scale, ratio 1.25 from a 16px base */
+    --text-xs: 0.75rem;
+    --text-xs--line-height: 1.5;
+    --text-sm: 0.875rem;
+    --text-sm--line-height: 1.55;
+    --text-base: 1rem;
+    --text-base--line-height: 1.6;
+    --text-lg: 1.25rem;
+    --text-lg--line-height: 1.5;
+    --text-xl: 1.5625rem;
+    --text-xl--line-height: 1.35;
+    --text-2xl: 1.953rem;
+    --text-2xl--line-height: 1.25;
+    --text-3xl: 2.441rem;
+    --text-3xl--line-height: 1.15;
+    --text-4xl: 3.052rem;
+    --text-4xl--line-height: 1.1;
+    --text-5xl: 3.815rem;
+    --text-5xl--line-height: 1.05;
 }
 
 @layer base {
@@ -13,15 +62,26 @@
         scroll-behavior: smooth;
     }
 
+    body {
+        background-color: var(--color-cream);
+        color: var(--color-ink);
+    }
+
     ::selection {
-        background: #092b83;
-        color: #ffffff;
+        background: var(--color-accent);
+        color: var(--color-cream);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 2px;
     }
 }
 
 @layer components {
+    /* Legacy alias kept during the redesign migration — maps old markup to the new serif token. */
     .wp-serif {
-        font-family: Georgia, 'Times New Roman', Times, serif;
+        font-family: var(--font-serif);
         letter-spacing: 0;
     }
 
@@ -42,7 +102,6 @@
 
     .glasses-canvas {
         display: block;
-        filter: drop-shadow(0 28px 18px rgb(15 23 42 / 15%)) drop-shadow(0 60px 42px rgb(9 43 131 / 12%));
         height: 100%;
         inset: 0;
         position: absolute;
@@ -51,13 +110,12 @@
     }
 
     .glasses-3d {
-        filter: drop-shadow(0 20px 14px rgb(15 23 42 / 17%)) drop-shadow(0 52px 38px rgb(9 43 131 / 13%));
         height: auto;
         max-height: 38rem;
         object-fit: contain;
         object-position: center;
         pointer-events: none;
-        transition: opacity 250ms ease;
+        transition: opacity 200ms ease-out;
         width: min(64rem, 112%);
         z-index: 1;
     }
@@ -77,145 +135,45 @@
     }
 
     .gallery-stage img {
-        transition: transform 200ms ease;
-        will-change: transform;
+        transition: transform 200ms ease-out;
     }
 
-    .motion-reveal {
-        opacity: 0;
-        transform: translate3d(0, 24px, 0);
-        transition:
-            opacity 900ms cubic-bezier(0.16, 1, 0.3, 1),
-            transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
-        transition-delay: var(--motion-delay, 0ms);
-        will-change: opacity, transform;
-    }
-
-    .motion-reveal.is-visible {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
-
+    /* Entrance-only fade, used once on initial paint — never re-triggered by scroll. */
     .motion-fade {
-        animation: luma-fade-up 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation: luma-fade-up 500ms ease-out both;
     }
 
     .motion-fade-slow {
-        animation: luma-fade-up 1100ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
+        animation: luma-fade-up 600ms ease-out 80ms both;
     }
 
-    .motion-float {
-        animation: luma-float 7s ease-in-out infinite;
-        transform-origin: center;
-        will-change: transform;
-    }
-
-    .motion-sheen {
-        overflow: hidden;
-        position: relative;
-    }
-
-    .motion-sheen::after {
-        background: linear-gradient(110deg, transparent 20%, rgb(255 255 255 / 22%) 50%, transparent 80%);
-        content: '';
-        inset: -40% -80%;
-        opacity: 0;
-        position: absolute;
-        transform: translate3d(-35%, 0, 0) rotate(8deg);
-        transition:
-            opacity 450ms ease,
-            transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
-        pointer-events: none;
-    }
-
-    .motion-sheen:hover::after {
-        opacity: 1;
-        transform: translate3d(35%, 0, 0) rotate(8deg);
-    }
-
-    .motion-lift {
-        transition:
-            border-color 350ms ease,
-            box-shadow 450ms cubic-bezier(0.16, 1, 0.3, 1),
-            transform 450ms cubic-bezier(0.16, 1, 0.3, 1),
-            background-color 350ms ease,
-            color 350ms ease;
-        will-change: transform;
-    }
-
-    .motion-lift:hover {
-        transform: translate3d(0, -6px, 0);
-    }
-
+    /* Subtle interactive feedback only — no translation, no scale bounce. */
     .motion-press {
         transition:
-            background-color 300ms ease,
-            border-color 300ms ease,
-            box-shadow 350ms ease,
-            color 300ms ease,
-            transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+            background-color 200ms ease-out,
+            border-color 200ms ease-out,
+            color 200ms ease-out,
+            opacity 200ms ease-out;
     }
 
     .motion-press:hover {
-        transform: translate3d(0, -2px, 0);
-    }
-
-    .motion-press:active {
-        transform: translate3d(0, 0, 0) scale(0.98);
+        opacity: 0.82;
     }
 
     .motion-image {
-        transform: scale(1.015);
-        transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
-        will-change: transform;
-    }
-
-    .group:hover .motion-image {
-        transform: scale(1.075);
-    }
-
-    .motion-glow {
-        box-shadow: 0 18px 60px rgb(31 61 52 / 12%);
-        transition: box-shadow 450ms ease;
-    }
-
-    .motion-glow:hover {
-        box-shadow: 0 26px 80px rgb(31 61 52 / 20%);
-    }
-
-    .scroll-progress {
-        background: linear-gradient(90deg, #115be8, #092b83, #08765e);
-        height: 2px;
-        inset: auto 0 0 0;
-        pointer-events: none;
-        position: absolute;
-        transform: scaleX(var(--scroll-progress, 0));
-        transform-origin: left;
-        transition: transform 120ms linear;
-        z-index: 40;
+        transition: opacity 200ms ease-out;
     }
 }
 
 @keyframes luma-fade-up {
     from {
         opacity: 0;
-        transform: translate3d(0, 22px, 0);
+        transform: translate3d(0, 8px, 0);
     }
 
     to {
         opacity: 1;
         transform: translate3d(0, 0, 0);
-    }
-}
-
-@keyframes luma-float {
-    0%,
-    100% {
-        transform: translate3d(0, 0, 0) scale(1.015);
-    }
-
-    50% {
-        transform: translate3d(0, -10px, 0) scale(1.035);
     }
 }
 
@@ -232,25 +190,9 @@
         scroll-behavior: auto !important;
         transition-duration: 1ms !important;
     }
-
-    .motion-reveal {
-        opacity: 1;
-        transform: none;
-    }
-
 }
 
 @media (max-width: 640px) {
-    .motion-float {
-        animation: none;
-        transform: none;
-    }
-
-    .group:hover .motion-image,
-    .motion-image {
-        transform: none;
-    }
-
     .glasses-stage {
         min-height: 18rem;
     }

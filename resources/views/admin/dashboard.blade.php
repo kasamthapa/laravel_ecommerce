@@ -39,43 +39,43 @@
     </div>
 
     <div class="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-        <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <h2 class="font-black text-zinc-950">Revenue &mdash; last 14 days</h2>
+        <div class="rounded-2xl border border-line bg-cream p-6 shadow-sm">
+            <h2 class="font-black text-ink">Revenue &mdash; last 14 days</h2>
             <div class="mt-4 h-64">
                 <canvas data-chart="revenue" data-labels="{{ json_encode($revenueChart['labels']) }}" data-values="{{ json_encode($revenueChart['values']) }}"></canvas>
             </div>
         </div>
-        <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <h2 class="font-black text-zinc-950">Orders by status</h2>
+        <div class="rounded-2xl border border-line bg-cream p-6 shadow-sm">
+            <h2 class="font-black text-ink">Orders by status</h2>
             <div class="mt-4 h-64">
                 <canvas data-chart="status" data-labels="{{ json_encode($statusChart['labels']) }}" data-values="{{ json_encode($statusChart['values']) }}"></canvas>
             </div>
         </div>
     </div>
 
-    <div class="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
-        <div class="border-b border-zinc-200 px-6 py-4">
-            <h2 class="font-black text-zinc-950">Top products</h2>
+    <div class="mt-6 overflow-hidden rounded-2xl border border-line bg-cream shadow-sm">
+        <div class="border-b border-line px-6 py-4">
+            <h2 class="font-black text-ink">Top products</h2>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
                 <thead>
-                    <tr class="border-b border-zinc-200 bg-zinc-50/60 text-xs font-black uppercase tracking-wide text-zinc-500">
+                    <tr class="border-b border-line bg-cream-dim/60 text-xs font-black uppercase tracking-wide text-stone">
                         <th class="px-6 py-3">Product</th>
                         <th class="px-6 py-3">Units sold</th>
                         <th class="px-6 py-3 text-right">Revenue</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-zinc-100">
+                <tbody class="divide-y divide-cream-dim">
                     @forelse ($topProducts as $item)
-                        <tr class="transition hover:bg-zinc-50">
-                            <td class="px-6 py-3.5 font-bold text-zinc-950">{{ $item->product_name }}</td>
-                            <td class="px-6 py-3.5 text-zinc-700">{{ $item->units }}</td>
+                        <tr class="transition hover:bg-cream-dim">
+                            <td class="px-6 py-3.5 font-bold text-ink">{{ $item->product_name }}</td>
+                            <td class="px-6 py-3.5 text-ink-soft">{{ $item->units }}</td>
                             <td class="px-6 py-3.5 text-right font-bold">Rs. {{ number_format((float) $item->revenue) }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-10 text-center text-zinc-500">No sales yet.</td>
+                            <td colspan="3" class="px-6 py-10 text-center text-stone">No sales yet.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -83,15 +83,15 @@
         </div>
     </div>
 
-    <div class="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
-        <div class="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
-            <h2 class="font-black text-zinc-950">Recent orders</h2>
-            <a href="{{ route('admin.orders.index') }}" class="text-sm font-bold text-[#092b83] hover:underline">View all &rarr;</a>
+    <div class="mt-6 overflow-hidden rounded-2xl border border-line bg-cream shadow-sm">
+        <div class="flex items-center justify-between border-b border-line px-6 py-4">
+            <h2 class="font-black text-ink">Recent orders</h2>
+            <a href="{{ route('admin.orders.index') }}" class="text-sm font-bold text-accent hover:underline">View all &rarr;</a>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
                 <thead>
-                    <tr class="border-b border-zinc-200 bg-zinc-50/60 text-xs font-black uppercase tracking-wide text-zinc-500">
+                    <tr class="border-b border-line bg-cream-dim/60 text-xs font-black uppercase tracking-wide text-stone">
                         <th class="px-6 py-3">Order</th>
                         <th class="px-6 py-3">Customer</th>
                         <th class="px-6 py-3">Status</th>
@@ -99,18 +99,18 @@
                         <th class="px-6 py-3 text-right">Total</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-zinc-100">
+                <tbody class="divide-y divide-cream-dim">
                     @forelse ($recentOrders as $order)
-                        <tr class="transition hover:bg-zinc-50">
-                            <td class="px-6 py-3.5 font-bold"><a href="{{ route('admin.orders.show', $order) }}" class="hover:text-[#092b83]">{{ $order->order_number }}</a></td>
-                            <td class="px-6 py-3.5 text-zinc-700">{{ $order->customer_name }}</td>
+                        <tr class="transition hover:bg-cream-dim">
+                            <td class="px-6 py-3.5 font-bold"><a href="{{ route('admin.orders.show', $order) }}" class="hover:text-accent">{{ $order->order_number }}</a></td>
+                            <td class="px-6 py-3.5 text-ink-soft">{{ $order->customer_name }}</td>
                             <td class="px-6 py-3.5"><x-admin.status-badge :status="$order->status" /></td>
-                            <td class="px-6 py-3.5 capitalize text-zinc-700">{{ $order->payment_status }}</td>
+                            <td class="px-6 py-3.5 capitalize text-ink-soft">{{ $order->payment_status }}</td>
                             <td class="px-6 py-3.5 text-right font-bold">Rs. {{ number_format((float) $order->total) }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-zinc-500">No orders yet.</td>
+                            <td colspan="5" class="px-6 py-10 text-center text-stone">No orders yet.</td>
                         </tr>
                     @endforelse
                 </tbody>

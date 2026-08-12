@@ -244,7 +244,7 @@ const bindAppInteractions = () => {
     bindFormLoadingState();
     bindFlashMessage();
     bindMobileMenu();
-    bindGlassesViewer();
+    bindProductViewToggle();
     bindProductGallery();
     bindAdminCharts();
 };
@@ -254,4 +254,4 @@ if (document.readyState === 'loading') {
 } else {
     bindAppInteractions();
 }
-import { bindGlassesViewer } from './glasses-viewer';
+import { bindProductViewToggle } from './glasses-viewer';

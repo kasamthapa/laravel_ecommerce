@@ -31,12 +31,50 @@ const prepareModel = (model) => {
     model.position.sub(center);
 };
 
-const bindViewer = (stage) => {
-    const canvas = stage.querySelector('[data-glasses-canvas]');
+const disposeMaterial = (material) => {
+    Object.values(material).forEach((value) => {
+        if (value && typeof value.dispose === 'function') {
+            value.dispose();
+        }
+    });
 
-    if (!(stage instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement)) {
-        return;
+    material.dispose();
+};
+
+const disposeObject = (object) => {
+    object.traverse((child) => {
+        if (!child.isMesh) {
+            return;
+        }
+
+        child.geometry?.dispose();
+
+        const materials = Array.isArray(child.material) ? child.material : [child.material];
+        materials.forEach((material) => material && disposeMaterial(material));
+    });
+};
+
+/**
+ * Mounts the Three.js viewer into a stage element and returns a dispose
+ * function that fully tears the scene, renderer, and listeners back down.
+ *
+ * @param {HTMLElement} stage
+ * @returns {(() => void)|null}
+ */
+const mountViewer = (stage) => {
+    const existingCanvas = stage.querySelector('[data-glasses-canvas]');
+    const modelPath = stage.dataset.modelPath;
+
+    if (!(stage instanceof HTMLElement) || !(existingCanvas instanceof HTMLCanvasElement) || !modelPath) {
+        return null;
     }
+
+    // A <canvas> can only ever hold one WebGL context — once a prior mount's
+    // context is lost via forceContextLoss(), re-requesting one on the same
+    // node returns that same dead context. Swap in a fresh node so remounting
+    // (toggling Photos/3D View back and forth) always gets a live context.
+    const canvas = existingCanvas.cloneNode();
+    existingCanvas.replaceWith(canvas);
 
     let renderer;
 
@@ -50,7 +88,7 @@ const bindViewer = (stage) => {
         });
     } catch {
         stage.classList.add('is-webgl-unavailable');
-        return;
+        return null;
     }
 
     renderer.setClearColor(0x000000, 0);
@@ -64,7 +102,8 @@ const bindViewer = (stage) => {
     camera.position.set(0, 0.1, 10.6);
 
     const environmentGenerator = new THREE.PMREMGenerator(renderer);
-    scene.environment = environmentGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+    const environmentTexture = environmentGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environment = environmentTexture;
     environmentGenerator.dispose();
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x38445b, 1.35));
@@ -80,10 +119,18 @@ const bindViewer = (stage) => {
     const rotationPivot = new THREE.Group();
     scene.add(rotationPivot);
 
+    const controller = new AbortController();
+    const { signal } = controller;
+
     let isModelReady = false;
     new GLTFLoader().load(
-        '/models/sunglasses-khronos.glb',
+        modelPath,
         (gltf) => {
+            if (signal.aborted) {
+                disposeObject(gltf.scene);
+                return;
+            }
+
             prepareModel(gltf.scene);
             rotationPivot.add(gltf.scene);
             isModelReady = true;
@@ -144,7 +191,7 @@ const bindViewer = (stage) => {
         rotation.velocityY = 0;
         stage.classList.add('is-dragging');
         stage.setPointerCapture(event.pointerId);
-    });
+    }, { signal });
 
     stage.addEventListener('pointermove', (event) => {
         if (!isDragging) {
@@ -159,29 +206,30 @@ const bindViewer = (stage) => {
         rotation.targetX += deltaY * 0.014;
         rotation.velocityY = deltaX * 0.0018;
         rotation.velocityX = deltaY * 0.0018;
-    });
+    }, { signal });
 
-    stage.addEventListener('pointerup', stopDragging);
-    stage.addEventListener('pointercancel', stopDragging);
+    stage.addEventListener('pointerup', stopDragging, { signal });
+    stage.addEventListener('pointercancel', stopDragging, { signal });
     stage.addEventListener('lostpointercapture', () => {
         isDragging = false;
         stage.classList.remove('is-dragging');
-    });
+    }, { signal });
     stage.addEventListener('dblclick', () => {
         rotation.targetX = -0.12;
         rotation.targetY = -0.4;
         rotation.velocityX = 0;
         rotation.velocityY = 0;
-    });
+    }, { signal });
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(stage);
 
+    let intersectionObserver;
     if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(([entry]) => {
+        intersectionObserver = new IntersectionObserver(([entry]) => {
             isVisible = entry.isIntersecting;
         });
-        observer.observe(stage);
+        intersectionObserver.observe(stage);
     }
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -204,8 +252,64 @@ const bindViewer = (stage) => {
         renderer.render(scene, camera);
         stage.classList.add('is-webgl-ready');
     });
+
+    return () => {
+        controller.abort();
+        renderer.setAnimationLoop(null);
+        resizeObserver.disconnect();
+        intersectionObserver?.disconnect();
+        disposeObject(scene);
+        environmentTexture?.dispose();
+        renderer.dispose();
+        renderer.forceContextLoss();
+        stage.classList.remove('is-webgl-ready', 'is-webgl-unavailable', 'is-dragging');
+    };
 };
 
-export const bindGlassesViewer = () => {
-    document.querySelectorAll('[data-glasses-viewer]').forEach(bindViewer);
+/**
+ * Binds every Photos/3D View toggle group on the page. The 3D viewer is
+ * mounted lazily on first activation and fully disposed whenever the
+ * customer switches back to Photos, so repeated toggling never leaks
+ * WebGL resources.
+ */
+export const bindProductViewToggle = () => {
+    document.querySelectorAll('[data-product-view]').forEach((group) => {
+        const tabs = group.querySelectorAll('[data-view-tab]');
+        const panels = group.querySelectorAll('[data-view-panel]');
+        const stage = group.querySelector('[data-glasses-viewer]');
+        let disposeViewer = null;
+
+        const activate = (view) => {
+            tabs.forEach((tab) => {
+                const isActive = tab.dataset.viewTab === view;
+                tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                tab.classList.toggle('border-ink', isActive);
+                tab.classList.toggle('text-ink', isActive);
+                tab.classList.toggle('border-transparent', !isActive);
+                tab.classList.toggle('text-stone', !isActive);
+            });
+
+            panels.forEach((panel) => {
+                panel.classList.toggle('hidden', panel.dataset.viewPanel !== view);
+            });
+
+            if (view === '3d' && stage && !disposeViewer) {
+                disposeViewer = mountViewer(stage);
+            } else if (view !== '3d' && disposeViewer) {
+                disposeViewer();
+                disposeViewer = null;
+            }
+        };
+
+        tabs.forEach((tab) => {
+            tab.addEventListener('click', () => activate(tab.dataset.viewTab));
+        });
+
+        window.addEventListener('pagehide', () => {
+            if (disposeViewer) {
+                disposeViewer();
+                disposeViewer = null;
+            }
+        });
+    });
 };

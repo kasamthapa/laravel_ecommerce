@@ -85,7 +85,23 @@
                 </select>
             </label>
 
-            <div class="mt-8" wire:loading.class="opacity-60" wire:target="search, category, color, sort, minPrice, maxPrice, selectCategory, selectColor, clearFilters">
+            @php
+                $loadingTargets = 'search, category, color, sort, minPrice, maxPrice, selectCategory, selectColor, clearFilters';
+            @endphp
+
+            <div class="hidden" wire:loading.class.remove="hidden" wire:target="{{ $loadingTargets }}">
+                <div class="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
+                    @for ($i = 0; $i < 6; $i++)
+                        <div class="animate-pulse">
+                            <div class="aspect-[4/5] bg-cream-dim"></div>
+                            <div class="mt-4 h-5 w-2/3 bg-cream-dim"></div>
+                            <div class="mt-2 h-4 w-1/3 bg-cream-dim"></div>
+                        </div>
+                    @endfor
+                </div>
+            </div>
+
+            <div class="mt-8" wire:loading.class="hidden" wire:target="{{ $loadingTargets }}">
                 @if ($products->isEmpty())
                     <div class="border border-dashed border-line px-6 py-16 text-center">
                         <p class="font-serif text-2xl text-ink">No frames found</p>

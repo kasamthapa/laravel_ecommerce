@@ -134,9 +134,16 @@
     }
 
     .glasses-stage.is-webgl-ready [data-glasses-skeleton],
-    .glasses-stage.is-webgl-unavailable [data-glasses-skeleton] {
+    .glasses-stage.is-webgl-unavailable [data-glasses-skeleton],
+    .glasses-stage.is-tryon-ready [data-glasses-skeleton] {
         opacity: 0;
         visibility: hidden;
+    }
+
+    /* Wraps the try-on video + canvas as one unit so mirroring the webcam
+       feed (selfie view) keeps the glasses overlay pixel-aligned with it. */
+    .tryon-mirror {
+        transform: scaleX(-1);
     }
 
     .gallery-stage {

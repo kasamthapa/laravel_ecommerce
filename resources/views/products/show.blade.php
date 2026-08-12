@@ -5,6 +5,7 @@
                 <div class="flex gap-6 border-b border-line text-sm" role="tablist" aria-label="Product view">
                     <button type="button" data-view-tab="photos" role="tab" aria-selected="true" class="motion-press border-b-2 border-ink pb-3 font-medium text-ink">Photos</button>
                     <button type="button" data-view-tab="3d" role="tab" aria-selected="false" class="motion-press border-b-2 border-transparent pb-3 text-stone hover:text-ink">3D View</button>
+                    <button type="button" data-view-tab="tryon" role="tab" aria-selected="false" class="motion-press border-b-2 border-transparent pb-3 text-stone hover:text-ink">Try On</button>
                 </div>
             @endif
 
@@ -32,6 +33,21 @@
                         <div data-glasses-skeleton class="absolute inset-0 z-[3] animate-pulse bg-cream-dim" aria-hidden="true"></div>
                     </div>
                     <p class="mt-3 text-center text-xs text-stone">Drag to rotate &middot; double-click to reset</p>
+                </div>
+
+                <div data-view-panel="tryon" class="hidden">
+                    <div class="glasses-stage aspect-square min-h-0 overflow-hidden bg-cream-dim" data-face-tryon data-model-path="{{ asset($product->model_path) }}">
+                        <div class="tryon-mirror absolute inset-0">
+                            <video data-tryon-video class="absolute inset-0 h-full w-full object-cover" autoplay muted playsinline></video>
+                            <canvas class="glasses-canvas" data-tryon-canvas></canvas>
+                        </div>
+                        <div data-glasses-skeleton class="absolute inset-0 z-[3] animate-pulse bg-cream-dim" aria-hidden="true"></div>
+                        <div data-tryon-status class="absolute inset-0 z-[4] hidden flex-col items-center justify-center gap-3 bg-cream-dim px-6 text-center" aria-live="polite">
+                            <p data-tryon-status-text class="font-serif text-lg text-ink"></p>
+                            <button type="button" data-tryon-retry class="hidden motion-press border border-ink px-4 py-2 text-sm font-medium text-ink">Try again</button>
+                        </div>
+                    </div>
+                    <p class="mt-3 text-center text-xs text-stone">Runs entirely in your browser &mdash; no photo or video ever leaves your device.</p>
                 </div>
             @endif
         </div>

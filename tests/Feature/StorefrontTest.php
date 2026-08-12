@@ -81,6 +81,54 @@ test('the product detail page shows a 3D view toggle only for products with a mo
         ->assertDontSee('data-glasses-viewer', false);
 });
 
+test('the product detail page shows a Try On toggle only for products with a model', function () {
+    $category = Category::create([
+        'name' => 'Sunglasses',
+        'slug' => 'sunglasses-tryon',
+        'description' => 'Sun-ready frames.',
+    ]);
+
+    $withModel = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Modeled Frame Two',
+        'slug' => 'modeled-frame-two',
+        'description' => 'Has a 3D model.',
+        'image_url' => 'https://example.com/modeled-two.jpg',
+        'model_path' => 'models/sunglasses-khronos.glb',
+        'price' => 9000.00,
+        'stock' => 5,
+        'sizes' => ['Medium'],
+        'colors' => ['Black'],
+        'is_featured' => false,
+        'is_active' => true,
+    ]);
+
+    $withoutModel = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Photo Only Frame Two',
+        'slug' => 'photo-only-frame-two',
+        'description' => 'Photos only.',
+        'image_url' => 'https://example.com/photo-only-two.jpg',
+        'price' => 8500.00,
+        'stock' => 5,
+        'sizes' => ['Medium'],
+        'colors' => ['Black'],
+        'is_featured' => false,
+        'is_active' => true,
+    ]);
+
+    $this->get(route('products.show', $withModel))
+        ->assertSuccessful()
+        ->assertSee('Try On')
+        ->assertSee('data-face-tryon', false)
+        ->assertSee('no photo or video ever leaves your device');
+
+    $this->get(route('products.show', $withoutModel))
+        ->assertSuccessful()
+        ->assertDontSee('Try On')
+        ->assertDontSee('data-face-tryon', false);
+});
+
 test('a guest can add to cart but must login before checkout', function () {
     $category = Category::create([
         'name' => 'Optical Frames',

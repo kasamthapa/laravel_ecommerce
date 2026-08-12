@@ -34,7 +34,7 @@
                             </td>
                             <td class="px-6 py-3.5 text-stone">{{ $product->category->name }}</td>
                             <td class="px-6 py-3.5 font-medium text-ink-soft">Rs. {{ number_format((float) $product->price) }}</td>
-                            <td class="px-6 py-3.5 {{ $product->stock <= 5 ? 'font-black text-[#e25822]' : 'text-ink-soft' }}">{{ $product->stock }}</td>
+                            <td class="px-6 py-3.5 {{ $product->stock <= 5 ? 'font-black text-error' : 'text-ink-soft' }}">{{ $product->stock }}</td>
                             <td class="px-6 py-3.5">
                                 @if (! $product->is_active)
                                     <span class="inline-flex items-center gap-1.5 rounded-full bg-cream-dim px-3 py-1 text-xs font-black uppercase text-stone"><span class="h-1.5 w-1.5 rounded-full bg-stone-light"></span>Hidden</span>

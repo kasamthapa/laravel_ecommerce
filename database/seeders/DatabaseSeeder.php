@@ -98,6 +98,7 @@ class DatabaseSeeder extends Seeder
                     'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?auto=format&fit=crop&w=900&q=85',
                     'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=900&q=85',
                 ],
+                'model_path' => 'models/sunglasses-khronos.glb',
                 'price' => 9600.00,
                 'compare_at_price' => 11900.00,
                 'stock' => 46,

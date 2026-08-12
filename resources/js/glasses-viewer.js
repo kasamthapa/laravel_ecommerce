@@ -1,58 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
-const prepareModel = (model) => {
-    model.traverse((child) => {
-        if (!child.isMesh) {
-            return;
-        }
-
-        child.frustumCulled = false;
-
-        const materials = Array.isArray(child.material) ? child.material : [child.material];
-        materials.forEach((material) => {
-            if (!material) {
-                return;
-            }
-
-            material.envMapIntensity = 1.15;
-            material.needsUpdate = true;
-        });
-    });
-
-    const initialBounds = new THREE.Box3().setFromObject(model);
-    const initialSize = initialBounds.getSize(new THREE.Vector3());
-    const longestSide = Math.max(initialSize.x, initialSize.y, initialSize.z);
-    model.scale.setScalar(5.5 / longestSide);
-
-    const scaledBounds = new THREE.Box3().setFromObject(model);
-    const center = scaledBounds.getCenter(new THREE.Vector3());
-    model.position.sub(center);
-};
-
-const disposeMaterial = (material) => {
-    Object.values(material).forEach((value) => {
-        if (value && typeof value.dispose === 'function') {
-            value.dispose();
-        }
-    });
-
-    material.dispose();
-};
-
-const disposeObject = (object) => {
-    object.traverse((child) => {
-        if (!child.isMesh) {
-            return;
-        }
-
-        child.geometry?.dispose();
-
-        const materials = Array.isArray(child.material) ? child.material : [child.material];
-        materials.forEach((material) => material && disposeMaterial(material));
-    });
-};
+import { loadModel, disposeObject } from './glasses-model';
 
 /**
  * Mounts the Three.js viewer into a stage element and returns a dispose
@@ -123,23 +71,16 @@ const mountViewer = (stage) => {
     const { signal } = controller;
 
     let isModelReady = false;
-    new GLTFLoader().load(
-        modelPath,
-        (gltf) => {
-            if (signal.aborted) {
-                disposeObject(gltf.scene);
-                return;
-            }
-
-            prepareModel(gltf.scene);
-            rotationPivot.add(gltf.scene);
+    loadModel(modelPath, { signal })
+        .then((modelScene) => {
+            rotationPivot.add(modelScene);
             isModelReady = true;
-        },
-        undefined,
-        () => {
-            stage.classList.add('is-webgl-unavailable');
-        },
-    );
+        })
+        .catch(() => {
+            if (!signal.aborted) {
+                stage.classList.add('is-webgl-unavailable');
+            }
+        });
 
     const rotation = {
         x: -0.12,
@@ -277,7 +218,9 @@ export const bindProductViewToggle = () => {
         const tabs = group.querySelectorAll('[data-view-tab]');
         const panels = group.querySelectorAll('[data-view-panel]');
         const stage = group.querySelector('[data-glasses-viewer]');
+        const tryOnStage = group.querySelector('[data-face-tryon]');
         let disposeViewer = null;
+        let disposeTryOn = null;
 
         const activate = (view) => {
             tabs.forEach((tab) => {
@@ -299,6 +242,27 @@ export const bindProductViewToggle = () => {
                 disposeViewer();
                 disposeViewer = null;
             }
+
+            if (view === 'tryon' && tryOnStage && !disposeTryOn) {
+                // The MediaPipe face tracker is a multi-hundred-KB dependency
+                // only needed on this tab, so it's fetched on demand rather
+                // than bundled into every page load.
+                let cancelled = false;
+                disposeTryOn = () => {
+                    cancelled = true;
+                };
+
+                import('./face-tryon').then(({ mountTryOn }) => {
+                    if (cancelled) {
+                        return;
+                    }
+
+                    disposeTryOn = mountTryOn(tryOnStage);
+                });
+            } else if (view !== 'tryon' && disposeTryOn) {
+                disposeTryOn();
+                disposeTryOn = null;
+            }
         };
 
         tabs.forEach((tab) => {
@@ -309,6 +273,11 @@ export const bindProductViewToggle = () => {
             if (disposeViewer) {
                 disposeViewer();
                 disposeViewer = null;
+            }
+
+            if (disposeTryOn) {
+                disposeTryOn();
+                disposeTryOn = null;
             }
         });
     });

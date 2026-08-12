@@ -33,6 +33,54 @@ test('a shopper can search the product catalog', function () {
         ->assertSee('No frames found');
 });
 
+test('the product detail page shows a 3D view toggle only for products with a model', function () {
+    $category = Category::create([
+        'name' => 'Sunglasses',
+        'slug' => 'sunglasses',
+        'description' => 'Sun-ready frames.',
+    ]);
+
+    $withModel = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Modeled Frame',
+        'slug' => 'modeled-frame',
+        'description' => 'Has a 3D model.',
+        'image_url' => 'https://example.com/modeled.jpg',
+        'model_path' => 'models/sunglasses-khronos.glb',
+        'price' => 9000.00,
+        'stock' => 5,
+        'sizes' => ['Medium'],
+        'colors' => ['Black'],
+        'is_featured' => false,
+        'is_active' => true,
+    ]);
+
+    $withoutModel = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Photo Only Frame',
+        'slug' => 'photo-only-frame',
+        'description' => 'Photos only.',
+        'image_url' => 'https://example.com/photo-only.jpg',
+        'price' => 8500.00,
+        'stock' => 5,
+        'sizes' => ['Medium'],
+        'colors' => ['Black'],
+        'is_featured' => false,
+        'is_active' => true,
+    ]);
+
+    $this->get(route('products.show', $withModel))
+        ->assertSuccessful()
+        ->assertSee('3D View')
+        ->assertSee('data-model-path', false)
+        ->assertSee(asset('models/sunglasses-khronos.glb'), false);
+
+    $this->get(route('products.show', $withoutModel))
+        ->assertSuccessful()
+        ->assertDontSee('3D View')
+        ->assertDontSee('data-glasses-viewer', false);
+});
+
 test('a guest can add to cart but must login before checkout', function () {
     $category = Category::create([
         'name' => 'Optical Frames',

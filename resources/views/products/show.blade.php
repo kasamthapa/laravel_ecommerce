@@ -1,17 +1,37 @@
 <x-layouts.storefront :title="$product->name.' - Luma Lens'" :cart-count="$cartCount">
     <section class="mx-auto grid max-w-[100rem] gap-10 px-4 py-10 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:py-14">
-        <div class="grid gap-4 motion-fade" data-gallery data-images="{{ json_encode($product->gallery()) }}">
-            <div data-gallery-stage class="gallery-stage relative aspect-square overflow-hidden bg-cream-dim">
-                <img data-gallery-main src="{{ $product->gallery()[0] }}" alt="{{ $product->name }}" class="h-full w-full object-cover {{ $product->stock < 1 ? 'grayscale' : '' }}">
+        <div class="grid gap-4 motion-fade" data-product-view>
+            @if ($product->model_path)
+                <div class="flex gap-6 border-b border-line text-sm" role="tablist" aria-label="Product view">
+                    <button type="button" data-view-tab="photos" role="tab" aria-selected="true" class="motion-press border-b-2 border-ink pb-3 font-medium text-ink">Photos</button>
+                    <button type="button" data-view-tab="3d" role="tab" aria-selected="false" class="motion-press border-b-2 border-transparent pb-3 text-stone hover:text-ink">3D View</button>
+                </div>
+            @endif
+
+            <div data-view-panel="photos" data-gallery data-images="{{ json_encode($product->gallery()) }}">
+                <div data-gallery-stage class="gallery-stage relative aspect-square overflow-hidden bg-cream-dim">
+                    <img data-gallery-main src="{{ $product->gallery()[0] }}" alt="{{ $product->name }}" class="h-full w-full object-cover {{ $product->stock < 1 ? 'grayscale' : '' }}">
+                </div>
+
+                @if (count($product->gallery()) > 1)
+                    <div class="flex gap-3">
+                        @foreach ($product->gallery() as $index => $image)
+                            <button type="button" data-gallery-thumb data-index="{{ $index }}" aria-label="Show image {{ $index + 1 }} of {{ $product->name }}" class="h-20 w-20 shrink-0 overflow-hidden border {{ $index === 0 ? 'border-ink' : 'border-line' }}">
+                                <img src="{{ $image }}" alt="" class="h-full w-full object-cover">
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
             </div>
 
-            @if (count($product->gallery()) > 1)
-                <div class="flex gap-3">
-                    @foreach ($product->gallery() as $index => $image)
-                        <button type="button" data-gallery-thumb data-index="{{ $index }}" aria-label="Show image {{ $index + 1 }} of {{ $product->name }}" class="h-20 w-20 shrink-0 overflow-hidden border {{ $index === 0 ? 'border-ink' : 'border-line' }}">
-                            <img src="{{ $image }}" alt="" class="h-full w-full object-cover">
-                        </button>
-                    @endforeach
+            @if ($product->model_path)
+                <div data-view-panel="3d" class="hidden">
+                    <div class="glasses-stage aspect-square min-h-0 overflow-hidden bg-cream-dim" data-glasses-viewer data-model-path="{{ asset($product->model_path) }}">
+                        <canvas class="glasses-canvas" data-glasses-canvas></canvas>
+                        <img src="{{ $product->gallery()[0] }}" alt="" class="glasses-3d">
+                        <div data-glasses-skeleton class="absolute inset-0 z-[3] animate-pulse bg-cream-dim" aria-hidden="true"></div>
+                    </div>
+                    <p class="mt-3 text-center text-xs text-stone">Drag to rotate &middot; double-click to reset</p>
                 </div>
             @endif
         </div>

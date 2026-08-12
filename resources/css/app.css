@@ -129,6 +129,16 @@
         display: none;
     }
 
+    .glasses-stage [data-glasses-skeleton] {
+        transition: opacity 200ms ease-out;
+    }
+
+    .glasses-stage.is-webgl-ready [data-glasses-skeleton],
+    .glasses-stage.is-webgl-unavailable [data-glasses-skeleton] {
+        opacity: 0;
+        visibility: hidden;
+    }
+
     .gallery-stage {
         cursor: zoom-in;
         overflow: hidden;

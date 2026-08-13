@@ -94,6 +94,7 @@ export const mountTryOn = (stage) => {
     const statusEl = stage.querySelector('[data-tryon-status]');
     const statusText = stage.querySelector('[data-tryon-status-text]');
     const retryButton = stage.querySelector('[data-tryon-retry]');
+    const debugPanel = stage.querySelector('[data-tryon-debug]');
 
     if (!(stage instanceof HTMLElement) || !modelPath || !(video instanceof HTMLVideoElement) || !(existingCanvas instanceof HTMLCanvasElement)) {
         return null;
@@ -106,6 +107,24 @@ export const mountTryOn = (stage) => {
 
     const controller = new AbortController();
     const { signal } = controller;
+
+    // Live-tunable fit values, editable via the ?debug=1 panel while Try On
+    // is running. Defaults match the shipped constants above.
+    const tuning = { scale: FIT_WIDTH_FACTOR, offsetX: 0, offsetY: 0, lerp: FIT_LERP };
+
+    debugPanel?.querySelectorAll('[data-tryon-debug-control]').forEach((input) => {
+        const key = input.dataset.tryonDebugControl;
+        const valueEl = debugPanel.querySelector(`[data-tryon-debug-value="${key}"]`);
+        tuning[key] = parseFloat(input.value);
+
+        input.addEventListener('input', () => {
+            tuning[key] = parseFloat(input.value);
+
+            if (valueEl) {
+                valueEl.textContent = tuning[key].toFixed(2);
+            }
+        }, { signal });
+    });
 
     let disposed = false;
     let stream = null;
@@ -255,9 +274,9 @@ export const mountTryOn = (stage) => {
         const eyeDistance = Math.hypot(eyeDx, eyeDy) || 1;
         const eyeMidX = (leftEye.x + rightEye.x) / 2;
 
-        fit.targetX = noseBridge.x;
-        fit.targetY = noseBridge.y;
-        fit.targetScale = (eyeDistance / 5.5) * FIT_WIDTH_FACTOR;
+        fit.targetX = noseBridge.x + tuning.offsetX;
+        fit.targetY = noseBridge.y + tuning.offsetY;
+        fit.targetScale = (eyeDistance / 5.5) * tuning.scale;
         fit.targetRoll = -Math.atan2(eyeDy, eyeDx);
         fit.targetYaw = THREE.MathUtils.clamp(((noseTip.x - eyeMidX) / eyeDistance) * YAW_SENSITIVITY, -MAX_YAW, MAX_YAW);
 
@@ -306,11 +325,11 @@ export const mountTryOn = (stage) => {
                 }
             }
 
-            fit.x = THREE.MathUtils.lerp(fit.x, fit.targetX, FIT_LERP);
-            fit.y = THREE.MathUtils.lerp(fit.y, fit.targetY, FIT_LERP);
-            fit.scale = THREE.MathUtils.lerp(fit.scale, fit.targetScale, FIT_LERP);
-            fit.roll = THREE.MathUtils.lerp(fit.roll, fit.targetRoll, FIT_LERP);
-            fit.yaw = THREE.MathUtils.lerp(fit.yaw, fit.targetYaw, FIT_LERP);
+            fit.x = THREE.MathUtils.lerp(fit.x, fit.targetX, tuning.lerp);
+            fit.y = THREE.MathUtils.lerp(fit.y, fit.targetY, tuning.lerp);
+            fit.scale = THREE.MathUtils.lerp(fit.scale, fit.targetScale, tuning.lerp);
+            fit.roll = THREE.MathUtils.lerp(fit.roll, fit.targetRoll, tuning.lerp);
+            fit.yaw = THREE.MathUtils.lerp(fit.yaw, fit.targetYaw, tuning.lerp);
 
             pivot.position.set(fit.x, fit.y, 0);
             pivot.rotation.set(0, fit.yaw, fit.roll);

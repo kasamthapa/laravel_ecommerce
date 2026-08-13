@@ -46,6 +46,32 @@
                             <p data-tryon-status-text class="font-serif text-lg text-ink"></p>
                             <button type="button" data-tryon-retry class="hidden motion-press border border-ink px-4 py-2 text-sm font-medium text-ink">Try again</button>
                         </div>
+
+                        @if (request()->query('debug') === '1')
+                            <div data-tryon-debug class="absolute right-2 top-2 z-[5] w-52 space-y-2.5 border border-line bg-cream/95 p-3 text-xs text-ink">
+                                <p class="font-medium uppercase tracking-wide text-stone">Try On debug</p>
+
+                                <label class="block">
+                                    <span class="flex items-center justify-between">Scale <span data-tryon-debug-value="scale">1.35</span></span>
+                                    <input type="range" data-tryon-debug-control="scale" min="0.5" max="3" step="0.01" value="1.35" class="w-full">
+                                </label>
+
+                                <label class="block">
+                                    <span class="flex items-center justify-between">Vertical offset <span data-tryon-debug-value="offsetY">0</span></span>
+                                    <input type="range" data-tryon-debug-control="offsetY" min="-150" max="150" step="1" value="0" class="w-full">
+                                </label>
+
+                                <label class="block">
+                                    <span class="flex items-center justify-between">Horizontal offset <span data-tryon-debug-value="offsetX">0</span></span>
+                                    <input type="range" data-tryon-debug-control="offsetX" min="-150" max="150" step="1" value="0" class="w-full">
+                                </label>
+
+                                <label class="block">
+                                    <span class="flex items-center justify-between">Smoothing <span data-tryon-debug-value="lerp">0.3</span></span>
+                                    <input type="range" data-tryon-debug-control="lerp" min="0.05" max="1" step="0.01" value="0.3" class="w-full">
+                                </label>
+                            </div>
+                        @endif
                     </div>
                     <p class="mt-3 text-center text-xs text-stone">Runs entirely in your browser &mdash; no photo or video ever leaves your device.</p>
                 </div>

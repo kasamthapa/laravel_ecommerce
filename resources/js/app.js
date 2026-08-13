@@ -247,6 +247,7 @@ const bindAppInteractions = () => {
     bindProductViewToggle();
     bindProductGallery();
     bindAdminCharts();
+    bindScrollReveal();
 };
 
 if (document.readyState === 'loading') {
@@ -255,3 +256,4 @@ if (document.readyState === 'loading') {
     bindAppInteractions();
 }
 import { bindProductViewToggle } from './glasses-viewer';
+import { bindScrollReveal } from './scroll-reveal';

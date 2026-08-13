@@ -177,6 +177,22 @@
         opacity: 0.82;
     }
 
+    /* Scroll-triggered reveal, bound once per element by scroll-reveal.js.
+       Deliberately restrained: a short rise + fade, no scale, no bounce,
+       never re-triggers once shown. --reveal-delay staggers siblings. */
+    [data-reveal] {
+        opacity: 0;
+        transform: translate3d(0, 14px, 0);
+        transition:
+            opacity 380ms ease-out var(--reveal-delay, 0ms),
+            transform 380ms ease-out var(--reveal-delay, 0ms);
+    }
+
+    [data-reveal].is-revealed {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+
     .motion-image {
         transition: opacity 200ms ease-out;
     }

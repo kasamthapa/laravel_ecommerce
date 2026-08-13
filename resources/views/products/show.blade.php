@@ -78,9 +78,6 @@
             <div class="flex flex-wrap gap-3">
                 @if ($product->stock < 1)
                     <x-ui.button variant="secondary" disabled class="cursor-not-allowed opacity-50">Sold out</x-ui.button>
-                    <button type="button" disabled title="Virtual try-on is coming in a future update" class="motion-press inline-flex cursor-not-allowed items-center justify-center gap-2 border border-line px-6 py-3 text-sm font-medium tracking-wide text-stone opacity-70">
-                        Try on &middot; coming soon
-                    </button>
                 @else
                     <livewire:add-to-cart-form :product="$product" />
                 @endif

@@ -32,9 +32,6 @@
                     <span wire:loading.remove wire:target="addToCart">Add to cart</span>
                     <span wire:loading wire:target="addToCart">Adding&hellip;</span>
                 </x-ui.button>
-                <button type="button" disabled title="Virtual try-on is coming in a future update" class="motion-press inline-flex cursor-not-allowed items-center justify-center gap-2 border border-line px-6 py-3 text-sm font-medium tracking-wide text-stone opacity-70">
-                    Try on &middot; coming soon
-                </button>
             </div>
             <p class="text-xs text-stone">Checkout is available after login and payment is confirmed through Khalti.</p>
         </form>

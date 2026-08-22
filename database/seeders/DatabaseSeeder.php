@@ -189,6 +189,7 @@ class DatabaseSeeder extends Seeder
                 'slug' => 'golden-hour-aviator',
                 'description' => 'Brushed gold aviator frames with gradient lenses built for late afternoon light and long drives.',
                 'image_url' => 'https://images.unsplash.com/photo-1567473810954-507d59716c25?auto=format&fit=crop&w=900&q=85',
+                'model_path' => 'models/sunglasses-khronos.glb',
                 'price' => 11200.00,
                 'compare_at_price' => 13400.00,
                 'stock' => 22,

@@ -61,47 +61,59 @@
                                 <p class="font-medium uppercase tracking-wide text-stone">Try On debug &mdash; 6DOF</p>
 
                                 <label class="block">
-                                    <span class="flex items-center justify-between">Scale <span data-tryon-debug-value="scale">1.00</span></span>
-                                    <input type="range" data-tryon-debug-control="scale" min="0.3" max="3" step="0.01" value="1" class="w-full">
+                                    <span class="flex items-center justify-between">Scale <span data-tryon-debug-value="scale">1.01</span></span>
+                                    <input type="range" data-tryon-debug-control="scale" min="0.3" max="3" step="0.01" value="1.01" class="w-full">
                                 </label>
 
                                 <p class="pt-1 font-medium uppercase tracking-wide text-stone">Position (cm)</p>
 
                                 <label class="block">
-                                    <span class="flex items-center justify-between">X (left/right) <span data-tryon-debug-value="offsetX">0</span></span>
-                                    <input type="range" data-tryon-debug-control="offsetX" min="-10" max="10" step="0.1" value="0" class="w-full">
+                                    <span class="flex items-center justify-between">X (left/right) <span data-tryon-debug-value="offsetX">-0.20</span></span>
+                                    <input type="range" data-tryon-debug-control="offsetX" min="-10" max="10" step="0.1" value="-0.2" class="w-full">
                                 </label>
 
                                 <label class="block">
-                                    <span class="flex items-center justify-between">Y (up/down) <span data-tryon-debug-value="offsetY">0</span></span>
-                                    <input type="range" data-tryon-debug-control="offsetY" min="-10" max="10" step="0.1" value="0" class="w-full">
+                                    <span class="flex items-center justify-between">Y (up/down) <span data-tryon-debug-value="offsetY">2.60</span></span>
+                                    <input type="range" data-tryon-debug-control="offsetY" min="-10" max="10" step="0.1" value="2.6" class="w-full">
                                 </label>
 
                                 <label class="block">
-                                    <span class="flex items-center justify-between">Z (near/far) <span data-tryon-debug-value="offsetZ">0</span></span>
-                                    <input type="range" data-tryon-debug-control="offsetZ" min="-10" max="10" step="0.1" value="0" class="w-full">
+                                    <span class="flex items-center justify-between">Z (near/far) <span data-tryon-debug-value="offsetZ">-3.70</span></span>
+                                    <input type="range" data-tryon-debug-control="offsetZ" min="-10" max="10" step="0.1" value="-3.7" class="w-full">
                                 </label>
 
                                 <p class="pt-1 font-medium uppercase tracking-wide text-stone">Base rotation (&deg;)</p>
 
                                 <label class="block">
-                                    <span class="flex items-center justify-between">Pitch <span data-tryon-debug-value="pitchDeg">0</span></span>
-                                    <input type="range" data-tryon-debug-control="pitchDeg" min="-180" max="180" step="1" value="0" class="w-full">
+                                    <span class="flex items-center justify-between">Pitch <span data-tryon-debug-value="pitchDeg">4.00</span></span>
+                                    <input type="range" data-tryon-debug-control="pitchDeg" min="-180" max="180" step="1" value="4" class="w-full">
                                 </label>
 
                                 <label class="block">
-                                    <span class="flex items-center justify-between">Yaw <span data-tryon-debug-value="yawDeg">0</span></span>
-                                    <input type="range" data-tryon-debug-control="yawDeg" min="-180" max="180" step="1" value="0" class="w-full">
+                                    <span class="flex items-center justify-between">Yaw <span data-tryon-debug-value="yawDeg">3.00</span></span>
+                                    <input type="range" data-tryon-debug-control="yawDeg" min="-180" max="180" step="1" value="3" class="w-full">
                                 </label>
 
                                 <label class="block">
-                                    <span class="flex items-center justify-between">Roll <span data-tryon-debug-value="rollDeg">0</span></span>
-                                    <input type="range" data-tryon-debug-control="rollDeg" min="-180" max="180" step="1" value="0" class="w-full">
+                                    <span class="flex items-center justify-between">Roll <span data-tryon-debug-value="rollDeg">-1.00</span></span>
+                                    <input type="range" data-tryon-debug-control="rollDeg" min="-180" max="180" step="1" value="-1" class="w-full">
                                 </label>
 
                                 <label class="block pt-1">
-                                    <span class="flex items-center justify-between">Smoothing <span data-tryon-debug-value="lerp">0.3</span></span>
-                                    <input type="range" data-tryon-debug-control="lerp" min="0.05" max="1" step="0.01" value="0.3" class="w-full">
+                                    <span class="flex items-center justify-between">Smoothing <span data-tryon-debug-value="lerp">0.40</span></span>
+                                    <input type="range" data-tryon-debug-control="lerp" min="0.05" max="1" step="0.01" value="0.4" class="w-full">
+                                </label>
+
+                                <p class="pt-1 font-medium uppercase tracking-wide text-stone">Occlusion</p>
+
+                                <label class="block">
+                                    <span class="flex items-center justify-between">Head size <span data-tryon-debug-value="occluderScale">1.00</span></span>
+                                    <input type="range" data-tryon-debug-control="occluderScale" min="0.5" max="1.6" step="0.01" value="1" class="w-full">
+                                </label>
+
+                                <label class="block">
+                                    <span class="flex items-center justify-between">Head depth (Z) <span data-tryon-debug-value="occluderZ">-13.20</span></span>
+                                    <input type="range" data-tryon-debug-control="occluderZ" min="-25" max="5" step="0.1" value="-13.2" class="w-full">
                                 </label>
                             </div>
                         @endif

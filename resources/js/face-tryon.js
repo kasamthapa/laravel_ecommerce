@@ -21,7 +21,29 @@ const CANONICAL_VERTICAL_FOV_DEG = 63;
 const ASSUMED_FACE_WIDTH_CM = 15;
 
 const NO_FACE_HINT_DELAY_MS = 6000;
-const FIT_LERP = 0.3;
+
+// Fit defaults — found via live testing on Cobalt Flight Aviator (2026-08),
+// since this GLB's own authored orientation and MediaPipe's canonical face
+// model convention couldn't be known without a camera. Still exposed via
+// ?debug=1 in case a different model or face needs a different calibration.
+const FIT_LERP = 0.4;
+const DEFAULT_SCALE = 1.01;
+const DEFAULT_OFFSET_X = -0.2;
+const DEFAULT_OFFSET_Y = 2.6;
+const DEFAULT_OFFSET_Z = -3.7;
+const DEFAULT_PITCH_DEG = 4;
+const DEFAULT_YAW_DEG = 3;
+const DEFAULT_ROLL_DEG = -1;
+
+// Approximate adult head dimensions (cm), used as an invisible occluder so
+// the glasses correctly disappear behind the head/ear as it turns, instead
+// of always drawing on top of the video regardless of depth.
+const OCCLUDER_WIDTH_CM = 15;
+const OCCLUDER_HEIGHT_CM = 21;
+const OCCLUDER_DEPTH_CM = 19;
+// Centers the occluder roughly mid-head, behind the face surface the
+// glasses sit on (DEFAULT_OFFSET_Z) by about half a head's depth.
+const DEFAULT_OCCLUDER_Z = DEFAULT_OFFSET_Z - OCCLUDER_DEPTH_CM / 2;
 
 // The wasm fileset is a multi-MB binary — cache the resolved fileset across
 // mounts so toggling the Try On tab off and on doesn't re-fetch/re-init it.
@@ -100,14 +122,16 @@ export const mountTryOn = (stage) => {
     // Live-tunable fit values, editable via the ?debug=1 panel while Try On
     // is running.
     const tuning = {
-        scale: 1,
-        offsetX: 0,
-        offsetY: 0,
-        offsetZ: 0,
-        pitchDeg: 0,
-        yawDeg: 0,
-        rollDeg: 0,
+        scale: DEFAULT_SCALE,
+        offsetX: DEFAULT_OFFSET_X,
+        offsetY: DEFAULT_OFFSET_Y,
+        offsetZ: DEFAULT_OFFSET_Z,
+        pitchDeg: DEFAULT_PITCH_DEG,
+        yawDeg: DEFAULT_YAW_DEG,
+        rollDeg: DEFAULT_ROLL_DEG,
         lerp: FIT_LERP,
+        occluderScale: 1,
+        occluderZ: DEFAULT_OCCLUDER_Z,
     };
 
     debugPanel?.querySelectorAll('[data-tryon-debug-control]').forEach((input) => {
@@ -225,6 +249,22 @@ export const mountTryOn = (stage) => {
 
     const pivot = new THREE.Group();
     faceAnchor.add(pivot);
+
+    // Invisible head-shaped occluder: writes to the depth buffer but never
+    // draws color, so glasses geometry that ends up behind it (e.g. the far
+    // temple arm as the head turns) fails the depth test and isn't drawn —
+    // the transparent canvas then lets the real video show through there
+    // instead, giving the illusion the head is actually blocking the
+    // glasses rather than the glasses floating in front of it regardless of
+    // pose. Standard AR technique; the alternative (a mesh built from the
+    // exact face contour) needs MediaPipe's canonical face mesh triangle
+    // data, which isn't bundled with this package.
+    const occluder = new THREE.Mesh(
+        new THREE.SphereGeometry(1, 24, 24),
+        new THREE.MeshBasicMaterial({ colorWrite: false }),
+    );
+    occluder.renderOrder = -1;
+    faceAnchor.add(occluder);
 
     let isModelReady = false;
     let modelWidth = 5.5;
@@ -362,6 +402,13 @@ export const mountTryOn = (stage) => {
                 THREE.MathUtils.degToRad(tuning.yawDeg),
                 THREE.MathUtils.degToRad(tuning.rollDeg),
             );
+
+            occluder.scale.set(
+                (OCCLUDER_WIDTH_CM / 2) * tuning.occluderScale,
+                (OCCLUDER_HEIGHT_CM / 2) * tuning.occluderScale,
+                (OCCLUDER_DEPTH_CM / 2) * tuning.occluderScale,
+            );
+            occluder.position.set(tuning.offsetX, tuning.offsetY, tuning.occluderZ);
 
             renderer.render(scene, camera);
 

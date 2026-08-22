@@ -338,21 +338,38 @@ export const mountTryOn = (stage) => {
         armNoFaceTimer();
         resizeCamera();
 
+        // MediaPipe's VIDEO running mode requires each detectForVideo
+        // timestamp to be strictly greater than the previous one. Raw
+        // performance.now() can repeat on the same rounded millisecond on
+        // some browsers (timer-resolution privacy protections), which
+        // throws — and with no isolation around it, that one throw used to
+        // permanently stop the whole renderer.setAnimationLoop callback,
+        // freezing the glasses in place with no further head tracking. A
+        // monotonic counter plus a try/catch around only the detection call
+        // means a single bad frame is skipped instead of ending tracking.
+        let frameTimestamp = 0;
+
         renderer.setAnimationLoop(() => {
             if (!isVisible) {
                 return;
             }
 
-            if (video.readyState >= 2 && video.videoWidth > 0) {
-                const bounds = stage.getBoundingClientRect();
-                const result = faceLandmarker.detectForVideo(video, performance.now());
+            if (video.readyState >= 2 && video.videoWidth > 0 && faceLandmarker) {
+                try {
+                    const bounds = stage.getBoundingClientRect();
+                    frameTimestamp += 1;
+                    const result = faceLandmarker.detectForVideo(video, frameTimestamp);
 
-                if (result.faceLandmarks && result.faceLandmarks.length > 0) {
-                    hasEverSeenFace = true;
-                    clearTimeout(noFaceTimer);
-                    noFaceTimer = null;
-                    hideStatus();
-                    applyLandmarks(result.faceLandmarks[0], bounds);
+                    if (result.faceLandmarks && result.faceLandmarks.length > 0) {
+                        hasEverSeenFace = true;
+                        clearTimeout(noFaceTimer);
+                        noFaceTimer = null;
+                        hideStatus();
+                        applyLandmarks(result.faceLandmarks[0], bounds);
+                    }
+                } catch {
+                    // Skip this frame's detection; rendering below still
+                    // proceeds toward the last known-good target.
                 }
             }
 

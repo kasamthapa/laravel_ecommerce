@@ -10,26 +10,18 @@ import { loadModel, disposeObject } from './glasses-model';
 const WASM_BASE = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm';
 const FACE_MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
 
-// Indices into MediaPipe's 478-point face mesh.
-const LEFT_EYE_OUTER = 33;
-const RIGHT_EYE_OUTER = 263;
-const NOSE_BRIDGE = 168;
-const NOSE_TIP = 1;
-// Widest points of the face near the temples/ears — used for scale instead
-// of eye-corner distance. Real glasses width tracks temple-to-temple face
-// width directly (roughly 1:1), which is a far more predictable reference
-// than eye-corner distance: that requires an empirical multiplier (glasses
-// are proportionally much wider than the eyes) that's sensitive to exactly
-// where "eye corner" is measured, and got tuned wrong twice in a row before
-// landing on this landmark pair instead.
-const LEFT_FACE_EDGE = 234;
-const RIGHT_FACE_EDGE = 454;
+// MediaPipe's face-geometry pipeline assumes a virtual camera with this
+// vertical FOV when it computes facialTransformationMatrixes — matching it
+// here is what makes that matrix line up with what the real camera sees.
+const CANONICAL_VERTICAL_FOV_DEG = 63;
+// The canonical face model is authored in centimeters. A full adult face
+// (temple to temple) is roughly this wide — used only as a starting-point
+// scale guess; the debug panel's Scale slider is the real calibration tool
+// during live testing.
+const ASSUMED_FACE_WIDTH_CM = 15;
 
 const NO_FACE_HINT_DELAY_MS = 6000;
 const FIT_LERP = 0.3;
-const FIT_WIDTH_FACTOR = 1.05;
-const YAW_SENSITIVITY = 2.4;
-const MAX_YAW = 0.55;
 
 // The wasm fileset is a multi-MB binary — cache the resolved fileset across
 // mounts so toggling the Try On tab off and on doesn't re-fetch/re-init it.
@@ -62,6 +54,11 @@ const createLandmarker = async (delegate) => {
         },
         runningMode: 'VIDEO',
         numFaces: 1,
+        // The full 3D head-pose matrix — position, pitch, yaw, and roll
+        // together — instead of estimating each separately from 2D
+        // landmarks. This is what lets the glasses track every axis of
+        // head movement, the way a real pair would move with your head.
+        outputFacialTransformationMatrixes: true,
     });
 };
 
@@ -70,33 +67,6 @@ const supportsRequiredApis = () =>
     !!navigator.mediaDevices &&
     typeof navigator.mediaDevices.getUserMedia === 'function' &&
     typeof WebAssembly !== 'undefined';
-
-/**
- * Maps a normalized face-landmark coordinate (0..1 in the raw camera frame)
- * into stage-pixel space, accounting for the object-fit: cover crop applied
- * to the mirrored video element.
- */
-const projectLandmark = (landmark, bounds, videoAspect) => {
-    const boundsAspect = bounds.width / bounds.height;
-    let visibleWidth = 1;
-    let visibleHeight = 1;
-
-    if (videoAspect > boundsAspect) {
-        visibleWidth = boundsAspect / videoAspect;
-    } else {
-        visibleHeight = videoAspect / boundsAspect;
-    }
-
-    const cropX0 = (1 - visibleWidth) / 2;
-    const cropY0 = (1 - visibleHeight) / 2;
-    const screenX = (landmark.x - cropX0) / visibleWidth;
-    const screenY = (landmark.y - cropY0) / visibleHeight;
-
-    return {
-        x: (screenX - 0.5) * bounds.width,
-        y: -(screenY - 0.5) * bounds.height,
-    };
-};
 
 /**
  * Mounts the webcam try-on overlay into a stage element and returns a
@@ -128,8 +98,17 @@ export const mountTryOn = (stage) => {
     const { signal } = controller;
 
     // Live-tunable fit values, editable via the ?debug=1 panel while Try On
-    // is running. Defaults match the shipped constants above.
-    const tuning = { scale: FIT_WIDTH_FACTOR, offsetX: 0, offsetY: 0, lerp: FIT_LERP };
+    // is running.
+    const tuning = {
+        scale: 1,
+        offsetX: 0,
+        offsetY: 0,
+        offsetZ: 0,
+        pitchDeg: 0,
+        yawDeg: 0,
+        rollDeg: 0,
+        lerp: FIT_LERP,
+    };
 
     debugPanel?.querySelectorAll('[data-tryon-debug-control]').forEach((input) => {
         const key = input.dataset.tryonDebugControl;
@@ -230,9 +209,22 @@ export const mountTryOn = (stage) => {
     keyLight.position.set(2, 3, 5);
     scene.add(keyLight);
 
-    const camera = new THREE.OrthographicCamera();
+    // Perspective camera at the origin looking down -Z, matching the virtual
+    // camera MediaPipe assumes when it computes facialTransformationMatrixes
+    // — the matrix only lines up with the video if this camera matches it.
+    const camera = new THREE.PerspectiveCamera(CANONICAL_VERTICAL_FOV_DEG, 1, 0.01, 1000);
+
+    // faceAnchor receives the tracked head pose every frame (position +
+    // full 3D rotation, smoothed). pivot is a child of it that applies the
+    // live-tunable calibration (scale + offsets + base rotation correction)
+    // on top, since the exact alignment between this GLB's own axes and
+    // MediaPipe's canonical face model isn't something that can be known in
+    // advance — it's what the debug panel is for.
+    const faceAnchor = new THREE.Group();
+    scene.add(faceAnchor);
+
     const pivot = new THREE.Group();
-    scene.add(pivot);
+    faceAnchor.add(pivot);
 
     let isModelReady = false;
     let modelWidth = 5.5;
@@ -256,20 +248,13 @@ export const mountTryOn = (stage) => {
         }
 
         renderer.setSize(bounds.width, bounds.height, false);
-        // Left/right are swapped (rather than mirroring the finished canvas
-        // with CSS, as the video is) so the 3D scene is mirrored inside the
-        // projection itself. Mirroring a rendered 2D image with CSS reverses
-        // the apparent direction of any in-plane rotation drawn on it, which
-        // fought the roll calculation below and produced a wrong tilt.
-        // Flipping the camera's own frustum mirrors positions *and*
-        // rotations correctly, the way an actual mirror would.
-        camera.left = bounds.width / 2;
-        camera.right = -bounds.width / 2;
-        camera.top = bounds.height / 2;
-        camera.bottom = -bounds.height / 2;
-        camera.near = -1000;
-        camera.far = 1000;
+        camera.aspect = bounds.width / bounds.height;
         camera.updateProjectionMatrix();
+        // Mirrors the render (matching the CSS-mirrored video) by flipping
+        // clip-space X after projection, rather than mirroring the camera
+        // itself — negating the camera's own transform would flip the view
+        // matrix's handedness and break backface culling on the model.
+        camera.projectionMatrix.elements[0] *= -1;
     };
 
     resizeObserver = new ResizeObserver(resizeCamera);
@@ -282,42 +267,25 @@ export const mountTryOn = (stage) => {
         intersectionObserver.observe(stage);
     }
 
-    // Smoothed pivot transform, updated from face landmarks and lerped
-    // toward each frame's target to damp per-frame landmark jitter.
-    const fit = {
-        x: 0, y: 0, scale: 1, roll: 0, yaw: 0,
-        targetX: 0, targetY: 0, targetScale: 1, targetRoll: 0, targetYaw: 0,
-    };
-    let fitInitialized = false;
+    // Smoothed head pose, decomposed from each frame's transformation
+    // matrix and eased toward with lerp/slerp (matrices can't be linearly
+    // blended directly without producing invalid intermediate transforms).
+    const targetMatrix = new THREE.Matrix4();
+    const targetPosition = new THREE.Vector3();
+    const targetQuaternion = new THREE.Quaternion();
+    const targetScale = new THREE.Vector3();
+    const smoothedPosition = new THREE.Vector3();
+    const smoothedQuaternion = new THREE.Quaternion();
+    let poseInitialized = false;
 
-    const applyLandmarks = (landmarks, bounds) => {
-        const videoAspect = video.videoWidth / video.videoHeight;
-        const leftEye = projectLandmark(landmarks[LEFT_EYE_OUTER], bounds, videoAspect);
-        const rightEye = projectLandmark(landmarks[RIGHT_EYE_OUTER], bounds, videoAspect);
-        const leftFace = projectLandmark(landmarks[LEFT_FACE_EDGE], bounds, videoAspect);
-        const rightFace = projectLandmark(landmarks[RIGHT_FACE_EDGE], bounds, videoAspect);
-        const noseBridge = projectLandmark(landmarks[NOSE_BRIDGE], bounds, videoAspect);
-        const noseTip = projectLandmark(landmarks[NOSE_TIP], bounds, videoAspect);
+    const applyPoseMatrix = (matrixData) => {
+        targetMatrix.fromArray(matrixData);
+        targetMatrix.decompose(targetPosition, targetQuaternion, targetScale);
 
-        const eyeDx = rightEye.x - leftEye.x;
-        const eyeDy = rightEye.y - leftEye.y;
-        const eyeDistance = Math.hypot(eyeDx, eyeDy) || 1;
-        const eyeMidX = (leftEye.x + rightEye.x) / 2;
-        const faceWidth = Math.hypot(rightFace.x - leftFace.x, rightFace.y - leftFace.y) || 1;
-
-        fit.targetX = noseBridge.x + tuning.offsetX;
-        fit.targetY = noseBridge.y + tuning.offsetY;
-        fit.targetScale = (faceWidth / modelWidth) * tuning.scale;
-        fit.targetRoll = -Math.atan2(eyeDy, eyeDx);
-        fit.targetYaw = THREE.MathUtils.clamp(((noseTip.x - eyeMidX) / eyeDistance) * YAW_SENSITIVITY, -MAX_YAW, MAX_YAW);
-
-        if (!fitInitialized) {
-            fit.x = fit.targetX;
-            fit.y = fit.targetY;
-            fit.scale = fit.targetScale;
-            fit.roll = fit.targetRoll;
-            fit.yaw = fit.targetYaw;
-            fitInitialized = true;
+        if (!poseInitialized) {
+            smoothedPosition.copy(targetPosition);
+            smoothedQuaternion.copy(targetQuaternion);
+            poseInitialized = true;
         }
     };
 
@@ -356,16 +324,16 @@ export const mountTryOn = (stage) => {
 
             if (video.readyState >= 2 && video.videoWidth > 0 && faceLandmarker) {
                 try {
-                    const bounds = stage.getBoundingClientRect();
                     frameTimestamp += 1;
                     const result = faceLandmarker.detectForVideo(video, frameTimestamp);
+                    const matrix = result.facialTransformationMatrixes?.[0];
 
-                    if (result.faceLandmarks && result.faceLandmarks.length > 0) {
+                    if (matrix) {
                         hasEverSeenFace = true;
                         clearTimeout(noFaceTimer);
                         noFaceTimer = null;
                         hideStatus();
-                        applyLandmarks(result.faceLandmarks[0], bounds);
+                        applyPoseMatrix(matrix.data);
                     }
                 } catch {
                     // Skip this frame's detection; rendering below still
@@ -373,18 +341,33 @@ export const mountTryOn = (stage) => {
                 }
             }
 
-            fit.x = THREE.MathUtils.lerp(fit.x, fit.targetX, tuning.lerp);
-            fit.y = THREE.MathUtils.lerp(fit.y, fit.targetY, tuning.lerp);
-            fit.scale = THREE.MathUtils.lerp(fit.scale, fit.targetScale, tuning.lerp);
-            fit.roll = THREE.MathUtils.lerp(fit.roll, fit.targetRoll, tuning.lerp);
-            fit.yaw = THREE.MathUtils.lerp(fit.yaw, fit.targetYaw, tuning.lerp);
+            if (poseInitialized) {
+                smoothedPosition.lerp(targetPosition, tuning.lerp);
+                smoothedQuaternion.slerp(targetQuaternion, tuning.lerp);
+                faceAnchor.position.copy(smoothedPosition);
+                faceAnchor.quaternion.copy(smoothedQuaternion);
+            }
 
-            pivot.position.set(fit.x, fit.y, 0);
-            pivot.rotation.set(0, fit.yaw, fit.roll);
-            pivot.scale.setScalar(fit.scale);
+            // Calibration on top of the tracked pose: a starting scale
+            // guess (real face width in cm / this model's own width) times
+            // the debug slider's multiplier, an XYZ nudge, and a base
+            // rotation correction for whatever this GLB's authored
+            // orientation turns out to be relative to MediaPipe's canonical
+            // face model — all meant to be dialed in live, not guessed.
+            const baseScale = (ASSUMED_FACE_WIDTH_CM / modelWidth) * tuning.scale;
+            pivot.scale.setScalar(baseScale);
+            pivot.position.set(tuning.offsetX, tuning.offsetY, tuning.offsetZ);
+            pivot.rotation.set(
+                THREE.MathUtils.degToRad(tuning.pitchDeg),
+                THREE.MathUtils.degToRad(tuning.yawDeg),
+                THREE.MathUtils.degToRad(tuning.rollDeg),
+            );
 
             renderer.render(scene, camera);
-            stage.classList.add('is-tryon-ready');
+
+            if (isModelReady) {
+                stage.classList.add('is-tryon-ready');
+            }
         });
     };
 

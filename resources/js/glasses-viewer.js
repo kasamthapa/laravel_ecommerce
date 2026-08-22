@@ -222,6 +222,16 @@ export const bindProductViewToggle = () => {
         let disposeViewer = null;
         let disposeTryOn = null;
 
+        if (tryOnStage) {
+            // Warm the MediaPipe WASM download on idle, well before a
+            // customer would realistically click the Try On tab, so most of
+            // the startup latency is already paid for by the time they do.
+            const scheduleIdle = window.requestIdleCallback || ((callback) => setTimeout(callback, 2000));
+            scheduleIdle(() => {
+                import('./face-tryon').then(({ preloadFaceTryOn }) => preloadFaceTryOn());
+            });
+        }
+
         const activate = (view) => {
             tabs.forEach((tab) => {
                 const isActive = tab.dataset.viewTab === view;

@@ -18,7 +18,11 @@ const NOSE_TIP = 1;
 
 const NO_FACE_HINT_DELAY_MS = 6000;
 const FIT_LERP = 0.3;
-const FIT_WIDTH_FACTOR = 1.35;
+// Real eyewear typically spans roughly 2.0-2.4x the outer-eye-corner
+// distance (frames extend past the eyes to the temples) — the original
+// 1.35 default under-sized the frame, rendering it like a small sticker
+// rather than a properly fitted pair of glasses.
+const FIT_WIDTH_FACTOR = 2.2;
 const YAW_SENSITIVITY = 2.4;
 const MAX_YAW = 0.55;
 
@@ -31,6 +35,16 @@ const getFilesetResolver = () => {
     }
 
     return filesetResolverPromise;
+};
+
+/**
+ * Warms the MediaPipe WASM runtime without touching the camera, so the
+ * multi-MB fileset is already resolved by the time a customer clicks the
+ * Try On tab. Called on idle from glasses-viewer.js, only on pages that
+ * actually have a Try On tab, so it never runs for the rest of the site.
+ */
+export const preloadFaceTryOn = () => {
+    getFilesetResolver().catch(() => {});
 };
 
 const createLandmarker = async (delegate) => {
@@ -216,9 +230,11 @@ export const mountTryOn = (stage) => {
     scene.add(pivot);
 
     let isModelReady = false;
+    let modelWidth = 5.5;
     loadModel(modelPath, { signal })
         .then((modelScene) => {
             pivot.add(modelScene);
+            modelWidth = modelScene.userData.fittedWidth || 5.5;
             isModelReady = true;
         })
         .catch(() => {
@@ -276,7 +292,7 @@ export const mountTryOn = (stage) => {
 
         fit.targetX = noseBridge.x + tuning.offsetX;
         fit.targetY = noseBridge.y + tuning.offsetY;
-        fit.targetScale = (eyeDistance / 5.5) * tuning.scale;
+        fit.targetScale = (eyeDistance / modelWidth) * tuning.scale;
         fit.targetRoll = -Math.atan2(eyeDy, eyeDx);
         fit.targetYaw = THREE.MathUtils.clamp(((noseTip.x - eyeMidX) / eyeDistance) * YAW_SENSITIVITY, -MAX_YAW, MAX_YAW);
 
@@ -341,7 +357,7 @@ export const mountTryOn = (stage) => {
     };
 
     const start = () => {
-        hideStatus();
+        showStatus('Starting camera…');
         stopStream();
 
         navigator.mediaDevices

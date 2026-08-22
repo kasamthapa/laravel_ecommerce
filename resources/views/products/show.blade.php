@@ -63,8 +63,8 @@
                                 <p class="font-medium uppercase tracking-wide text-stone">Try On debug</p>
 
                                 <label class="block">
-                                    <span class="flex items-center justify-between">Scale <span data-tryon-debug-value="scale">1.35</span></span>
-                                    <input type="range" data-tryon-debug-control="scale" min="0.5" max="3" step="0.01" value="1.35" class="w-full">
+                                    <span class="flex items-center justify-between">Scale <span data-tryon-debug-value="scale">2.2</span></span>
+                                    <input type="range" data-tryon-debug-control="scale" min="0.5" max="3.5" step="0.01" value="2.2" class="w-full">
                                 </label>
 
                                 <label class="block">

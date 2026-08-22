@@ -34,6 +34,16 @@ export const prepareModel = (model) => {
     const scaledBounds = new THREE.Box3().setFromObject(model);
     const center = scaledBounds.getCenter(new THREE.Vector3());
     model.position.sub(center);
+
+    // The uniform scale above normalizes the model's LONGEST bounding-box
+    // axis to 5.5 units — for glasses, that's often the temple arms' Z
+    // depth, not the lens-to-lens width. Callers that need to fit the frame
+    // to a real measurement (e.g. try-on scaling to the wearer's eye
+    // distance) need the actual left-right (X) extent, which can be
+    // meaningfully smaller than 5.5 — so it's captured here rather than
+    // assumed.
+    const scaledSize = scaledBounds.getSize(new THREE.Vector3());
+    model.userData.fittedWidth = scaledSize.x;
 };
 
 export const disposeMaterial = (material) => {

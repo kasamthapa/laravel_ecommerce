@@ -7,20 +7,20 @@
             </div>
         </section>
     @else
-        <section class="border-b border-line">
-            <div class="mx-auto grid max-w-[100rem] lg:grid-cols-2 lg:items-stretch">
-                <div class="motion-fade aspect-[4/3] overflow-hidden bg-cream-dim lg:aspect-auto lg:min-h-[34rem]">
-                    <img
-                        src="{{ asset('images/storefront/hero-glasses-real.jpg') }}"
-                        alt="A pair of Luma Lens optical frames resting on a neutral surface in natural light"
-                        class="h-full w-full object-cover"
-                    >
-                </div>
-                <div class="motion-fade-slow flex flex-col justify-center gap-6 px-4 py-14 sm:px-8 lg:px-16 lg:py-0">
-                    <p class="text-xs font-medium uppercase tracking-[0.14em] text-stone">New season</p>
-                    <h1 class="font-serif text-4xl leading-[1.05] text-ink sm:text-5xl lg:text-6xl">Frames considered, not chosen in a hurry.</h1>
-                    <p class="max-w-md text-base leading-relaxed text-stone">Optical and sun frames edited for fit, finish, and everyday wear &mdash; with lenses ready in every pair.</p>
-                    <div>
+        <section class="motion-fade relative border-b border-line">
+            <div class="relative h-[75vh] max-h-[44rem] min-h-[30rem] w-full overflow-hidden bg-cream-dim">
+                <img
+                    src="{{ asset('images/storefront/lightweight-eyewear.png') }}"
+                    alt="A person wearing Luma Lens optical frames, photographed against a warm neutral backdrop"
+                    class="h-full w-full object-cover"
+                >
+                <div class="absolute inset-0 bg-gradient-to-r from-ink/70 via-ink/25 to-transparent lg:from-ink/65 lg:via-transparent lg:to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent"></div>
+                <div class="absolute inset-x-0 bottom-0 px-4 pb-12 sm:px-8 sm:pb-16 lg:inset-y-0 lg:flex lg:max-w-2xl lg:flex-col lg:justify-center lg:px-16 lg:pb-0">
+                    <p class="text-xs font-medium uppercase tracking-[0.14em] text-cream/80">New season</p>
+                    <h1 class="mt-4 max-w-2xl font-serif text-4xl leading-[1.05] text-cream sm:text-5xl lg:text-6xl">Frames considered, not chosen in a hurry.</h1>
+                    <p class="mt-5 max-w-md text-base leading-relaxed text-cream/85">Optical and sun frames edited for fit, finish, and everyday wear &mdash; with lenses ready in every pair.</p>
+                    <div class="mt-8">
                         <x-ui.button :href="route('shop')" size="lg">Shop the collection</x-ui.button>
                     </div>
                 </div>

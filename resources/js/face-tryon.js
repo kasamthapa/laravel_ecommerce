@@ -15,14 +15,19 @@ const LEFT_EYE_OUTER = 33;
 const RIGHT_EYE_OUTER = 263;
 const NOSE_BRIDGE = 168;
 const NOSE_TIP = 1;
+// Widest points of the face near the temples/ears — used for scale instead
+// of eye-corner distance. Real glasses width tracks temple-to-temple face
+// width directly (roughly 1:1), which is a far more predictable reference
+// than eye-corner distance: that requires an empirical multiplier (glasses
+// are proportionally much wider than the eyes) that's sensitive to exactly
+// where "eye corner" is measured, and got tuned wrong twice in a row before
+// landing on this landmark pair instead.
+const LEFT_FACE_EDGE = 234;
+const RIGHT_FACE_EDGE = 454;
 
 const NO_FACE_HINT_DELAY_MS = 6000;
 const FIT_LERP = 0.3;
-// Real eyewear typically spans roughly 2.0-2.4x the outer-eye-corner
-// distance (frames extend past the eyes to the temples) — the original
-// 1.35 default under-sized the frame, rendering it like a small sticker
-// rather than a properly fitted pair of glasses.
-const FIT_WIDTH_FACTOR = 2.2;
+const FIT_WIDTH_FACTOR = 1.05;
 const YAW_SENSITIVITY = 2.4;
 const MAX_YAW = 0.55;
 
@@ -289,6 +294,8 @@ export const mountTryOn = (stage) => {
         const videoAspect = video.videoWidth / video.videoHeight;
         const leftEye = projectLandmark(landmarks[LEFT_EYE_OUTER], bounds, videoAspect);
         const rightEye = projectLandmark(landmarks[RIGHT_EYE_OUTER], bounds, videoAspect);
+        const leftFace = projectLandmark(landmarks[LEFT_FACE_EDGE], bounds, videoAspect);
+        const rightFace = projectLandmark(landmarks[RIGHT_FACE_EDGE], bounds, videoAspect);
         const noseBridge = projectLandmark(landmarks[NOSE_BRIDGE], bounds, videoAspect);
         const noseTip = projectLandmark(landmarks[NOSE_TIP], bounds, videoAspect);
 
@@ -296,10 +303,11 @@ export const mountTryOn = (stage) => {
         const eyeDy = rightEye.y - leftEye.y;
         const eyeDistance = Math.hypot(eyeDx, eyeDy) || 1;
         const eyeMidX = (leftEye.x + rightEye.x) / 2;
+        const faceWidth = Math.hypot(rightFace.x - leftFace.x, rightFace.y - leftFace.y) || 1;
 
         fit.targetX = noseBridge.x + tuning.offsetX;
         fit.targetY = noseBridge.y + tuning.offsetY;
-        fit.targetScale = (eyeDistance / modelWidth) * tuning.scale;
+        fit.targetScale = (faceWidth / modelWidth) * tuning.scale;
         fit.targetRoll = -Math.atan2(eyeDy, eyeDx);
         fit.targetYaw = THREE.MathUtils.clamp(((noseTip.x - eyeMidX) / eyeDistance) * YAW_SENSITIVITY, -MAX_YAW, MAX_YAW);
 

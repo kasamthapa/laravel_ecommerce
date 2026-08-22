@@ -251,8 +251,15 @@ export const mountTryOn = (stage) => {
         }
 
         renderer.setSize(bounds.width, bounds.height, false);
-        camera.left = -bounds.width / 2;
-        camera.right = bounds.width / 2;
+        // Left/right are swapped (rather than mirroring the finished canvas
+        // with CSS, as the video is) so the 3D scene is mirrored inside the
+        // projection itself. Mirroring a rendered 2D image with CSS reverses
+        // the apparent direction of any in-plane rotation drawn on it, which
+        // fought the roll calculation below and produced a wrong tilt.
+        // Flipping the camera's own frustum mirrors positions *and*
+        // rotations correctly, the way an actual mirror would.
+        camera.left = bounds.width / 2;
+        camera.right = -bounds.width / 2;
         camera.top = bounds.height / 2;
         camera.bottom = -bounds.height / 2;
         camera.near = -1000;

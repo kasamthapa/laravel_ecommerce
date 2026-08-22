@@ -48,10 +48,8 @@
 
                 <div data-view-panel="tryon" class="hidden">
                     <div class="glasses-stage aspect-square min-h-0 overflow-hidden bg-cream-dim" data-face-tryon data-model-path="{{ asset($product->model_path) }}">
-                        <div class="tryon-mirror absolute inset-0">
-                            <video data-tryon-video class="absolute inset-0 h-full w-full object-cover" autoplay muted playsinline></video>
-                            <canvas class="glasses-canvas" data-tryon-canvas></canvas>
-                        </div>
+                        <video data-tryon-video class="tryon-mirror absolute inset-0 h-full w-full object-cover" autoplay muted playsinline></video>
+                        <canvas class="glasses-canvas" data-tryon-canvas></canvas>
                         <div data-glasses-skeleton class="absolute inset-0 z-[3] animate-pulse bg-cream-dim" aria-hidden="true"></div>
                         <div data-tryon-status class="absolute inset-0 z-[4] hidden flex-col items-center justify-center gap-3 bg-cream-dim px-6 text-center" aria-live="polite">
                             <p data-tryon-status-text class="font-serif text-lg text-ink"></p>

@@ -239,6 +239,31 @@ const bindAdminCharts = async () => {
     }
 };
 
+const bindStickyCta = () => {
+    document.querySelectorAll('[data-sticky-cta]').forEach((bar) => {
+        const targetSelector = bar.dataset.track;
+        const target = targetSelector ? document.querySelector(targetSelector) : null;
+        const button = bar.querySelector('[data-sticky-cta-button]');
+
+        if (!(target instanceof HTMLElement)) {
+            return;
+        }
+
+        // Reveal only once the real buy box has scrolled fully above the
+        // viewport, not just whenever it happens to not be intersecting
+        // (which is also true before the user has scrolled down at all).
+        const observer = new IntersectionObserver(([entry]) => {
+            const scrolledPast = entry.boundingClientRect.bottom < 0;
+            bar.classList.toggle('translate-y-full', !scrolledPast);
+        });
+        observer.observe(target);
+
+        button?.addEventListener('click', () => {
+            window.Livewire?.dispatch('sticky-add-to-cart');
+        });
+    });
+};
+
 const bindAppInteractions = () => {
     bindAutoSearch();
     bindFormLoadingState();
@@ -248,6 +273,7 @@ const bindAppInteractions = () => {
     bindProductGallery();
     bindAdminCharts();
     bindScrollReveal();
+    bindStickyCta();
 };
 
 if (document.readyState === 'loading') {

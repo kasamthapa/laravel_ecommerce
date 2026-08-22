@@ -12,6 +12,17 @@
             <div data-view-panel="photos" data-gallery data-images="{{ json_encode($product->gallery()) }}">
                 <div data-gallery-stage class="gallery-stage relative aspect-square overflow-hidden bg-cream-dim">
                     <img data-gallery-main src="{{ $product->gallery()[0] }}" alt="{{ $product->name }}" class="h-full w-full object-cover {{ $product->stock < 1 ? 'grayscale' : '' }}">
+
+                    @if ($product->model_path)
+                        <button type="button" data-view-tab-proxy="tryon" class="motion-press absolute inset-x-0 top-4 z-[2] mx-auto flex w-fit items-center gap-2 rounded-full border border-ink bg-cream/95 px-4 py-2 text-xs font-medium text-ink shadow-sm">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <circle cx="6.5" cy="13" r="3.5" stroke="currentColor" stroke-width="1.6" />
+                                <circle cx="17.5" cy="13" r="3.5" stroke="currentColor" stroke-width="1.6" />
+                                <path d="M10 12.2c.6-1 1.4-1 2 0M3 12.5l-1.5-.6M21 12.5l1.5-.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                            </svg>
+                            Try it on
+                        </button>
+                    @endif
                 </div>
 
                 @if (count($product->gallery()) > 1)
@@ -101,7 +112,7 @@
 
             <p class="font-serif text-lg leading-relaxed text-ink-soft">{{ $product->description }}</p>
 
-            <div class="flex flex-wrap gap-3">
+            <div id="pdp-buy-box" class="flex flex-wrap gap-3">
                 @if ($product->stock < 1)
                     <x-ui.button variant="secondary" disabled class="cursor-not-allowed opacity-50">Sold out</x-ui.button>
                 @else
@@ -114,6 +125,18 @@
             @endif
         </div>
     </section>
+
+    @if ($product->stock >= 1)
+        <div data-sticky-cta data-track="#pdp-buy-box" class="fixed inset-x-0 bottom-0 z-40 translate-y-full border-t border-line bg-cream/95 px-4 py-3 backdrop-blur transition-transform duration-200 ease-out sm:hidden">
+            <div class="flex items-center justify-between gap-4">
+                <div class="min-w-0">
+                    <p class="truncate text-sm font-medium text-ink">{{ $product->name }}</p>
+                    <p class="text-sm text-stone">Rs. {{ number_format((float) $product->price) }}</p>
+                </div>
+                <x-ui.button type="button" data-sticky-cta-button size="sm" class="shrink-0">Add to cart</x-ui.button>
+            </div>
+        </div>
+    @endif
 
     <section class="border-y border-line bg-cream-dim">
         <div class="mx-auto grid max-w-[100rem] gap-8 px-4 py-12 sm:px-8 sm:grid-cols-3">

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -29,6 +30,7 @@ class AddToCartForm extends Component
         $this->color = $product->colors[0] ?? null;
     }
 
+    #[On('sticky-add-to-cart')]
     public function addToCart(): void
     {
         $this->product->refresh();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\AddToCartForm;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
@@ -7,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -127,6 +129,36 @@ test('the product detail page shows a Try On toggle only for products with a mod
         ->assertSuccessful()
         ->assertDontSee('Try On')
         ->assertDontSee('data-face-tryon', false);
+});
+
+test('the sticky mobile cta adds to cart via the sticky-add-to-cart event', function () {
+    $category = Category::create([
+        'name' => 'Optical Frames',
+        'slug' => 'optical-frames-sticky',
+        'description' => 'Everyday eyewear.',
+    ]);
+
+    $product = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Sticky Bar Frame',
+        'slug' => 'sticky-bar-frame',
+        'description' => 'A frame for testing the sticky cta.',
+        'image_url' => 'https://example.com/sticky.jpg',
+        'price' => 5000.00,
+        'stock' => 10,
+        'sizes' => ['Medium'],
+        'colors' => ['Black'],
+        'is_featured' => false,
+        'is_active' => true,
+    ]);
+
+    Livewire::test(AddToCartForm::class, ['product' => $product])
+        ->dispatch('sticky-add-to-cart')
+        ->assertSet('added', true);
+
+    $this->get(route('cart.index'))
+        ->assertSuccessful()
+        ->assertSee('Sticky Bar Frame');
 });
 
 test('a guest can add to cart but must login before checkout', function () {

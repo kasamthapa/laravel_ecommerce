@@ -269,6 +269,13 @@ export const bindProductViewToggle = () => {
             tab.addEventListener('click', () => activate(tab.dataset.viewTab));
         });
 
+        // Secondary entry points into a tab (e.g. the "Try it on" pill
+        // overlaid on the product photo) that should behave exactly like
+        // clicking the real tab, keeping its active/selected state in sync.
+        group.querySelectorAll('[data-view-tab-proxy]').forEach((proxy) => {
+            proxy.addEventListener('click', () => activate(proxy.dataset.viewTabProxy));
+        });
+
         window.addEventListener('pagehide', () => {
             if (disposeViewer) {
                 disposeViewer();

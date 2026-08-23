@@ -46,6 +46,40 @@ export const prepareModel = (model) => {
     model.userData.fittedWidth = scaledSize.x;
 };
 
+/**
+ * Recolors the shared GLB's frame and lens materials to match a specific
+ * product's actual color, since one static model is reused across every
+ * product that has a model_path — without this, every one of them would
+ * render in the asset's own baked-in chrome/cobalt finish regardless of
+ * what color the real product actually is. Matches by material name, so it
+ * silently no-ops on a model that doesn't have "temples"/"lens_exterior"/
+ * "lens_interior" materials rather than erroring.
+ *
+ * @param {THREE.Object3D} model
+ * @param {{ frame?: string, lens?: string }|null|undefined} tint
+ */
+export const applyTint = (model, tint) => {
+    if (!tint) {
+        return;
+    }
+
+    model.traverse((child) => {
+        if (!child.isMesh || !child.material || !child.material.color) {
+            return;
+        }
+
+        if (tint.frame && child.material.name === 'temples') {
+            child.material.color.set(tint.frame);
+            child.material.needsUpdate = true;
+        }
+
+        if (tint.lens && (child.material.name === 'lens_exterior' || child.material.name === 'lens_interior')) {
+            child.material.color.set(tint.lens);
+            child.material.needsUpdate = true;
+        }
+    });
+};
+
 export const disposeMaterial = (material) => {
     Object.values(material).forEach((value) => {
         if (value && typeof value.dispose === 'function') {
@@ -76,10 +110,10 @@ export const disposeObject = (object) => {
  * to guard against a stale mount handing back a model after teardown.
  *
  * @param {string} modelPath
- * @param {{ signal?: AbortSignal }} [options]
+ * @param {{ signal?: AbortSignal, tint?: { frame?: string, lens?: string } }} [options]
  * @returns {Promise<THREE.Object3D>}
  */
-export const loadModel = (modelPath, { signal } = {}) => new Promise((resolve, reject) => {
+export const loadModel = (modelPath, { signal, tint } = {}) => new Promise((resolve, reject) => {
     new GLTFLoader().load(
         modelPath,
         (gltf) => {
@@ -90,6 +124,7 @@ export const loadModel = (modelPath, { signal } = {}) => new Promise((resolve, r
             }
 
             prepareModel(gltf.scene);
+            applyTint(gltf.scene, tint);
             resolve(gltf.scene);
         },
         undefined,

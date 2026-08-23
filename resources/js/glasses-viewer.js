@@ -12,6 +12,9 @@ import { loadModel, disposeObject } from './glasses-model';
 const mountViewer = (stage) => {
     const existingCanvas = stage.querySelector('[data-glasses-canvas]');
     const modelPath = stage.dataset.modelPath;
+    const tint = stage.dataset.frameTint || stage.dataset.lensTint
+        ? { frame: stage.dataset.frameTint || undefined, lens: stage.dataset.lensTint || undefined }
+        : undefined;
 
     if (!(stage instanceof HTMLElement) || !(existingCanvas instanceof HTMLCanvasElement) || !modelPath) {
         return null;
@@ -71,7 +74,7 @@ const mountViewer = (stage) => {
     const { signal } = controller;
 
     let isModelReady = false;
-    loadModel(modelPath, { signal })
+    loadModel(modelPath, { signal, tint })
         .then((modelScene) => {
             rotationPivot.add(modelScene);
             isModelReady = true;

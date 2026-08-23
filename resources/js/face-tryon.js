@@ -100,6 +100,9 @@ const supportsRequiredApis = () =>
  */
 export const mountTryOn = (stage) => {
     const modelPath = stage.dataset.modelPath;
+    const tint = stage.dataset.frameTint || stage.dataset.lensTint
+        ? { frame: stage.dataset.frameTint || undefined, lens: stage.dataset.lensTint || undefined }
+        : undefined;
     const video = stage.querySelector('[data-tryon-video]');
     const existingCanvas = stage.querySelector('[data-tryon-canvas]');
     const statusEl = stage.querySelector('[data-tryon-status]');
@@ -268,7 +271,7 @@ export const mountTryOn = (stage) => {
 
     let isModelReady = false;
     let modelWidth = 5.5;
-    loadModel(modelPath, { signal })
+    loadModel(modelPath, { signal, tint })
         .then((modelScene) => {
             pivot.add(modelScene);
             modelWidth = modelScene.userData.fittedWidth || 5.5;

@@ -37,8 +37,10 @@
             </div>
 
             @if ($product->model_path)
+                @php $modelTint = $product->modelTint(); @endphp
+
                 <div data-view-panel="3d" class="hidden">
-                    <div class="glasses-stage aspect-square min-h-0 overflow-hidden bg-cream-dim" data-glasses-viewer data-model-path="{{ asset($product->model_path) }}">
+                    <div class="glasses-stage aspect-square min-h-0 overflow-hidden bg-cream-dim" data-glasses-viewer data-model-path="{{ asset($product->model_path) }}" @if ($modelTint) data-frame-tint="{{ $modelTint['frame'] }}" data-lens-tint="{{ $modelTint['lens'] }}" @endif>
                         <canvas class="glasses-canvas" data-glasses-canvas></canvas>
                         <img src="{{ $product->gallery()[0] }}" alt="" class="glasses-3d">
                         <div data-glasses-skeleton class="absolute inset-0 z-[3] animate-pulse bg-cream-dim" aria-hidden="true"></div>
@@ -47,7 +49,7 @@
                 </div>
 
                 <div data-view-panel="tryon" class="hidden">
-                    <div class="glasses-stage aspect-square min-h-0 overflow-hidden bg-cream-dim" data-face-tryon data-model-path="{{ asset($product->model_path) }}">
+                    <div class="glasses-stage aspect-square min-h-0 overflow-hidden bg-cream-dim" data-face-tryon data-model-path="{{ asset($product->model_path) }}" @if ($modelTint) data-frame-tint="{{ $modelTint['frame'] }}" data-lens-tint="{{ $modelTint['lens'] }}" @endif>
                         <video data-tryon-video class="tryon-mirror absolute inset-0 h-full w-full object-cover" autoplay muted playsinline></video>
                         <canvas class="glasses-canvas" data-tryon-canvas></canvas>
                         <div data-glasses-skeleton class="absolute inset-0 z-[3] animate-pulse bg-cream-dim" aria-hidden="true"></div>

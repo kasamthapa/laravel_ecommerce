@@ -3,8 +3,8 @@
 <article {{ $attributes->merge(['class' => 'group relative']) }}>
     @php $gallery = $product->gallery(); @endphp
 
-    <a href="{{ route('products.show', $product) }}" class="block" aria-label="{{ $product->name }}">
-        <div class="relative aspect-[4/5] overflow-hidden bg-cream-dim">
+    <div class="relative aspect-[4/5] overflow-hidden bg-cream-dim">
+        <a href="{{ route('products.show', $product) }}" class="absolute inset-0 z-[1]" aria-label="{{ $product->name }}">
             <x-ui.product-image
                 :src="$gallery[0]"
                 :alt="$product->name"
@@ -18,8 +18,14 @@
                     class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 {{ $product->stock < 1 ? 'grayscale' : '' }}"
                 />
             @endif
-        </div>
-    </a>
+        </a>
+
+        @if ($product->stock >= 1)
+            <div class="absolute inset-x-0 bottom-0 z-[2] translate-y-full p-3 transition-transform duration-300 ease-out group-hover:translate-y-0">
+                <livewire:quick-add-button :product="$product" :key="'quick-add-'.$product->id" />
+            </div>
+        @endif
+    </div>
 
     @if ($product->model_path)
         <p class="pointer-events-none absolute left-3 top-3 border border-gold bg-cream/90 px-2 py-1 text-[0.65rem] font-medium uppercase tracking-[0.1em] text-ink">

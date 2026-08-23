@@ -125,23 +125,23 @@
                 </div>
             </section>
 
-            <footer class="border-t border-line bg-cream text-ink">
-                <div class="mx-auto grid max-w-[100rem] gap-10 px-4 py-12 sm:px-8 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_1fr]">
+            <footer class="border-t border-line bg-ink text-cream">
+                <div class="mx-auto grid max-w-[100rem] gap-10 px-4 py-14 sm:px-8 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_1fr]">
                     <div>
-                        <x-brand-mark icon-class="h-4 w-7" text-class="font-serif text-xl text-ink" />
-                        <p class="mt-4 max-w-xs text-sm leading-relaxed text-stone">Optical frames, sunglasses, and screen-ready lenses selected for fit, finish, and everyday wear in Nepal.</p>
+                        <x-brand-mark icon-class="h-4 w-7" text-class="font-serif text-xl text-cream" />
+                        <p class="mt-4 max-w-xs text-sm leading-relaxed text-cream/70">Optical frames, sunglasses, and screen-ready lenses selected for fit, finish, and everyday wear in Nepal.</p>
                     </div>
                     <div>
-                        <p class="text-xs font-medium uppercase tracking-[0.14em] text-stone">Products</p>
-                        <div class="mt-4 grid gap-2.5 text-sm text-ink">
+                        <p class="text-xs font-medium uppercase tracking-[0.14em] text-cream/60">Products</p>
+                        <div class="mt-4 grid gap-2.5 text-sm text-cream">
                             <a href="{{ route('shop', ['category' => 'optical-frames']) }}" class="motion-press w-fit hover:opacity-70">Eyeglasses</a>
                             <a href="{{ route('shop', ['category' => 'sunglasses']) }}" class="motion-press w-fit hover:opacity-70">Sunglasses</a>
                             <a href="{{ route('shop', ['category' => 'blue-light']) }}" class="motion-press w-fit hover:opacity-70">Blue light</a>
                         </div>
                     </div>
                     <div>
-                        <p class="text-xs font-medium uppercase tracking-[0.14em] text-stone">Shop online</p>
-                        <div class="mt-4 grid gap-2.5 text-sm text-ink">
+                        <p class="text-xs font-medium uppercase tracking-[0.14em] text-cream/60">Shop online</p>
+                        <div class="mt-4 grid gap-2.5 text-sm text-cream">
                             <a href="{{ route('shop') }}" class="motion-press w-fit hover:opacity-70">Shop all</a>
                             <a href="{{ route('products.index') }}#shape" class="motion-press w-fit hover:opacity-70">Frame shapes</a>
                             <a href="{{ route('cart.index') }}" class="motion-press w-fit hover:opacity-70">Cart</a>
@@ -152,27 +152,27 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-xs font-medium uppercase tracking-[0.14em] text-stone">Visit a store</p>
-                        <div class="mt-4 grid gap-2.5 text-sm text-stone">
+                        <p class="text-xs font-medium uppercase tracking-[0.14em] text-cream/60">Visit a store</p>
+                        <div class="mt-4 grid gap-2.5 text-sm text-cream/70">
                             <p>Kathmandu pickup ready</p>
                             <p>Sun to screen collections</p>
                             <p>Fast local checkout</p>
                         </div>
                     </div>
                     <div>
-                        <p class="text-xs font-medium uppercase tracking-[0.14em] text-stone">Checkout</p>
-                        <div class="mt-4 border border-line p-4">
+                        <p class="text-xs font-medium uppercase tracking-[0.14em] text-cream/60">Checkout</p>
+                        <div class="mt-4 border border-cream/20 p-4">
                             <div class="flex items-center justify-between gap-3">
-                                <span class="text-xs font-medium uppercase tracking-wide text-stone">Powered by</span>
+                                <span class="text-xs font-medium uppercase tracking-wide text-cream/60">Powered by</span>
                                 <img src="{{ asset('images/khalti_logo.svg') }}" alt="Khalti" class="h-5 w-auto">
                             </div>
-                            <p class="mt-3 text-xs leading-5 text-stone">Orders are confirmed after Khalti payment verification.</p>
+                            <p class="mt-3 text-xs leading-5 text-cream/70">Orders are confirmed after Khalti payment verification.</p>
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-wrap justify-center gap-x-3 gap-y-1 border-t border-line px-4 py-4 text-center text-xs text-stone">
+                <div class="flex flex-wrap justify-center gap-x-3 gap-y-1 border-t border-cream/10 px-4 py-4 text-center text-xs text-cream/60">
                     <span>&copy; {{ now()->year }} Luma Lens. Independent eyewear commerce for Nepal.</span>
-                    <a href="https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/SunglassesKhronos" target="_blank" rel="noreferrer" class="motion-press text-stone underline-offset-4 hover:underline">3D eyewear: DGG GmbH, CC BY 4.0</a>
+                    <a href="https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/SunglassesKhronos" target="_blank" rel="noreferrer" class="motion-press text-cream/60 underline-offset-4 hover:underline">3D eyewear: DGG GmbH, CC BY 4.0</a>
                 </div>
             </footer>
         </div>

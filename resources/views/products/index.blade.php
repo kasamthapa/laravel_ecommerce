@@ -20,7 +20,7 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent"></div>
                 <div class="absolute inset-x-0 bottom-0 px-4 pb-12 sm:px-8 sm:pb-16 lg:inset-y-0 lg:flex lg:max-w-2xl lg:flex-col lg:justify-center lg:px-16 lg:pb-0">
                     <p class="text-xs font-medium uppercase tracking-[0.14em] text-cream/80">New season</p>
-                    <h1 class="mt-4 max-w-2xl font-serif text-4xl leading-[1.05] text-cream sm:text-5xl lg:text-6xl">Frames considered, not chosen in a hurry.</h1>
+                    <h1 class="mt-4 max-w-2xl font-serif text-5xl font-semibold leading-[0.98] tracking-tight text-cream sm:text-6xl lg:text-8xl">Frames considered, not chosen in a hurry.</h1>
                     <p class="mt-5 max-w-md text-base leading-relaxed text-cream/85">Optical and sun frames edited for fit, finish, and everyday wear &mdash; with lenses ready in every pair.</p>
                     <div class="mt-8">
                         <x-ui.button :href="route('shop')" size="lg">Shop the collection</x-ui.button>
@@ -46,7 +46,7 @@
 
         <section class="border-b border-line">
             <div class="mx-auto max-w-[100rem] px-4 py-14 sm:px-8">
-                <h2 class="max-w-xl font-serif text-3xl leading-tight text-ink sm:text-4xl" data-reveal>Three ways to see clearly.</h2>
+                <h2 class="max-w-xl font-serif text-4xl font-semibold leading-[0.95] tracking-tight text-ink sm:text-5xl lg:text-6xl" data-reveal>Three ways to see clearly.</h2>
                 <div class="mt-10 grid gap-4 lg:grid-cols-3">
                     <a href="{{ route('shop', ['category' => 'sunglasses']) }}" class="group relative block aspect-[4/5] overflow-hidden bg-cream-dim lg:col-span-2 lg:row-span-2 lg:aspect-auto" data-reveal>
                         <img
@@ -81,7 +81,7 @@
 
         <section class="border-b border-line bg-ink">
             <div class="mx-auto max-w-[100rem] px-4 py-16 text-center sm:px-8 sm:py-20" data-reveal>
-                <p class="font-serif text-6xl text-gold sm:text-7xl">{{ $totalFrameCount }}</p>
+                <p class="font-serif text-7xl font-semibold tracking-tight text-gold sm:text-8xl md:text-9xl">{{ $totalFrameCount }}</p>
                 <p class="mx-auto mt-4 max-w-md text-base leading-relaxed text-cream/70">frames. That's the entire collection &mdash; every one fitted across two widths, checked by hand, and still here next season instead of clearanced out.</p>
             </div>
         </section>
@@ -111,7 +111,7 @@
                 >
             </div>
             <div class="lg:order-1" data-reveal style="--reveal-delay: 90ms">
-                <h2 class="font-serif text-3xl leading-tight text-ink sm:text-4xl">Nothing here is a guess.</h2>
+                <h2 class="font-serif text-4xl font-semibold leading-[0.95] tracking-tight text-ink sm:text-5xl lg:text-6xl">Nothing here is a guess.</h2>
                 <p class="mt-5 max-w-md text-base leading-relaxed text-stone">Acetate and metal come from mills we've used for years, not whichever supplier quoted lowest this season. Widths are set per shape &mdash; Narrow, Medium, or Wide, whichever that frame actually sits well in, not a default applied across the board. Hinges get checked by hand before a frame leaves for you, every one, not a sample batch.</p>
             </div>
         </section>

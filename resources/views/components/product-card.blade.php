@@ -11,6 +11,12 @@
         </div>
     </a>
 
+    @if ($product->model_path)
+        <p class="pointer-events-none absolute left-3 top-3 border border-ink bg-cream/90 px-2 py-1 text-[0.65rem] font-medium uppercase tracking-[0.1em] text-ink">
+            3D &middot; Try On
+        </p>
+    @endif
+
     @auth
         <div class="absolute right-3 top-3">
             <livewire:wishlist-button :product="$product" :wishlisted="$wishlisted" size="h-8 w-8 text-base" :key="'wishlist-card-'.$product->id" />

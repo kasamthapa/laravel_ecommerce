@@ -102,7 +102,12 @@ class ProductCatalog extends Component
             ->when($maxPrice !== null, fn ($query) => $query->where('price', '<=', $maxPrice))
             ->when($this->sort === 'price_asc', fn ($query) => $query->orderBy('price'))
             ->when($this->sort === 'price_desc', fn ($query) => $query->orderByDesc('price'))
-            ->when(! in_array($this->sort, ['price_asc', 'price_desc'], true), fn ($query) => $query->latest())
+            ->when(
+                ! in_array($this->sort, ['price_asc', 'price_desc'], true),
+                // Surface Try On / 3D View-enabled frames first so the feature
+                // is easy to find while browsing, then fall back to newest.
+                fn ($query) => $query->orderByRaw('model_path IS NULL')->latest()
+            )
             ->paginate(9);
 
         return view('livewire.product-catalog', [

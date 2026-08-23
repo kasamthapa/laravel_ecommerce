@@ -84,14 +84,23 @@ test('the product detail page shows a 3D view toggle only for products with a mo
 });
 
 test('the product detail page shows a Try On toggle only for products with a model', function () {
-    $category = Category::create([
+    // Different categories so neither shows up in the other's "related
+    // products" rail — the with-model product's card there would otherwise
+    // carry the "3D · Try On" badge onto the without-model product's page.
+    $modeledCategory = Category::create([
         'name' => 'Sunglasses',
         'slug' => 'sunglasses-tryon',
         'description' => 'Sun-ready frames.',
     ]);
 
+    $photoOnlyCategory = Category::create([
+        'name' => 'Eyeglasses',
+        'slug' => 'eyeglasses-tryon',
+        'description' => 'Everyday optical frames.',
+    ]);
+
     $withModel = Product::create([
-        'category_id' => $category->id,
+        'category_id' => $modeledCategory->id,
         'name' => 'Modeled Frame Two',
         'slug' => 'modeled-frame-two',
         'description' => 'Has a 3D model.',
@@ -106,7 +115,7 @@ test('the product detail page shows a Try On toggle only for products with a mod
     ]);
 
     $withoutModel = Product::create([
-        'category_id' => $category->id,
+        'category_id' => $photoOnlyCategory->id,
         'name' => 'Photo Only Frame Two',
         'slug' => 'photo-only-frame-two',
         'description' => 'Photos only.',

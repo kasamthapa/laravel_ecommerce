@@ -9,8 +9,8 @@
         <div class="mt-10 grid gap-12 lg:grid-cols-[1fr_22rem] lg:items-start">
             <div class="grid gap-6" wire:loading.class="opacity-60">
                 @foreach ($this->cart['items'] as $key => $item)
-                    <div wire:key="cart-item-{{ $key }}" class="grid gap-4 border-b border-line pb-6 last:border-0 sm:grid-cols-[7rem_1fr_auto]">
-                        <img src="{{ $item['image_url'] }}" alt="{{ $item['name'] }}" class="h-28 w-28 bg-cream-dim object-cover">
+                    <div wire:key="cart-item-{{ $key }}" class="grid gap-4 border-b border-line pb-6 last:border-0 sm:grid-cols-[9rem_1fr_auto]">
+                        <img src="{{ $item['image_url'] }}" alt="{{ $item['name'] }}" class="h-36 w-36 bg-cream-dim object-cover">
                         <div>
                             <a href="{{ route('products.show', $item['slug']) }}" class="motion-press font-serif text-lg text-ink">{{ $item['name'] }}</a>
                             <p class="mt-1 text-sm text-stone">Fit {{ $item['size'] ?? 'Any' }} &middot; {{ $item['color'] ?? 'Any finish' }}</p>

@@ -28,7 +28,7 @@
             @enderror
 
             <div class="flex flex-wrap gap-3">
-                <x-ui.button type="submit" wire:loading.attr="disabled" class="disabled:opacity-60">
+                <x-ui.button type="submit" size="lg" wire:loading.attr="disabled" class="disabled:opacity-60">
                     <span wire:loading.remove wire:target="addToCart">Add to cart</span>
                     <span wire:loading wire:target="addToCart">Adding&hellip;</span>
                 </x-ui.button>

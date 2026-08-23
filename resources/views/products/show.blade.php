@@ -159,6 +159,21 @@
             @if ($product->stock >= 1 && $product->stock <= 5)
                 <p class="text-sm text-stone">Only {{ $product->stock }} left in stock.</p>
             @endif
+
+            <ul class="grid gap-2 border-t border-line pt-6 text-xs text-stone">
+                <li class="flex items-center gap-2">
+                    <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5 20 7v5.5c0 4.6-3.4 8.2-8 9-4.6-.8-8-4.4-8-9V7l8-3.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" /></svg>
+                    Secure payment with Khalti
+                </li>
+                <li class="flex items-center gap-2">
+                    <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 1 0 8-8M4 12h4M4 12l3-3M4 12l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    14-day returns and exchanges
+                </li>
+                <li class="flex items-center gap-2">
+                    <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" /><circle cx="7.5" cy="18" r="1.5" fill="currentColor" /><circle cx="17.5" cy="18" r="1.5" fill="currentColor" /></svg>
+                    Free shipping over Rs. 10,000, otherwise Rs. 250
+                </li>
+            </ul>
         </div>
     </section>
 

@@ -9,11 +9,13 @@
     @else
         <section class="motion-fade relative border-b border-line">
             <div class="relative h-[75vh] max-h-[44rem] min-h-[30rem] w-full overflow-hidden bg-cream-dim">
-                <img
-                    src="{{ asset('images/storefront/lightweight-eyewear.png') }}"
-                    alt="A person wearing Luma Lens optical frames, photographed against a warm neutral backdrop"
-                    class="h-full w-full object-cover"
-                >
+                <div data-parallax="0.12" class="absolute inset-0">
+                    <img
+                        src="{{ asset('images/storefront/lightweight-eyewear.png') }}"
+                        alt="A person wearing Luma Lens optical frames, photographed against a warm neutral backdrop"
+                        class="motion-kenburns h-full w-full object-cover"
+                    >
+                </div>
                 <div class="absolute inset-0 bg-gradient-to-r from-ink/70 via-ink/25 to-transparent lg:from-ink/65 lg:via-transparent lg:to-transparent"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent"></div>
                 <div class="absolute inset-x-0 bottom-0 px-4 pb-12 sm:px-8 sm:pb-16 lg:inset-y-0 lg:flex lg:max-w-2xl lg:flex-col lg:justify-center lg:px-16 lg:pb-0">
@@ -27,6 +29,21 @@
             </div>
         </section>
 
+        <div class="overflow-hidden border-b border-line bg-ink py-3">
+            <div class="motion-marquee flex w-max gap-10 whitespace-nowrap text-sm font-medium uppercase tracking-[0.14em] text-cream/80" aria-hidden="true">
+                @for ($i = 0; $i < 2; $i++)
+                    <span>Free shipping over Rs. 10,000</span>
+                    <span class="text-gold">&middot;</span>
+                    <span>3D Try On, no app required</span>
+                    <span class="text-gold">&middot;</span>
+                    <span>Khalti secure checkout</span>
+                    <span class="text-gold">&middot;</span>
+                    <span>{{ $totalFrameCount }} frames, nothing generic</span>
+                    <span class="text-gold">&middot;</span>
+                @endfor
+            </div>
+        </div>
+
         <section class="border-b border-line">
             <div class="mx-auto max-w-[100rem] px-4 py-14 sm:px-8">
                 <h2 class="max-w-xl font-serif text-3xl leading-tight text-ink sm:text-4xl" data-reveal>Three ways to see clearly.</h2>
@@ -35,7 +52,7 @@
                         <img
                             src="https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=1600&q=85"
                             alt="Sunglasses"
-                            class="h-full w-full object-cover transition-opacity duration-200 ease-out group-hover:opacity-85"
+                            class="motion-zoom h-full w-full object-cover group-hover:scale-110"
                         >
                         <div class="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent"></div>
                         <p class="motion-press absolute bottom-6 left-6 font-serif text-2xl text-cream">Sunglasses</p>
@@ -44,7 +61,7 @@
                         <img
                             src="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=1200&q=85"
                             alt="Eyeglasses"
-                            class="h-full w-full object-cover transition-opacity duration-200 ease-out group-hover:opacity-85"
+                            class="motion-zoom h-full w-full object-cover group-hover:scale-110"
                         >
                         <div class="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent"></div>
                         <p class="motion-press absolute bottom-5 left-5 font-serif text-xl text-cream">Eyeglasses</p>
@@ -53,7 +70,7 @@
                         <img
                             src="https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=1200&q=85"
                             alt="Blue light frames"
-                            class="h-full w-full object-cover transition-opacity duration-200 ease-out group-hover:opacity-85"
+                            class="motion-zoom h-full w-full object-cover group-hover:scale-110"
                         >
                         <div class="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent"></div>
                         <p class="motion-press absolute bottom-5 left-5 font-serif text-xl text-cream">Blue light</p>

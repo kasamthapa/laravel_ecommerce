@@ -1,13 +1,23 @@
 @props(['product', 'wishlisted' => false])
 
 <article {{ $attributes->merge(['class' => 'group relative']) }}>
+    @php $gallery = $product->gallery(); @endphp
+
     <a href="{{ route('products.show', $product) }}" class="block" aria-label="{{ $product->name }}">
-        <div class="aspect-[4/5] overflow-hidden bg-cream-dim">
+        <div class="relative aspect-[4/5] overflow-hidden bg-cream-dim">
             <x-ui.product-image
-                :src="$product->image_url"
+                :src="$gallery[0]"
                 :alt="$product->name"
-                class="h-full w-full object-cover transition-opacity duration-200 ease-out group-hover:opacity-85 {{ $product->stock < 1 ? 'grayscale' : '' }}"
+                class="h-full w-full object-cover transition-opacity duration-200 ease-out {{ $product->stock < 1 ? 'grayscale' : '' }} {{ count($gallery) > 1 ? 'group-hover:opacity-0' : 'group-hover:opacity-85' }}"
             />
+            @if (count($gallery) > 1)
+                <x-ui.product-image
+                    :src="$gallery[1]"
+                    :alt="''"
+                    aria-hidden="true"
+                    class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 {{ $product->stock < 1 ? 'grayscale' : '' }}"
+                />
+            @endif
         </div>
     </a>
 

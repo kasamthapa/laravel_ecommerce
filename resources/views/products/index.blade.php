@@ -28,48 +28,44 @@
         </section>
 
         <section class="border-b border-line">
-            <div class="mx-auto max-w-[100rem] px-4 pt-14 sm:px-8">
-                <x-ui.section-heading eyebrow="Edit" heading="Shop by category" align="center" class="mx-auto" data-reveal />
-            </div>
-            <div class="mx-auto grid max-w-[100rem] gap-8 px-4 pb-14 pt-10 sm:px-8 sm:grid-cols-3">
-                @foreach ([
-                    ['label' => 'Eyeglasses', 'slug' => 'optical-frames', 'image' => 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=1200&q=85'],
-                    ['label' => 'Sunglasses', 'slug' => 'sunglasses', 'image' => 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=1200&q=85'],
-                    ['label' => 'Blue light', 'slug' => 'blue-light', 'image' => 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=1200&q=85'],
-                ] as $tile)
-                    <a href="{{ route('shop', ['category' => $tile['slug']]) }}" class="group block" data-reveal style="--reveal-delay: {{ $loop->index * 80 }}ms">
-                        <div class="aspect-[4/5] overflow-hidden bg-cream-dim">
-                            <img
-                                src="{{ $tile['image'] }}"
-                                alt="{{ $tile['label'] }} frames"
-                                class="h-full w-full object-cover transition-opacity duration-200 ease-out group-hover:opacity-85"
-                            >
-                        </div>
-                        <p class="motion-press mt-4 font-serif text-xl text-ink">{{ $tile['label'] }}</p>
+            <div class="mx-auto max-w-[100rem] px-4 py-14 sm:px-8">
+                <h2 class="max-w-xl font-serif text-3xl leading-tight text-ink sm:text-4xl" data-reveal>Three ways to see clearly.</h2>
+                <div class="mt-10 grid gap-4 lg:grid-cols-3">
+                    <a href="{{ route('shop', ['category' => 'sunglasses']) }}" class="group relative block aspect-[4/5] overflow-hidden bg-cream-dim lg:col-span-2 lg:row-span-2 lg:aspect-auto" data-reveal>
+                        <img
+                            src="https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=1600&q=85"
+                            alt="Sunglasses"
+                            class="h-full w-full object-cover transition-opacity duration-200 ease-out group-hover:opacity-85"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent"></div>
+                        <p class="motion-press absolute bottom-6 left-6 font-serif text-2xl text-cream">Sunglasses</p>
                     </a>
-                @endforeach
+                    <a href="{{ route('shop', ['category' => 'optical-frames']) }}" class="group relative block aspect-[16/9] overflow-hidden bg-cream-dim" data-reveal style="--reveal-delay: 80ms">
+                        <img
+                            src="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=1200&q=85"
+                            alt="Eyeglasses"
+                            class="h-full w-full object-cover transition-opacity duration-200 ease-out group-hover:opacity-85"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent"></div>
+                        <p class="motion-press absolute bottom-5 left-5 font-serif text-xl text-cream">Eyeglasses</p>
+                    </a>
+                    <a href="{{ route('shop', ['category' => 'blue-light']) }}" class="group relative block aspect-[16/9] overflow-hidden bg-cream-dim" data-reveal style="--reveal-delay: 160ms">
+                        <img
+                            src="https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=1200&q=85"
+                            alt="Blue light frames"
+                            class="h-full w-full object-cover transition-opacity duration-200 ease-out group-hover:opacity-85"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent"></div>
+                        <p class="motion-press absolute bottom-5 left-5 font-serif text-xl text-cream">Blue light</p>
+                    </a>
+                </div>
             </div>
         </section>
 
-        <section class="border-b border-line bg-cream-dim">
-            <div class="mx-auto max-w-[100rem] px-4 py-14 sm:px-8">
-                <x-ui.section-heading eyebrow="Craft" heading="What goes into every pair" align="center" class="mx-auto" data-reveal />
-                <div class="mt-10 grid gap-8 sm:grid-cols-3">
-                    @foreach ([
-                        ['step' => '01', 'label' => 'Sourced', 'image' => 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=1000&q=85', 'body' => 'Acetate and metal from mills we\'ve worked with for years — not whatever\'s cheapest that season.'],
-                        ['step' => '02', 'label' => 'Fitted', 'image' => 'https://images.unsplash.com/photo-1587310311582-aa7610e90826?auto=format&fit=crop&w=1000&q=85', 'body' => 'Every shape is tested across real face widths before it reaches the shop, not just modeled on a screen.'],
-                        ['step' => '03', 'label' => 'Finished', 'image' => 'https://images.unsplash.com/photo-1610136649349-0f646f318053?auto=format&fit=crop&w=1000&q=85', 'body' => 'Hinges, hardware, and lens edging are checked by hand before a frame ever ships to you.'],
-                    ] as $step)
-                        <div data-reveal style="--reveal-delay: {{ $loop->index * 90 }}ms">
-                            <div class="aspect-[4/5] overflow-hidden bg-cream">
-                                <img src="{{ $step['image'] }}" alt="{{ $step['label'] }}" class="h-full w-full object-cover">
-                            </div>
-                            <p class="mt-4 text-xs font-medium tracking-[0.14em] text-stone">{{ $step['step'] }}</p>
-                            <h3 class="mt-1 font-serif text-xl text-ink">{{ $step['label'] }}</h3>
-                            <p class="mt-2 text-sm leading-relaxed text-stone">{{ $step['body'] }}</p>
-                        </div>
-                    @endforeach
-                </div>
+        <section class="border-b border-line bg-ink">
+            <div class="mx-auto max-w-[100rem] px-4 py-16 text-center sm:px-8 sm:py-20" data-reveal>
+                <p class="font-serif text-6xl text-cream sm:text-7xl">{{ $totalFrameCount }}</p>
+                <p class="mx-auto mt-4 max-w-md text-base leading-relaxed text-cream/70">frames. That's the entire collection &mdash; every one fitted across two widths, checked by hand, and still here next season instead of clearanced out.</p>
             </div>
         </section>
 
@@ -98,9 +94,8 @@
                 >
             </div>
             <div class="lg:order-1" data-reveal style="--reveal-delay: 90ms">
-                <p class="text-xs font-medium uppercase tracking-[0.14em] text-stone">Our approach</p>
-                <h2 class="mt-4 font-serif text-3xl leading-tight text-ink sm:text-4xl">A small, considered collection</h2>
-                <p class="mt-5 max-w-md text-base leading-relaxed text-stone">We keep the range tight on purpose. Every frame is chosen for how it wears day to day &mdash; the weight on your nose, the way it catches light, how it looks by the third wear, not just the first. No seasonal clutter to sort through, just frames worth keeping.</p>
+                <h2 class="font-serif text-3xl leading-tight text-ink sm:text-4xl">Nothing here is a guess.</h2>
+                <p class="mt-5 max-w-md text-base leading-relaxed text-stone">Acetate and metal come from mills we've used for years, not whichever supplier quoted lowest this season. Widths are set per shape &mdash; Narrow, Medium, or Wide, whichever that frame actually sits well in, not a default applied across the board. Hinges get checked by hand before a frame leaves for you, every one, not a sample batch.</p>
             </div>
         </section>
     @endif

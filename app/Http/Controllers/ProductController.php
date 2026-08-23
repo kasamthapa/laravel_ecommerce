@@ -12,6 +12,7 @@ class ProductController extends Controller
     {
         return view('products.index', [
             'featuredProducts' => Product::active()->featured()->with('category')->withAvg('reviews', 'rating')->withCount('reviews')->limit(4)->get(),
+            'totalFrameCount' => Product::active()->count(),
             'wishlistedProductIds' => $this->wishlistedProductIds($request),
             'cartCount' => collect(session('cart.items', []))->sum('quantity'),
         ]);

@@ -9,18 +9,39 @@
         </div>
     @else
         <form wire:submit="addToCart" class="grid gap-6">
-            <div class="grid gap-4 sm:grid-cols-3">
-                <x-ui.select label="Fit" wire:model="size">
-                    @foreach ($product->sizes as $sizeOption)
-                        <option value="{{ $sizeOption }}">{{ $sizeOption }}</option>
-                    @endforeach
-                </x-ui.select>
-                <x-ui.select label="Finish" wire:model="color">
-                    @foreach ($product->colors as $colorOption)
-                        <option value="{{ $colorOption }}">{{ $colorOption }}</option>
-                    @endforeach
-                </x-ui.select>
-                <x-ui.input label="Qty" type="number" wire:model="quantity" min="1" :max="min(10, $product->stock)" />
+            @if (count($product->sizes) > 1)
+                <div>
+                    <p class="text-xs font-medium uppercase tracking-[0.14em] text-stone">Fit</p>
+                    <div class="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-label="Fit">
+                        @foreach ($product->sizes as $sizeOption)
+                            <button type="button" wire:click="$set('size', '{{ $sizeOption }}')" role="radio" aria-checked="{{ $size === $sizeOption ? 'true' : 'false' }}" class="motion-press border px-4 py-2 text-sm {{ $size === $sizeOption ? 'border-ink text-ink' : 'border-line text-stone hover:border-ink hover:text-ink' }}">
+                                {{ $sizeOption }}
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            @if (count($product->colors) > 1)
+                <div>
+                    <p class="text-xs font-medium uppercase tracking-[0.14em] text-stone">Finish</p>
+                    <div class="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-label="Finish">
+                        @foreach ($product->colors as $colorOption)
+                            <button type="button" wire:click="$set('color', '{{ $colorOption }}')" role="radio" aria-checked="{{ $color === $colorOption ? 'true' : 'false' }}" class="motion-press border px-4 py-2 text-sm {{ $color === $colorOption ? 'border-ink text-ink' : 'border-line text-stone hover:border-ink hover:text-ink' }}">
+                                {{ $colorOption }}
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <div>
+                <p class="text-xs font-medium uppercase tracking-[0.14em] text-stone">Quantity</p>
+                <div class="mt-2 flex items-center gap-3">
+                    <button type="button" wire:click="$set('quantity', {{ max(1, $quantity - 1) }})" class="motion-press grid h-9 w-9 place-items-center border border-line text-ink" aria-label="Decrease quantity">&minus;</button>
+                    <span class="w-6 text-center text-ink" aria-live="polite">{{ $quantity }}</span>
+                    <button type="button" wire:click="$set('quantity', {{ min(10, $product->stock, $quantity + 1) }})" class="motion-press grid h-9 w-9 place-items-center border border-line text-ink" aria-label="Increase quantity">+</button>
+                </div>
             </div>
 
             @error('quantity')

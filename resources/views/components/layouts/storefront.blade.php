@@ -29,7 +29,7 @@
                             </svg>
                             <span class="sr-only">Menu</span>
                         </button>
-                        <a href="{{ route('products.index') }}" class="font-serif text-2xl tracking-tight text-ink">Luma Lens</a>
+                        <a href="{{ route('products.index') }}"><x-brand-mark /></a>
                     </div>
 
                     <nav aria-label="Primary" class="hidden items-center gap-8 text-sm font-medium text-ink lg:flex">
@@ -128,7 +128,7 @@
             <footer class="border-t border-line bg-cream text-ink">
                 <div class="mx-auto grid max-w-[100rem] gap-10 px-4 py-12 sm:px-8 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_1fr]">
                     <div>
-                        <p class="font-serif text-xl text-ink">Luma Lens</p>
+                        <x-brand-mark icon-class="h-4 w-7" text-class="font-serif text-xl text-ink" />
                         <p class="mt-4 max-w-xs text-sm leading-relaxed text-stone">Optical frames, sunglasses, and screen-ready lenses selected for fit, finish, and everyday wear in Nepal.</p>
                     </div>
                     <div>

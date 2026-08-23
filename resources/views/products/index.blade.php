@@ -64,7 +64,7 @@
 
         <section class="border-b border-line bg-ink">
             <div class="mx-auto max-w-[100rem] px-4 py-16 text-center sm:px-8 sm:py-20" data-reveal>
-                <p class="font-serif text-6xl text-cream sm:text-7xl">{{ $totalFrameCount }}</p>
+                <p class="font-serif text-6xl text-gold sm:text-7xl">{{ $totalFrameCount }}</p>
                 <p class="mx-auto mt-4 max-w-md text-base leading-relaxed text-cream/70">frames. That's the entire collection &mdash; every one fitted across two widths, checked by hand, and still here next season instead of clearanced out.</p>
             </div>
         </section>

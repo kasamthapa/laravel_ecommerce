@@ -15,6 +15,12 @@
             <aside class="flex shrink-0 flex-col justify-between border-b border-white/10 bg-ink px-5 py-6 text-white lg:w-64 lg:border-b-0 lg:border-r lg:py-8">
                 <div>
                     <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5">
+                        <svg class="h-4 w-7 shrink-0 text-cream" viewBox="0 0 40 20" fill="none" aria-hidden="true">
+                            <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.6" />
+                            <circle cx="30" cy="10" r="7" stroke="currentColor" stroke-width="1.6" />
+                            <path d="M17 8.5c1-1.6 5-1.6 6 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                            <path d="M3 7 0 4.5M37 7l3-2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                        </svg>
                         <span>
                             <span class="block font-serif text-lg text-cream">Luma Lens</span>
                             <span class="block text-[0.65rem] font-medium uppercase tracking-widest text-cream/50">Admin console</span>

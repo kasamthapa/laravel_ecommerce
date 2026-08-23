@@ -1,10 +1,16 @@
 <div>
     @if ($added)
-        <div class="border border-line bg-success-tint p-5 text-sm text-success">
-            <p class="font-medium">Added to your cart.</p>
-            <div class="mt-3 flex flex-wrap items-center gap-4">
-                <x-ui.button :href="route('cart.index')" size="sm">View cart</x-ui.button>
-                <button type="button" wire:click="$set('added', false)" class="motion-press text-xs font-medium uppercase tracking-wide text-success underline-offset-2 hover:underline">Add another</button>
+        <div class="flex items-start gap-3 border border-line bg-success-tint p-5 text-sm text-success">
+            <svg class="motion-pop mt-0.5 h-6 w-6 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6" />
+                <path d="M8 12.5l2.5 2.5L16 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <div>
+                <p class="font-medium">Added to your cart.</p>
+                <div class="mt-3 flex flex-wrap items-center gap-4">
+                    <x-ui.button :href="route('cart.index')" size="sm">View cart</x-ui.button>
+                    <button type="button" wire:click="$set('added', false)" class="motion-press text-xs font-medium uppercase tracking-wide text-success underline-offset-2 hover:underline">Add another</button>
+                </div>
             </div>
         </div>
     @else

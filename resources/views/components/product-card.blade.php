@@ -22,7 +22,7 @@
     </a>
 
     @if ($product->model_path)
-        <p class="pointer-events-none absolute left-3 top-3 border border-ink bg-cream/90 px-2 py-1 text-[0.65rem] font-medium uppercase tracking-[0.1em] text-ink">
+        <p class="pointer-events-none absolute left-3 top-3 border border-gold bg-cream/90 px-2 py-1 text-[0.65rem] font-medium uppercase tracking-[0.1em] text-ink">
             3D &middot; Try On
         </p>
     @endif

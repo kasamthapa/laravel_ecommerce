@@ -14,8 +14,8 @@
                     <img data-gallery-main src="{{ $product->gallery()[0] }}" alt="{{ $product->name }}" class="h-full w-full object-cover {{ $product->stock < 1 ? 'grayscale' : '' }}">
 
                     @if ($product->model_path)
-                        <button type="button" data-view-tab-proxy="tryon" class="motion-press absolute inset-x-0 top-4 z-[2] mx-auto flex w-fit items-center gap-2 rounded-full border border-ink bg-cream/95 px-4 py-2 text-xs font-medium text-ink shadow-sm">
-                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <button type="button" data-view-tab-proxy="tryon" class="motion-press absolute inset-x-0 top-4 z-[2] mx-auto flex w-fit items-center gap-2 rounded-full border border-gold bg-cream/95 px-4 py-2 text-xs font-medium text-ink shadow-sm">
+                            <svg class="h-4 w-4 text-gold" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <circle cx="6.5" cy="13" r="3.5" stroke="currentColor" stroke-width="1.6" />
                                 <circle cx="17.5" cy="13" r="3.5" stroke="currentColor" stroke-width="1.6" />
                                 <path d="M10 12.2c.6-1 1.4-1 2 0M3 12.5l-1.5-.6M21 12.5l1.5-.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />

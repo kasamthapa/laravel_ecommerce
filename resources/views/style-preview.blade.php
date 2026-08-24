@@ -101,9 +101,21 @@
 
         /* Full-bleed hero: breaks out of <main>'s max-width to run edge to
            edge, with the real product photo behind it. */
+        /* Height matches the homepage hero's own sizing exactly
+           (h-[75vh] max-h-[44rem] min-h-[30rem]): tied to viewport HEIGHT,
+           not width. A fixed rem height (the previous version's bug) stays
+           put as the window gets wider, so on a wide-but-normal-height
+           desktop monitor the box gets extremely short relative to its
+           width — object-fit: cover then has to zoom in hard on the tall
+           portrait source to fill it, and the visible vertical slice gets
+           too thin to hold the glasses no matter what object-position says.
+           Scaling height off the viewport keeps the box tall enough at any
+           width. */
         .hero {
             position: relative;
             width: 100%;
+            height: 75vh;
+            max-height: 44rem;
             min-height: 30rem;
             display: flex;
             align-items: flex-end;
@@ -112,7 +124,6 @@
 
         @media (min-width: 768px) {
             .hero {
-                min-height: 38rem;
                 align-items: center;
             }
         }

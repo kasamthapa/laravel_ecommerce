@@ -15,6 +15,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\WishlistController;
+use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
@@ -73,3 +74,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/messages', [AdminChatMessageController::class, 'index'])->name('chat-messages.index');
     Route::delete('/messages/{chatMessage}', [AdminChatMessageController::class, 'destroy'])->name('chat-messages.destroy');
 });
+
+// Isolated, unlinked visual test page for approving a color/type direction
+// before any site-wide rollout. Not in any nav menu, not referenced by
+// name() anywhere else — reachable only by typing the URL directly.
+Route::get('/style-preview', function () {
+    return view('style-preview', [
+        'product' => Product::active()->first(),
+    ]);
+})->name('style-preview');

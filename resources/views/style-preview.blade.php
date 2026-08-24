@@ -117,13 +117,19 @@
             }
         }
 
+        /* object-position matches the homepage hero's crop exactly (verified
+           via computed styles there: object-position: 50% 50%, i.e. no
+           override / plain center). The previous 78% 22% value pushed the
+           visible window toward the top-right of this tall portrait source,
+           cropping out the eyes and glasses — only hair/forehead stayed in
+           frame. Center is where the face and glasses actually sit. */
         .hero-photo {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: 78% 22%;
+            object-position: 50% 50%;
         }
 
         /* Legibility scrim only — one color (page background) at varying

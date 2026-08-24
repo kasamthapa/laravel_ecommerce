@@ -13,7 +13,8 @@ description: Use for any visual, UI, or frontend work on Luma Lens — new pages
 - Card/section surface: `#171717`
 - Text on dark: `#F2F0EA`
 - Accent: `#D97A2E` (warm amber-gold) — ONLY on CTA fills and small active-state details, roughly 5–8% of visual area max, never a large fill or background
-- No blue anywhere. No gradients anywhere.
+- No decorative color gradients anywhere (a black-to-transparent darkening fade behind photo text, for legibility, is fine — that's functional, not decorative)
+- No blue anywhere
 
 **Type**
 
@@ -34,19 +35,21 @@ description: Use for any visual, UI, or frontend work on Luma Lens — new pages
 
 This is a near-black-plus-single-accent palette, which is one of the most common defaults in AI-generated design right now — the color choice alone won't make anything look distinctive. Distinctiveness has to come from execution:
 
-- **Every hero needs a real photo.** Full-bleed, with a dark overlay/gradient toward the page background so the amber and off-white type stay legible over it. A text-only hero on a flat color is the single most common miss on this project so far — don't ship one.
-- **Pick one signature move per screen and commit to it** — usually how the photo, the amber accent, and the type interact — then keep everything else quiet. Don't scatter extra decoration, animation, or flourishes around it; restraint everywhere except that one deliberate choice is what makes it read.
+- **Every hero needs a real photo**, full-bleed or as a clear dominant panel, with a dark overlay/fade toward the page background so the amber and off-white type stay legible near it.
+- **Product photography must actually show the product.** A hero photo that's technically present but cropped so the glasses/eyes aren't in frame serves the brief no better than no photo at all. Check the focal point, not just that an image tag exists.
+- **Pick one signature move per screen and commit to it** — usually how the photo, the amber accent, and the type interact — then keep everything else quiet. Restraint everywhere except that one deliberate choice is what makes it read.
 - **Use real content, not placeholders** — a real product from the catalog, real copy, photography already live on the site.
 - **Quality floor on every ship:** responsive down to mobile width, visible keyboard focus states, motion respects `prefers-reduced-motion`.
 
 ## Process
 
-1. Before writing code, write a short plan: what's the one signature element here, and where does the required photo go and how is it treated (crop, overlay, focal point)?
-2. Self-critique the plan: would this look the same for any eyewear brand, or does it actually use Luma's own product and photography? If it reads generic, revise before building.
+1. Before writing code, write a short plan: what's the one signature element here, and where does the required photo go, and how is it cropped/positioned so the actual product stays in frame?
+2. Self-critique the plan: would this look the same for any eyewear brand, or does it use Luma's own product and photography in a way that's actually recognizable as eyewear? If it reads generic, or if the product itself isn't visible, revise before building.
 3. Build against the locked tokens above.
-4. Screenshot the result and check it against both the locked tokens and the quality bar — not just "does it compile," but does it actually look considered.
-5. Report back what was built, what was verified (with real computed values, not "looks right"), and flag anything that couldn't be self-verified (e.g. anything needing a real webcam, or real human judgment on the aesthetic itself).
+4. Screenshot the result and check it against both the locked tokens and the quality bar.
+5. Report back what was built, what was verified (real computed values, not "looks right"), and flag anything that couldn't be self-verified.
 
-## Known open issue
+## Known lessons so far
 
-The first `/style-preview` build technically matched every locked token exactly but shipped with no photography — a flat colored card with text and a button, nothing else. It passed every technical check and still wasn't the level of quality expected. Technical spec compliance is necessary but not sufficient — always sanity-check against "does this actually look like a real, considered eyewear brand" before reporting something done.
+- **v1** matched every locked token exactly but shipped with no photography at all — a flat colored card, text and a button, nothing else. Fixed in v2.
+- **v2** added real photography, but the crop/position hid the actual product — only hair and forehead were in frame, no glasses, no eyes. Technical presence of a photo isn't the same as the photo doing its job. Always confirm the product itself is the visible focal point, not just that an `<img>` exists.

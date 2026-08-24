@@ -83,3 +83,12 @@ Route::get('/style-preview', function () {
         'product' => Product::active()->first(),
     ]);
 })->name('style-preview');
+
+// Light-dominated variant of the same page, for side-by-side comparison
+// against /style-preview above while the base palette is still undecided.
+// Same isolation rules: unlinked, unlisted, direct-URL only.
+Route::get('/style-preview-light', function () {
+    return view('style-preview-light', [
+        'product' => Product::active()->first(),
+    ]);
+})->name('style-preview-light');

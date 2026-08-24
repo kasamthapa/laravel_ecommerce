@@ -239,10 +239,10 @@ export const bindProductViewToggle = () => {
             tabs.forEach((tab) => {
                 const isActive = tab.dataset.viewTab === view;
                 tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
-                tab.classList.toggle('border-ink', isActive);
-                tab.classList.toggle('text-ink', isActive);
+                tab.classList.toggle('border-volt', isActive);
+                tab.classList.toggle('text-bone', isActive);
                 tab.classList.toggle('border-transparent', !isActive);
-                tab.classList.toggle('text-stone', !isActive);
+                tab.classList.toggle('text-smoke', !isActive);
             });
 
             panels.forEach((panel) => {

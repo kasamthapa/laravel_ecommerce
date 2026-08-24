@@ -156,8 +156,8 @@ const bindProductGallery = () => {
 
             thumbs.forEach((thumb) => {
                 const isActive = Number(thumb.dataset.index) === index;
-                thumb.classList.toggle('border-ink', isActive);
-                thumb.classList.toggle('border-line', !isActive);
+                thumb.classList.toggle('border-volt', isActive);
+                thumb.classList.toggle('border-hairline', !isActive);
             });
         };
 

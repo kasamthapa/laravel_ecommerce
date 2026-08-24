@@ -128,19 +128,28 @@
             }
         }
 
-        /* object-position matches the homepage hero's crop exactly (verified
-           via computed styles there: object-position: 50% 50%, i.e. no
-           override / plain center). The previous 78% 22% value pushed the
-           visible window toward the top-right of this tall portrait source,
-           cropping out the eyes and glasses — only hair/forehead stayed in
-           frame. Center is where the face and glasses actually sit. */
+        /* object-position: matching the homepage's plain 50% 50% (previous
+           commit) still cropped the glasses out on a real wide-but-normal-
+           height monitor — confirmed by a live screenshot, and by reading
+           the source photo directly (public/images/storefront/
+           lightweight-eyewear.png, 864x1821): the eyebrows/glasses sit at
+           roughly 32-44% down the frame, the chin around 54% — the face is
+           not vertically centered in this portrait, so a dead-center crop
+           starts losing the top of the glasses the moment the visible
+           window gets tight (which a wide/short viewport forces regardless
+           of container height). The homepage has this same latent bias, it
+           just isn't usually visible there. 40% anchors the window on the
+           eyes/glasses with margin above and below at every width tested,
+           at the cost of the chin/shoulders getting tighter on very wide
+           screens instead — the correct trade-off per the skill's
+           requirement that the glasses specifically stay in frame. */
         .hero-photo {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: 50% 50%;
+            object-position: 50% 40%;
         }
 
         /* Legibility scrim only — one color (page background) at varying

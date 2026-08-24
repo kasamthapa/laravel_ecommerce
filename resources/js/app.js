@@ -274,6 +274,7 @@ const bindAppInteractions = () => {
     bindAdminCharts();
     bindScrollReveal();
     bindStickyCta();
+    bindCarouselViewers();
 };
 
 if (document.readyState === 'loading') {
@@ -281,5 +282,5 @@ if (document.readyState === 'loading') {
 } else {
     bindAppInteractions();
 }
-import { bindProductViewToggle } from './glasses-viewer';
+import { bindProductViewToggle, bindCarouselViewers } from './glasses-viewer';
 import { bindScrollReveal } from './scroll-reveal';

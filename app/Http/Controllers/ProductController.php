@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -11,7 +12,14 @@ class ProductController extends Controller
     public function index(Request $request): View
     {
         return view('products.index', [
-            'featuredProducts' => Product::active()->featured()->with('category')->withAvg('reviews', 'rating')->withCount('reviews')->limit(4)->get(),
+            'featuredProducts' => Product::active()->featured()->with('category')->withAvg('reviews', 'rating')->withCount('reviews')->limit(8)->get(),
+            // Categories have no cover-image field of their own, so the tile
+            // photo borrows the newest active product in that category.
+            'categories' => Category::withCount(['products' => fn ($query) => $query->active()])
+                ->with(['products' => fn ($query) => $query->active()->latest()])
+                ->get()
+                ->filter(fn (Category $category) => $category->products_count > 0)
+                ->values(),
             'totalFrameCount' => Product::active()->count(),
             'wishlistedProductIds' => $this->wishlistedProductIds($request),
             'cartCount' => collect(session('cart.items', []))->sum('quantity'),

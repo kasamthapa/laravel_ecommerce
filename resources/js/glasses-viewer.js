@@ -302,3 +302,46 @@ export const bindProductViewToggle = () => {
         });
     });
 };
+
+/**
+ * Mounts the same drag-viewer used by the Photos/3D View tab into every
+ * carousel card that has a model — but only while the card is actually
+ * scrolled into view. Each mount is a real WebGL context plus a PMREM
+ * environment bake and its own render loop, so eagerly mounting every card
+ * in a "Best Sellers" rail at once would stack up several live contexts a
+ * customer never scrolls to. Gating on IntersectionObserver keeps at most
+ * a couple mounted at a time regardless of how many carousel cards have a
+ * model_path, and tears each one down again once it scrolls back out.
+ */
+export const bindCarouselViewers = () => {
+    const stages = document.querySelectorAll('[data-carousel-viewer]');
+
+    if (stages.length === 0 || !('IntersectionObserver' in window)) {
+        return;
+    }
+
+    const disposers = new WeakMap();
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            const stage = entry.target;
+
+            if (entry.isIntersecting && !disposers.has(stage)) {
+                const dispose = mountViewer(stage);
+
+                if (dispose) {
+                    disposers.set(stage, dispose);
+                }
+            } else if (!entry.isIntersecting && disposers.has(stage)) {
+                disposers.get(stage)();
+                disposers.delete(stage);
+            }
+        });
+    }, { rootMargin: '160px', threshold: 0.2 });
+
+    stages.forEach((stage) => observer.observe(stage));
+
+    window.addEventListener('pagehide', () => {
+        stages.forEach((stage) => disposers.get(stage)?.());
+    });
+};

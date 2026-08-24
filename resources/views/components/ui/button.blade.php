@@ -8,12 +8,12 @@
     ];
 
     $variants = [
-        'primary' => 'border border-accent bg-accent text-cream',
-        'secondary' => 'border border-ink bg-transparent text-ink',
-        'ghost' => 'border-0 bg-transparent p-0 text-ink underline decoration-1 underline-offset-4',
+        'primary' => 'border border-volt bg-volt text-bone hover:bg-bone hover:text-black',
+        'secondary' => 'border border-bone bg-transparent text-bone hover:bg-bone hover:text-black',
+        'ghost' => 'border-0 bg-transparent p-0 text-bone underline decoration-1 underline-offset-4 hover:text-volt',
     ];
 
-    $base = 'motion-press inline-flex items-center justify-center gap-2 rounded-sm font-medium tracking-wide disabled:opacity-50 disabled:pointer-events-none';
+    $base = 'motion-invert inline-flex items-center justify-center gap-2 rounded-sm font-medium uppercase tracking-wide disabled:opacity-50 disabled:pointer-events-none';
     $classes = trim($base.' '.($variants[$variant] ?? $variants['primary']).' '.($variant === 'ghost' ? '' : ($sizes[$size] ?? $sizes['md'])));
 @endphp
 

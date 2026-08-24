@@ -3,7 +3,7 @@
 <article {{ $attributes->merge(['class' => 'group relative']) }}>
     @php $gallery = $product->gallery(); @endphp
 
-    <div class="relative aspect-[4/5] overflow-hidden bg-cream-dim">
+    <div class="motion-card relative aspect-[4/5] overflow-hidden bg-charcoal group-hover:scale-[1.03]">
         <a href="{{ route('products.show', $product) }}" class="absolute inset-0 z-[1]" aria-label="{{ $product->name }}">
             <x-ui.product-image
                 :src="$gallery[0]"
@@ -28,7 +28,7 @@
     </div>
 
     @if ($product->model_path)
-        <p class="pointer-events-none absolute left-3 top-3 border border-gold bg-cream/90 px-2 py-1 text-[0.65rem] font-medium uppercase tracking-[0.1em] text-ink">
+        <p class="pointer-events-none absolute left-3 top-3 border border-gold bg-black/90 px-2 py-1 text-[0.65rem] font-medium uppercase tracking-[0.1em] text-gold">
             3D &middot; Try On
         </p>
     @endif
@@ -40,13 +40,13 @@
     @endauth
 
     <a href="{{ route('products.show', $product) }}" class="mt-4 block">
-        <h3 class="font-serif text-lg text-ink">{{ $product->name }}</h3>
-        <p class="mt-1 text-sm text-stone">
+        <h3 class="font-display text-lg font-semibold uppercase tracking-wide text-bone">{{ $product->name }}</h3>
+        <p class="mt-1 text-sm text-smoke">
             @if ($product->stock < 1)
                 Sold out
             @else
                 @if ($product->compare_at_price)
-                    <span class="text-stone-light line-through">Rs. {{ number_format((float) $product->compare_at_price) }}</span>
+                    <span class="text-smoke-dim line-through">Rs. {{ number_format((float) $product->compare_at_price) }}</span>
                 @endif
                 Rs. {{ number_format((float) $product->price) }}
             @endif

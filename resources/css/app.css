@@ -4,7 +4,8 @@
 @source '../../storage/framework/views/*.php';
 
 /*
- * Design tokens — Luma Lens editorial redesign.
+ * Design tokens — Luma Lens editorial redesign (admin panel still reads
+ * these; left untouched this phase).
  * Palette: warm cream / near-black / single forest-green accent.
  * Type: Fraunces (editorial serif, headings) + Inter (humanist sans, body).
  * Scale: modular 1.25 ratio from a 16px base. Spacing stays on Tailwind's
@@ -36,6 +37,38 @@
     --color-success-tint: #e9f1ea;
     --color-error: #a64d3a;
     --color-error-tint: #f6e9e6;
+
+    /*
+     * Storefront-only palette — athletic/performance redesign phase.
+     * Kept as new tokens rather than replacing the tokens above, because
+     * the admin panel (out of scope this phase) reads the cream/ink/accent
+     * tokens directly and must not visually change.
+     * Bold, high-contrast, single-accent: near-black + near-white as the
+     * dominant register, pure white reserved for deliberate light-section
+     * breaks, one confident electric-blue accent for CTAs/active states.
+     * Gold stays imported from the palette above for AR/3D badges only —
+     * still a rare second accent, not a competing primary color.
+     */
+    --font-display: 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
+
+    --color-black: #0f0f0f;
+    --color-charcoal: #1a1a1a;
+    --color-bone: #f5f5f0;
+    --color-bone-soft: #d4d4ce;
+    --color-smoke: #a8a89f;
+    --color-smoke-dim: #8c8c83;
+    --color-hairline: #2a2a2a;
+    /* Light-section bg is plain `bg-white`; --color-black above doubles as
+       the near-black text color to pair with it (`text-black`). */
+
+    --color-volt: #0057ff;
+    --color-volt-dark: #0044cc;
+    --color-volt-tint: #131f3d;
+
+    /* Brighter success/error variants — the palette-above pair was tuned
+       for text on cream and falls under 4.5:1 against near-black. */
+    --color-signal-good: #6fae74;
+    --color-signal-bad: #e07a63;
 
     /* Corners: near-square, a hint of softening only */
     --radius-sm: 2px;
@@ -76,6 +109,17 @@
     ::selection {
         background: var(--color-accent);
         color: var(--color-cream);
+    }
+
+    /* Storefront's new dark palette gets its own selection/focus accent,
+       scoped to body.storefront so the admin panel keeps its green accent. */
+    body.storefront ::selection {
+        background: var(--color-volt);
+        color: var(--color-bone);
+    }
+
+    body.storefront :focus-visible {
+        outline-color: var(--color-volt);
     }
 
     :focus-visible {
@@ -197,8 +241,8 @@
         opacity: 0;
         transform: translate3d(0, 36px, 0) scale(0.94);
         transition:
-            opacity 700ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
-            transform 700ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+            opacity var(--reveal-duration, 700ms) cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+            transform var(--reveal-duration, 700ms) cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
     }
 
     [data-reveal].is-revealed {
@@ -231,6 +275,27 @@
     /* Infinite-loop marquee ticker. */
     .motion-marquee {
         animation: luma-marquee 22s linear infinite;
+    }
+
+    /*
+     * Athletic-redesign motion — storefront only, new class names so the
+     * admin panel's existing .motion-press/.motion-zoom timing is untouched.
+     * Confident and fast, not soft: sharp easing, short durations, real
+     * scale instead of opacity fades.
+     */
+
+    /* Product-card hover: a confident, fast scale-up (paired with
+       group-hover:scale-* in markup, no bounce). */
+    .motion-card {
+        transition: transform 150ms ease-out;
+    }
+
+    /* CTA hover: solid, sharp invert — not a gentle opacity fade. */
+    .motion-invert {
+        transition:
+            background-color 150ms ease-out,
+            border-color 150ms ease-out,
+            color 150ms ease-out;
     }
 }
 

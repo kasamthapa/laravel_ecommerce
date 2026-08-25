@@ -37,7 +37,9 @@
                     ['icon' => 'return', 'label' => 'Easy returns', 'text' => 'Not the right fit? Send it back, no hassle.'],
                 ] as $item)
                     <div class="flex items-start gap-3 bg-black px-5 py-8">
-                        <span class="mt-0.5 shrink-0 text-volt">
+                        {{-- Muted neutral, not the accent — 4 repeated icons is exactly
+                             the "large repeated element" case the accent stays out of. --}}
+                        <span class="mt-0.5 shrink-0 text-smoke">
                             @switch($item['icon'])
                                 @case('shipping')
                                     <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /><circle cx="7" cy="18" r="1.6" stroke="currentColor" stroke-width="1.6" /><circle cx="17.5" cy="18" r="1.6" stroke="currentColor" stroke-width="1.6" /></svg>
@@ -104,7 +106,9 @@
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent"></div>
                                 <div class="absolute inset-x-0 bottom-0 p-6">
                                     <p class="font-display text-3xl font-extrabold uppercase tracking-tight text-bone">{{ $category->name }}</p>
-                                    <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-volt">{{ $category->products_count }} {{ Str::plural('frame', $category->products_count) }}</p>
+                                    {{-- Muted neutral, not the accent — 3 repeated tiles is
+                                         the same "large repeated element" case as the icons above. --}}
+                                    <p class="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-smoke">{{ $category->products_count }} {{ Str::plural('frame', $category->products_count) }}</p>
                                 </div>
                             </a>
                         @endforeach

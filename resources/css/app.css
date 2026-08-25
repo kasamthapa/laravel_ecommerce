@@ -96,6 +96,75 @@
     --text-5xl--line-height: 1.05;
 }
 
+/*
+ * Homepage-only light re-skin — the chosen direction per the
+ * luma-lens-design skill, scoped to body.theme-light (applied only on the
+ * real homepage route, see components/layouts/storefront.blade.php).
+ *
+ * Every dark-variant utility class above (bg-black, bg-charcoal, text-bone,
+ * text-smoke, text-smoke-dim, border-hairline, bg-hairline, text-volt,
+ * bg-volt, bg-volt-tint) reads its color through var(--color-*) — Tailwind
+ * v4 compiles utilities against the custom property, not an inlined literal
+ * (confirmed in the built CSS: `.bg-black{background-color:var(--color-black)}`).
+ * Redefining those same variable names inside this one scope re-skins the
+ * whole homepage subtree — header, promo bar, every section, footer — with
+ * zero class-name changes anywhere, while every other page (shop, PDP,
+ * cart, checkout, account, admin) keeps reading the unscoped values above,
+ * completely untouched.
+ *
+ * --color-black and --color-bone swap roles entirely (black becomes the
+ * light page background, bone becomes the dark text) rather than just
+ * changing independently — that keeps every existing dark/light contrast
+ * PAIR in the markup (e.g. the button component's `hover:bg-bone
+ * hover:text-black` invert) still a valid, still-inverting pair after the
+ * swap, with no markup changes needed.
+ */
+body.theme-light {
+    --color-black: #f2f0ea;
+    --color-charcoal: #fcfbf8;
+    --color-bone: #171717;
+    --color-smoke: rgba(23, 23, 23, 0.65);
+    --color-smoke-dim: rgba(23, 23, 23, 0.5);
+    --color-hairline: rgba(23, 23, 23, 0.12);
+
+    --color-volt: #d97a2e;
+    --color-volt-dark: #b8621f;
+    --color-volt-tint: #f6e6d3;
+
+    /* Gold (#b8872e, from the base palette) drops to 2.82:1 against this
+       light background — fails AA even for large text. This is the exact
+       same class of bug flagged earlier in the project for gold-on-cream;
+       darkened to a deep bronze that clears 4.5:1+ on both the page and
+       card surface, scoped here so the PDP/cart's still-dark gold badges
+       are untouched. */
+    --color-gold: #7d5a1f;
+}
+
+/* CTA buttons need to be a fully rounded pill per the skill file, but the
+   shared <x-ui.button> component (rounded-sm, 2px) and the quick-add
+   button (no radius class at all) are both also used on still-dark pages
+   (PDP, /shop) — editing their class strings directly would change those
+   pages' button shape too. Scoped overrides instead: harmless everywhere
+   else, pill-shaped only within this homepage scope. `.qa-cta` is an inert
+   marker class added to the quick-add button for exactly this hook. */
+body.theme-light .rounded-sm,
+body.theme-light .qa-cta {
+    border-radius: 9999px;
+}
+
+/* Cards get a hairline edge and a small radius, not a flat cut — per the
+   skill file. Product-card, category-tile, and carousel-3D-card photo
+   containers all already share the .motion-card class (used for the
+   150ms/1.03x hover), so this one scoped rule covers all three without
+   touching the (also cross-page) component markup. The trust-strip already
+   gets its dividers from the bg-hairline grid-gap trick, so it's left as
+   is — that's the same "hairline, not flat cut" principle applied to a
+   strip layout instead of individual cards. */
+body.theme-light .motion-card {
+    border-radius: 6px;
+    border: 1px solid rgba(23, 23, 23, 0.1);
+}
+
 @layer base {
     html {
         scroll-behavior: smooth;

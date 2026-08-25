@@ -18,6 +18,13 @@ export default defineConfig({
                 bunny('Barlow Condensed', {
                     weights: [500, 600, 700, 800],
                 }),
+                // Eyebrow/section-label face for the light re-skin (font-eyebrow) —
+                // matches /style-preview-light exactly. Italic only, that's the
+                // only style eyebrows use.
+                bunny('Playfair Display', {
+                    weights: [400],
+                    styles: ['italic'],
+                }),
                 bunny('Inter', {
                     weights: [400, 500, 600, 700],
                 }),

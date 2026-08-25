@@ -11,38 +11,45 @@ description: Use for any visual, UI, or frontend work on Luma Lens — new pages
 - Card/section surface: `#FCFBF8`
 - Text: `#171717`
 
-The dark variant (`/style-preview`, `#0A0A0A` / `#171717` / `#F2F0EA`) is parked, not deleted — it was properly executed once earlier lessons were applied, and stays as a working reference. Don't build new work in dark tokens unless explicitly asked.
+The dark variant (`/style-preview`) is parked, not deleted — kept as a working reference.
 
 ## Shared rules
 
-**Accent** — `#D97A2E`. Reads noticeably better against the warm cream base than it did against near-black — stick with it unless flagged otherwise.
-
-- Solid fill ONLY on the CTA button. Not repeated as a flat fill on icons or decorative elements — those get a muted neutral or an outline/stroke treatment instead. (Small text-only touches, like an eyebrow label, are a lighter case — using the accent there is a judgment call, not a hard rule either way.)
-- Roughly 5–8% of total visual area max. Never a large fill or background.
+**Accent** — `#D97A2E`. Solid fill ONLY on the CTA button, not repeated as a flat fill elsewhere. Roughly 5–8% of visual area max.
 
 **Other rules**
 
-- No decorative color gradients anywhere (a darkening fade behind hero text, for legibility, is fine)
-- No blue anywhere
+- No decorative color gradients, no blue anywhere
 - Headline: Archivo Black or Anton, bold, all-caps, tight tracking, 56px+ on desktop
-- Eyebrow / section labels: Playfair Display italic
-- Body / secondary text: Inter — keep secondary or muted text warm-toned, not cool neutral gray
-- Buttons / CTAs: fully rounded pill (`border-radius: 9999px`)
-- Cards / containers: small radius only (`border-radius: 6px`), with a subtle hairline edge for definition — never pill
-- Card hover: 150ms transition, scale to 1.03x
-- Every hero needs a real photo, and the product itself (glasses) must be the visible focal point
+- Eyebrow / section labels: Playfair Display italic, mixed case ("New Season," not "NEW SEASON"), muted warm tone — never tracked-out sans caps, never the accent color
+- CTA button text: sentence case ("Shop the collection"), never all-caps
+- Body / secondary text: Inter, warm-toned, not cool neutral gray
+- Buttons: fully rounded pill (`9999px`). Cards: `6px` radius with a hairline edge — never pill.
+- Card hover: 150ms, scale to 1.03x
+- Every hero needs a real photo with the product as the visible focal point
+
+## Homepage — accepted additions (do not remove or treat as scope creep)
+
+These were added without being asked for, but the user reviewed them and chose to keep them. Don't revert or "clean up" the following on future passes — they're intentional:
+
+- The 3D product showcase ("Golden Hour Aviator," drag-to-rotate) — this is the project's signature feature (AR/3D try-on), so surfacing it prominently on the homepage is a deliberate choice, even though the specific product shown doesn't match the palette. Don't remove it or swap the product unless explicitly asked.
+- The "19 frames" stat block and the "Nothing here is a guess" materials/QC section — good, considered copy, kept deliberately.
+
+What these DO still need: the same typography rules as the rest of the page (see below) — being "kept" doesn't mean their type treatment is exempt from the shared rules.
 
 ## Process
 
-1. Before writing code, write a short plan: signature element, and how the photo is cropped so the product stays in frame.
-2. Self-critique: does this look distinctive and considered, or generic? Revise before building if generic.
-3. Build against the tokens above.
+1. Plan the signature element and photo crop before writing code.
+2. Self-critique for genericness before building.
+3. Build against the tokens above. When porting an already-tested design (e.g. from an isolated preview) to a real page, copy the FULL treatment — font-family and text-transform together with color, not color alone.
 4. Screenshot and verify with computed styles, not eyeballing.
-5. Report back what was built, what was verified, and flag anything uncertain.
+5. Report what was built, what was verified, and flag anything uncertain.
 
 ## Known lessons so far
 
-- **v1**: matched every locked token exactly but shipped with no photography — flat colored card. Fixed in v2.
-- **v2**: added photography, but the crop hid the product — only hair and forehead in frame. Fixed — the product now has to be the visible focal point.
-- **v3**: even with every value technically correct, execution read as loud/generic — uniform flat accent everywhere and cool-toned secondary text were the actual causes, not the background's darkness.
-- **v4**: light-dominated base compared directly against the (by-then well-executed) dark one — user chose light. Confirms v3's read: pairing and execution mattered more than which base value was picked.
+- **v1**: shipped with no photography. Fixed in v2.
+- **v2**: photo cropped the product out of frame. Fixed.
+- **v3**: uniform flat accent + cool secondary text read as loud/generic even with correct values.
+- **v4**: light-dominated base chosen over dark once execution matched, confirming v3.
+- **v5**: homepage rollout got colors right but silently reverted eyebrow labels and CTA text to old pre-redesign typography (tracked caps, all-caps) instead of the tested treatment, and added unrequested new sections and a 3D showcase.
+- **v6**: user reviewed v5's additions directly — keeping the 3D showcase and the two new content sections (see "accepted additions" above), rejecting removal. The typography reversion (eyebrows, button case) is still a real bug, unrelated to that decision, and still needs fixing everywhere, including on the newly-added sections.

@@ -50,6 +50,9 @@
      * still a rare second accent, not a competing primary color.
      */
     --font-display: 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
+    /* Eyebrow/section-label face for the light re-skin — matches
+       /style-preview-light's .eyebrow exactly (italic only). */
+    --font-eyebrow: 'Playfair Display', Georgia, 'Times New Roman', serif;
 
     --color-black: #0f0f0f;
     --color-charcoal: #1a1a1a;
@@ -150,6 +153,24 @@ body.theme-light {
 body.theme-light .rounded-sm,
 body.theme-light .qa-cta {
     border-radius: 9999px;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Eyebrow/section-label typography, matching /style-preview-light's
+   .eyebrow exactly — Playfair Display italic, mixed case, muted warm tone,
+   never the accent. The shared <x-ui.section-heading> component (used on
+   the still-dark PDP too) keeps its own uppercase-tracked-amber classes in
+   the markup; this scoped rule overrides them only within the homepage,
+   via the .section-eyebrow marker class added to that one <p>. */
+body.theme-light .section-eyebrow {
+    font-family: var(--font-eyebrow);
+    font-style: italic;
+    font-size: 1.05rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--color-smoke);
 }
 
 /* Cards get a hairline edge and a small radius, not a flat cut — per the

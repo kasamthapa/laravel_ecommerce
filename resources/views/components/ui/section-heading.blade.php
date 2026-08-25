@@ -2,7 +2,7 @@
 
 <div {{ $attributes->merge(['class' => ($align === 'center' ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl')]) }}>
     @if ($eyebrow)
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-volt">{{ $eyebrow }}</p>
+        <p class="section-eyebrow text-xs font-semibold uppercase tracking-[0.2em] text-volt">{{ $eyebrow }}</p>
     @endif
     <h2 class="mt-3 font-display text-4xl font-extrabold uppercase leading-[0.95] tracking-tight text-bone sm:text-5xl">{{ $heading }}</h2>
     @if ($body)

@@ -35,7 +35,7 @@
                 <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-black/20 lg:from-black/95 lg:via-black/78 lg:to-black/15"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
                 <div class="absolute inset-x-0 bottom-0 px-4 pb-12 sm:px-8 sm:pb-16 lg:inset-y-0 lg:flex lg:max-w-2xl lg:flex-col lg:justify-center lg:px-16 lg:pb-0">
-                    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-volt">New season</p>
+                    <p class="font-eyebrow text-[1.05rem] italic text-smoke">New Season</p>
                     <h1 class="mt-4 max-w-2xl font-display text-6xl font-extrabold uppercase leading-[0.92] tracking-tight text-bone sm:text-7xl lg:text-8xl">Built for how you actually move.</h1>
                     <p class="mt-5 max-w-md text-base leading-relaxed text-bone/85">Optical and sun frames edited for fit, finish, and everyday wear &mdash; with lenses ready in every pair.</p>
                     <div class="mt-8">
@@ -211,7 +211,7 @@
                         <div data-glasses-skeleton class="absolute inset-0 z-[3] animate-pulse bg-charcoal" aria-hidden="true"></div>
                     </div>
                     <div data-reveal style="--reveal-duration: 250ms; --reveal-delay: 90ms">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-volt">3D preview</p>
+                        <p class="font-eyebrow text-[1.05rem] italic text-smoke">3D Preview</p>
                         <h2 class="mt-3 font-display text-4xl font-extrabold uppercase leading-[0.9] tracking-tight text-bone sm:text-5xl lg:text-6xl">{{ $showcaseProduct->name }}</h2>
                         <p class="mt-5 max-w-md text-base leading-relaxed text-smoke">Drag to rotate and see the frame and lens finish from every angle, right here &mdash; no app, no headset. Rs. {{ number_format((float) $showcaseProduct->price) }}.</p>
                         <div class="mt-8">

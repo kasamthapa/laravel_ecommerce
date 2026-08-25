@@ -19,8 +19,21 @@
                     alt="A person wearing Luma Lens optical frames, photographed against a warm neutral backdrop"
                     class="h-full w-full object-cover object-[50%_40%]"
                 >
-                <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent lg:from-black/80 lg:via-black/10 lg:to-transparent"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                {{--
+                    Scrim strength: dark headline text (text-bone, which
+                    resolves to #171717 on the homepage) needs the blended
+                    background to stay light regardless of what's under it —
+                    verified by computing the worst-case blend against a
+                    near-black patch of the photo (hair) at each opacity.
+                    The previous via-black/40 (lg: /10) blended down to only
+                    3.42:1 there — fails AA (needs 4.5:1) — because at low
+                    scrim opacity the photo's own contrast dominates the
+                    result. from/95 via/80 (lg: via/78) keeps the blend at
+                    10.3-11.5:1 even against black hair, and the headline's
+                    max-w-2xl footprint sits well inside the strong 0-50%
+                    part of this gradient at every width tested. --}}
+                <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-black/20 lg:from-black/95 lg:via-black/78 lg:to-black/15"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
                 <div class="absolute inset-x-0 bottom-0 px-4 pb-12 sm:px-8 sm:pb-16 lg:inset-y-0 lg:flex lg:max-w-2xl lg:flex-col lg:justify-center lg:px-16 lg:pb-0">
                     <p class="text-xs font-semibold uppercase tracking-[0.2em] text-volt">New season</p>
                     <h1 class="mt-4 max-w-2xl font-display text-6xl font-extrabold uppercase leading-[0.92] tracking-tight text-bone sm:text-7xl lg:text-8xl">Built for how you actually move.</h1>

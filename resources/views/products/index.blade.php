@@ -9,10 +9,15 @@
     @else
         <section class="motion-fade relative border-b border-hairline">
             <div class="relative h-[75vh] max-h-[44rem] min-h-[30rem] w-full overflow-hidden bg-charcoal">
+                {{-- object-position 50% 40% (not the default center) — the eyes/
+                     glasses in this portrait sit above image-center, so a
+                     dead-center crop loses the top of the frames on any
+                     wide-but-not-tall viewport. Same fix already verified on
+                     /style-preview's hero using this identical photo. --}}
                 <img
                     src="{{ asset('images/storefront/lightweight-eyewear.png') }}"
                     alt="A person wearing Luma Lens optical frames, photographed against a warm neutral backdrop"
-                    class="h-full w-full object-cover"
+                    class="h-full w-full object-cover object-[50%_40%]"
                 >
                 <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent lg:from-black/80 lg:via-black/10 lg:to-transparent"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
@@ -124,37 +129,70 @@
             </div>
         </section>
 
-        {{-- Best sellers: horizontal-scroll carousel. Products with a model_path
-             get a subtle auto-rotating 3D preview (same viewer as the PDP's
-             3D View tab, mounted lazily only while the card is in view); the
-             rest fall back to the static photo. --}}
-        @if ($featuredProducts->isNotEmpty())
+        {{--
+            Best sellers: horizontal-scroll carousel of static photo cards,
+            all one consistent size. A model_path product used to render an
+            inline auto-rotating 3D preview right in this same card slot —
+            reusing .glasses-stage/.glasses-3d, which are sized for the
+            PDP's full-width viewer (min-height: 34rem, width: min(64rem,
+            112%)), broke out of this card's actual ~256-288px width badly.
+            That product gets its own properly-sized showcase section below
+            instead, and is excluded here so it isn't shown twice.
+        --}}
+        @php $showcaseProduct = $featuredProducts->firstWhere('model_path'); @endphp
+        @php $carouselProducts = $showcaseProduct ? $featuredProducts->reject(fn ($product) => $product->is($showcaseProduct)) : $featuredProducts; @endphp
+        @if ($carouselProducts->isNotEmpty())
             <section class="border-b border-hairline">
                 <div class="mx-auto max-w-[100rem] px-4 py-14 sm:px-8">
                     <x-ui.section-heading eyebrow="Best sellers" heading="This season’s edit" data-reveal style="--reveal-duration: 250ms" />
                     <div class="mt-10 -mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-4 sm:-mx-8 sm:px-8" data-reveal style="--reveal-duration: 250ms">
-                        @foreach ($featuredProducts as $product)
+                        @foreach ($carouselProducts as $product)
                             <div class="w-64 shrink-0 snap-start sm:w-72">
-                                @if ($product->model_path)
-                                    <article class="group relative">
-                                        <div class="glasses-stage motion-card relative aspect-[4/5] overflow-hidden bg-charcoal group-hover:scale-[1.03]" data-carousel-viewer data-model-path="{{ $product->model_path }}" @if ($tint = $product->modelTint()) data-frame-tint="{{ $tint['frame'] }}" data-lens-tint="{{ $tint['lens'] }}" @endif>
-                                            <canvas class="glasses-canvas" data-glasses-canvas aria-hidden="true"></canvas>
-                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="glasses-3d h-full w-full object-cover" loading="lazy">
-                                            <p class="pointer-events-none absolute left-3 top-3 z-[3] border border-gold bg-black/90 px-2 py-1 text-[0.65rem] font-medium uppercase tracking-[0.1em] text-gold">3D</p>
-                                        </div>
-                                        <a href="{{ route('products.show', $product) }}" class="mt-4 block">
-                                            <h3 class="font-display text-lg font-semibold uppercase tracking-wide text-bone">{{ $product->name }}</h3>
-                                            <p class="mt-1 text-sm text-smoke">Rs. {{ number_format((float) $product->price) }}</p>
-                                        </a>
-                                    </article>
-                                @else
-                                    <x-product-card :product="$product" :wishlisted="in_array($product->id, $wishlistedProductIds, true)" />
-                                @endif
+                                <x-product-card :product="$product" :wishlisted="in_array($product->id, $wishlistedProductIds, true)" />
                             </div>
                         @endforeach
                     </div>
                     <div class="mt-8 text-center">
                         <x-ui.button :href="route('shop')" variant="secondary">View all frames</x-ui.button>
+                    </div>
+                </div>
+            </section>
+        @endif
+
+        {{--
+            Dedicated 3D showcase — the model_path product pulled out of the
+            carousel above gets its own properly-sized stage instead, using
+            the exact same PDP glasses-stage/glasses-3d/skeleton markup and
+            the same lazy-mount-on-scroll-into-view binding the carousel
+            used (bindCarouselViewers in glasses-viewer.js — no second 3D
+            system). aspect-square + min-h-0 overrides .glasses-stage's
+            base min-height: 34rem to a size that actually fits this
+            section instead of the PDP's full-bleed one. No motion-card
+            hover-scale here — this stage is drag-to-rotate, and scaling it
+            on hover would fight that interaction.
+        --}}
+        @if ($showcaseProduct)
+            <section class="border-b border-hairline">
+                <div class="mx-auto grid max-w-[100rem] gap-10 px-4 py-16 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16">
+                    <div
+                        class="glasses-stage aspect-square min-h-0 overflow-hidden bg-charcoal"
+                        data-carousel-viewer
+                        data-model-path="{{ asset($showcaseProduct->model_path) }}"
+                        @if ($showcaseTint = $showcaseProduct->modelTint()) data-frame-tint="{{ $showcaseTint['frame'] }}" data-lens-tint="{{ $showcaseTint['lens'] }}" @endif
+                        data-reveal
+                        style="--reveal-duration: 250ms"
+                    >
+                        <canvas class="glasses-canvas" data-glasses-canvas aria-hidden="true"></canvas>
+                        <img src="{{ $showcaseProduct->image_url }}" alt="{{ $showcaseProduct->name }}" class="glasses-3d">
+                        <div data-glasses-skeleton class="absolute inset-0 z-[3] animate-pulse bg-charcoal" aria-hidden="true"></div>
+                    </div>
+                    <div data-reveal style="--reveal-duration: 250ms; --reveal-delay: 90ms">
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-volt">3D preview</p>
+                        <h2 class="mt-3 font-display text-4xl font-extrabold uppercase leading-[0.9] tracking-tight text-bone sm:text-5xl lg:text-6xl">{{ $showcaseProduct->name }}</h2>
+                        <p class="mt-5 max-w-md text-base leading-relaxed text-smoke">Drag to rotate and see the frame and lens finish from every angle, right here &mdash; no app, no headset. Rs. {{ number_format((float) $showcaseProduct->price) }}.</p>
+                        <div class="mt-8">
+                            <x-ui.button :href="route('products.show', $showcaseProduct)" size="lg">View this frame</x-ui.button>
+                        </div>
                     </div>
                 </div>
             </section>

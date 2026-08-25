@@ -170,13 +170,24 @@
             section instead of the PDP's full-bleed one. No motion-card
             hover-scale here — this stage is drag-to-rotate, and scaling it
             on hover would fight that interaction.
+
+            No background fill on the stage itself — it sits directly on
+            the page background instead of inside a visible colored box, so
+            the glasses read as floating rather than a photo tile. The
+            skeleton keeps its own bg-charcoal while the model loads; once
+            ready it's invisible and the stage underneath has nothing to
+            reveal but transparency. data-autorotate="true" opts this one
+            stage into a slow idle spin (PDP's 3D tab is untouched, still
+            drag-only) that pauses on drag and resumes after, gated behind
+            prefers-reduced-motion same as the rest of the site's motion.
         --}}
         @if ($showcaseProduct)
             <section class="border-b border-hairline">
                 <div class="mx-auto grid max-w-[100rem] gap-10 px-4 py-16 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16">
                     <div
-                        class="glasses-stage aspect-square min-h-0 overflow-hidden bg-charcoal"
+                        class="glasses-stage aspect-square min-h-0 overflow-hidden"
                         data-carousel-viewer
+                        data-autorotate="true"
                         data-model-path="{{ asset($showcaseProduct->model_path) }}"
                         @if ($showcaseTint = $showcaseProduct->modelTint()) data-frame-tint="{{ $showcaseTint['frame'] }}" data-lens-tint="{{ $showcaseTint['lens'] }}" @endif
                         data-reveal

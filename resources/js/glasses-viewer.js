@@ -9,12 +9,18 @@ import { loadModel, disposeObject } from './glasses-model';
  * @param {HTMLElement} stage
  * @returns {(() => void)|null}
  */
+const AUTO_ROTATE_SPEED = 0.0032;
+
 const mountViewer = (stage) => {
     const existingCanvas = stage.querySelector('[data-glasses-canvas]');
     const modelPath = stage.dataset.modelPath;
     const tint = stage.dataset.frameTint || stage.dataset.lensTint
         ? { frame: stage.dataset.frameTint || undefined, lens: stage.dataset.lensTint || undefined }
         : undefined;
+    // Opt-in only (data-autorotate="true") — the PDP's Photos/3D View tab
+    // keeps its existing drag-only behavior untouched; only stages that
+    // explicitly ask for it get a slow continuous spin.
+    const autoRotate = stage.dataset.autorotate === 'true';
 
     if (!(stage instanceof HTMLElement) || !(existingCanvas instanceof HTMLCanvasElement) || !modelPath) {
         return null;
@@ -188,6 +194,12 @@ const mountViewer = (stage) => {
             rotation.targetY += rotation.velocityY;
             rotation.velocityX *= 0.9;
             rotation.velocityY *= 0.9;
+
+            // Idle auto-spin: only once any drag-release momentum has
+            // settled, so a flick doesn't visibly fight the constant drift.
+            if (autoRotate && Math.abs(rotation.velocityY) < 0.0004) {
+                rotation.targetY += AUTO_ROTATE_SPEED;
+            }
         }
 
         rotation.x = THREE.MathUtils.lerp(rotation.x, rotation.targetX, 0.14);

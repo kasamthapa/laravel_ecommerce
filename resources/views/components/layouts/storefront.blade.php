@@ -11,14 +11,14 @@
         @livewireStyles
     </head>
     {{--
-        The real homepage (route name products.index — NOT the /shop
-        catalog, which reuses the same controller action but a different
-        route name) gets the chosen light design system. Every other
-        storefront page keeps today's dark tokens, completely untouched —
-        see the body.theme-light override block in app.css for how the
-        same utility classes below re-skin from one scoped class alone.
+        The real homepage (products.index) and the /shop catalog (route
+        name shop) both get the chosen light design system now. Every
+        other storefront page (PDP, cart, checkout, account, admin) keeps
+        today's dark tokens, completely untouched — see the
+        body.theme-light override block in app.css for how the same
+        utility classes below re-skin from one scoped class alone.
     --}}
-    <body class="storefront {{ request()->routeIs('products.index') ? 'theme-light' : '' }} bg-black font-sans text-bone antialiased">
+    <body class="storefront {{ request()->routeIs('products.index', 'shop') ? 'theme-light' : '' }} bg-black font-sans text-bone antialiased">
         <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-volt focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-bone">Skip to content</a>
 
         <div class="flex min-h-screen flex-col">

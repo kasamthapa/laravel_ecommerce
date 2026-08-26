@@ -10,10 +10,12 @@
         <aside class="{{ $filtersOpen ? 'block' : 'hidden' }} border-b border-hairline py-6 lg:sticky lg:top-24 lg:block lg:border-b-0 lg:py-0">
             <div>
                 <h2 class="text-xs font-medium uppercase tracking-[0.14em] text-smoke">Category</h2>
+                {{-- Selected state: a thin accent underline, not a solid fill —
+                     the accent stays reserved for the one CTA-level action. --}}
                 <div class="mt-3 grid gap-2.5 text-sm">
-                    <button type="button" wire:click="selectCategory('')" class="motion-invert w-fit text-left {{ $selectedCategory === null ? 'font-medium text-bone' : 'text-smoke hover:text-bone' }}">All frames</button>
+                    <button type="button" wire:click="selectCategory('')" class="motion-invert w-fit border-b text-left {{ $selectedCategory === null ? 'border-volt font-medium text-bone' : 'border-transparent text-smoke hover:text-bone' }}">All frames</button>
                     @foreach ($categories as $categoryOption)
-                        <button type="button" wire:click="selectCategory('{{ $categoryOption->slug }}')" class="motion-invert w-fit text-left {{ $selectedCategory?->is($categoryOption) ? 'font-medium text-bone' : 'text-smoke hover:text-bone' }}">
+                        <button type="button" wire:click="selectCategory('{{ $categoryOption->slug }}')" class="motion-invert w-fit border-b text-left {{ $selectedCategory?->is($categoryOption) ? 'border-volt font-medium text-bone' : 'border-transparent text-smoke hover:text-bone' }}">
                             {{ $categoryOption->name }} ({{ $categoryOption->products_count }})
                         </button>
                     @endforeach
@@ -48,7 +50,7 @@
             @endif
 
             @if ($search !== '' || $category !== '' || $color !== '' || $minPrice !== '' || $maxPrice !== '')
-                <button type="button" wire:click="clearFilters" class="motion-invert mt-8 text-xs font-medium uppercase tracking-wide text-volt hover:underline">Clear filters</button>
+                <button type="button" wire:click="clearFilters" class="motion-invert mt-8 text-sm font-medium text-volt hover:underline">Clear filters</button>
             @endif
         </aside>
 
@@ -117,7 +119,7 @@
                 @endif
 
                 <div class="mt-12">
-                    {{ $products->links() }}
+                    {{ $products->links('vendor.pagination.luma-catalog') }}
                 </div>
             </div>
         </div>

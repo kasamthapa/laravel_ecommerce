@@ -130,8 +130,12 @@
                 <a href="{{ route('shop', ['category' => $product->category->slug]) }}" class="motion-invert text-xs font-medium uppercase tracking-[0.14em] text-smoke hover:text-volt">{{ $product->category->name }}</a>
                 <div class="mt-3 flex items-start justify-between gap-4">
                     <h1 class="font-display text-4xl font-bold uppercase leading-[0.95] text-bone sm:text-5xl">{{ $product->name }}</h1>
+                    {{-- Secondary action, not the primary CTA — outline/stroke
+                         treatment (wishlist-outline kills the shared component's
+                         solid bg-black fill; see app.css), not a solid fill.
+                         Add to Cart stays the one solid-accent pill on this page. --}}
                     @auth
-                        <livewire:wishlist-button :product="$product" :wishlisted="in_array($product->id, $wishlistedProductIds, true)" size="h-11 w-11 shrink-0 border border-hairline text-lg" :key="'wishlist-main-'.$product->id" />
+                        <livewire:wishlist-button :product="$product" :wishlisted="in_array($product->id, $wishlistedProductIds, true)" size="h-11 w-11 shrink-0 border border-hairline text-lg wishlist-outline" :key="'wishlist-main-'.$product->id" />
                     @endauth
                 </div>
                 <a href="#reviews" class="mt-3 inline-block motion-invert">
@@ -189,21 +193,30 @@
         </div>
     @endif
 
-    {{-- Light-section break: PDP spec facts get the deliberate pure-white
-         panel called for in the new direction, not another dark band. --}}
-    <section class="border-y border-hairline bg-white text-black">
+    {{--
+        Light-section break: PDP spec facts get a deliberate pure-white
+        panel, not another band in the page's own background.
+
+        text-bone, not text-black: --color-black is the page-background
+        role token and gets swapped to near-white inside body.theme-light
+        (see app.css) — text-black would read as near-white-on-white here
+        and be nearly invisible. text-bone is the token that resolves to
+        near-black text under this same scope, which is what this section
+        actually needs regardless of theme.
+    --}}
+    <section class="border-y border-hairline bg-white text-bone">
         <div class="mx-auto grid max-w-[100rem] gap-8 px-4 py-12 sm:px-8 sm:grid-cols-3">
             <div>
-                <h2 class="text-xs font-semibold uppercase tracking-[0.14em] text-black/60">Fit range</h2>
-                <p class="mt-2 text-base text-black">{{ implode(', ', $product->sizes) }}</p>
+                <h2 class="text-xs font-semibold uppercase tracking-[0.14em] text-bone/70">Fit range</h2>
+                <p class="mt-2 text-base text-bone">{{ implode(', ', $product->sizes) }}</p>
             </div>
             <div>
-                <h2 class="text-xs font-semibold uppercase tracking-[0.14em] text-black/60">Finishes</h2>
-                <p class="mt-2 text-base text-black">{{ implode(', ', $product->colors) }}</p>
+                <h2 class="text-xs font-semibold uppercase tracking-[0.14em] text-bone/70">Finishes</h2>
+                <p class="mt-2 text-base text-bone">{{ implode(', ', $product->colors) }}</p>
             </div>
             <div>
-                <h2 class="text-xs font-semibold uppercase tracking-[0.14em] text-black/60">Details</h2>
-                <p class="mt-2 text-base text-black">Prescription-ready &middot; Free delivery over Rs. 10,000 &middot; Khalti secure checkout</p>
+                <h2 class="text-xs font-semibold uppercase tracking-[0.14em] text-bone/70">Details</h2>
+                <p class="mt-2 text-base text-bone">Prescription-ready &middot; Free delivery over Rs. 10,000 &middot; Khalti secure checkout</p>
             </div>
         </div>
     </section>
@@ -215,7 +228,7 @@
         </div>
 
         @auth
-            <form method="POST" action="{{ route('reviews.store', $product) }}" class="mt-8 grid gap-5 border border-hairline bg-charcoal p-6">
+            <form method="POST" action="{{ route('reviews.store', $product) }}" class="mt-8 grid gap-5 rounded-[6px] border border-hairline bg-charcoal p-6">
                 <p class="font-display text-lg font-semibold text-bone">{{ $userReview ? 'Update your review' : 'Write a review' }}</p>
                 @csrf
                 <x-ui.select label="Rating" name="rating" class="w-40">
@@ -231,12 +244,15 @@
                 <x-ui.button type="submit" class="w-fit">{{ $userReview ? 'Update review' : 'Submit review' }}</x-ui.button>
             </form>
         @else
-            <p class="mt-8 border border-dashed border-hairline p-6 text-sm text-smoke"><a href="{{ route('login') }}" class="motion-invert font-medium text-volt hover:underline">Sign in</a> to write a review.</p>
+            <p class="mt-8 rounded-[6px] border border-dashed border-hairline p-6 text-sm text-smoke"><a href="{{ route('login') }}" class="motion-invert font-medium text-volt hover:underline">Sign in</a> to write a review.</p>
         @endauth
 
-        <div class="mt-10 grid gap-8">
+        {{-- Individual reviews follow the same card convention as everywhere
+             else (6px radius, hairline border, charcoal/#FCFBF8 surface)
+             rather than the plain divider-list this used to be. --}}
+        <div class="mt-10 grid gap-4">
             @forelse ($product->reviews as $review)
-                <div class="border-b border-hairline pb-8 last:border-0">
+                <div class="rounded-[6px] border border-hairline bg-charcoal p-6">
                     <div class="flex items-center justify-between gap-3">
                         <p class="font-medium text-bone">{{ $review->user->name }}</p>
                         <x-star-rating :rating="$review->rating" />

@@ -15,40 +15,38 @@ The dark variant (`/style-preview`) is parked, not deleted — kept as a working
 
 ## Shared rules
 
-**Accent** — `#D97A2E`. Solid fill ONLY on the CTA button, not repeated as a flat fill elsewhere. Roughly 5–8% of visual area max.
+**Accent** — `#D97A2E`. Solid fill ONLY on the CTA button, not repeated as a flat fill elsewhere. Roughly 5–8% of visual area max. On smaller controls (filter chips, pagination), a thin accent border/underline for the selected/active state — not a fill.
 
 **Other rules**
 
 - No decorative color gradients, no blue anywhere
-- Headline: **Barlow Condensed**, weight 800, uppercase, tight tracking, 56px+ on desktop. (Corrected from "Archivo Black or Anton" — that was the spec used to build the isolated `/style-preview` pages, but the real site's actual heading font, used everywhere including product names, was always Barlow Condensed. Never verified against computed styles until now. Barlow Condensed is the real answer going forward; the isolated preview pages are out of date on this one point and can be left as historical reference, not corrected.)
-- Eyebrow / section labels: Playfair Display italic, mixed case ("New Season," not "NEW SEASON"), muted warm tone — never tracked-out sans caps, never the accent color
-- CTA button text: sentence case ("Shop the collection"), never all-caps
+- Headline: Barlow Condensed, weight 800, uppercase, tight tracking, 56px+ on desktop (see v7 — this is the real, pre-existing sitewide display face, not Archivo Black)
+- Eyebrow / section labels: Playfair Display italic, mixed case, muted warm tone. This applies to editorial kickers sitting above a headline ("New Season," "Best Sellers") — NOT to functional UI labels like filter-group headings ("Category," "Price," "Color") or other form-section labels, which stay as plain functional text (uppercase-tracked Inter is fine for these). Applying the eyebrow treatment to a functional label reads as a bug, not a design choice.
+- CTA button text: sentence case, never all-caps
 - Body / secondary text: Inter, warm-toned, not cool neutral gray
-- Buttons: fully rounded pill (`9999px`). Cards: `6px` radius with a hairline edge — never pill.
+- Buttons: fully rounded pill (`9999px`). This includes small clickable controls like pagination page-numbers, not just primary CTAs. Cards: `6px` radius with a hairline edge — never pill.
 - Card hover: 150ms, scale to 1.03x
 - Every hero needs a real photo with the product as the visible focal point
+- When a change touches a component shared across pages (section headings, pagination, buttons), use a scoped rule or a separately-named view rather than editing the shared original — then explicitly verify every other page that uses it is unaffected. This is now the standard approach, not a one-off.
+- Don't fabricate data that doesn't exist (hex values for free-text color names, etc.) to hit a design ideal — flag the gap instead and use what's real.
 
 ## Homepage — accepted additions (do not remove or treat as scope creep)
 
-- The 3D product showcase ("Golden Hour Aviator," drag-to-rotate) — kept deliberately, it's the project's signature feature (AR/3D try-on). Don't remove it or swap the product unless explicitly asked.
-- The "19 frames" stat block and the "Nothing here is a guess" materials/QC section — kept deliberately.
-
-These still follow the same typography rules as everything else — being "kept" only means their content and presence are settled, not their type treatment.
+- The 3D product showcase ("Golden Hour Aviator," drag-to-rotate) — kept deliberately, it's the project's signature feature.
+- The "19 frames" stat block and "Nothing here is a guess" section — kept deliberately.
 
 ## Process
 
-1. Plan the signature element and photo crop before writing code.
-2. Self-critique for genericness before building.
-3. Build against the tokens above. When porting an already-tested design to a real page, verify EVERY token with computed styles — including ones that seem obviously fine, like the headline font-family. Visual similarity between two different type families at heavy/condensed weights is easy to miss by eye.
-4. When a shared component is used on other pages (e.g. section headings, buttons also used on the PDP), don't edit it directly — use a scoped rule, then explicitly verify the other pages weren't affected, don't just assume.
-5. Report what was built, what was verified with real values, and flag anything uncertain.
+1. Plan the signature element before writing code; self-critique for genericness.
+2. Audit first — a lot of a new page may already be correct if it shares components with an already-fixed page. Confirm what's already right before building anything new.
+3. Verify EVERY token with computed styles, including ones that seem obviously fine.
+4. Shared components: scope, don't edit directly; verify other pages after.
+5. Report what was built, what was verified with real values, what judgment calls were made and why, and flag anything uncertain.
 
 ## Known lessons so far
 
-- **v1**: shipped with no photography. Fixed in v2.
-- **v2**: photo cropped the product out of frame. Fixed.
-- **v3**: uniform flat accent + cool secondary text read as loud/generic even with correct values.
-- **v4**: light-dominated base chosen over dark once execution matched, confirming v3.
-- **v5**: homepage rollout got colors right but silently reverted eyebrow labels and CTA text to old typography, and added unrequested new sections and a 3D showcase.
-- **v6**: user reviewed v5's additions directly and chose to keep the 3D showcase and new sections (see "accepted additions" above); the typography reversion was unrelated and still needed fixing.
-- **v7**: the eyebrow/button cleanup pass verified those elements correctly against a fresh `/style-preview-light` screenshot and correctly avoided a cross-page regression on the PDP — genuinely careful work. But it accepted the real homepage's headline font (Barlow Condensed) as already-correct without checking it against the actual tested reference, which uses Archivo Black. Checking computed values against _some_ things but not _all_ things gives false confidence. Barlow Condensed is now the corrected spec, since it's the pre-existing, sitewide display face — but the lesson is the gap in verification, not just this one value.
+- **v1–v4**: photography, product-in-frame cropping, accent overuse, and light-vs-dark base all resolved — see prior history.
+- **v5**: homepage rollout reverted typography and added unrequested content/features.
+- **v6**: user reviewed and kept the 3D showcase and new sections; typography reversion still needed fixing.
+- **v7**: cleanup pass verified eyebrows/buttons correctly but accepted the homepage's headline font as already-right without checking it against the actual tested reference. Barlow Condensed is the corrected, real spec now. Lesson: partial verification gives false confidence — check things that look right too.
+- **v8**: shop/catalog page rollout. Recovered correctly from a missing skill file (paused and reloaded rather than proceeding without it). Proactively flagged two out-of-brief items (shared pagination view, non-existent color-hex data) before building rather than silently expanding scope or silently leaving them broken. Correctly distinguished functional UI labels from editorial eyebrows (see rule above) and settled pagination as pill-shaped (see rule above). Full cross-page regression check across PDP, cart, homepage, and admin/wishlist/orders, all confirmed unaffected. This is the process working as intended.

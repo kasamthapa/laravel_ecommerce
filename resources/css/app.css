@@ -100,20 +100,21 @@
 }
 
 /*
- * Homepage-only light re-skin — the chosen direction per the
- * luma-lens-design skill, scoped to body.theme-light (applied only on the
- * real homepage route, see components/layouts/storefront.blade.php).
+ * Light re-skin — the chosen direction per the luma-lens-design skill,
+ * scoped to body.theme-light. Applied page-by-page as each one is
+ * redesigned (currently the homepage, /shop, and the PDP — see the
+ * routeIs(...) list in components/layouts/storefront.blade.php); cart,
+ * checkout, account, and admin are still pending and keep reading the
+ * unscoped dark values below, completely untouched.
  *
  * Every dark-variant utility class above (bg-black, bg-charcoal, text-bone,
  * text-smoke, text-smoke-dim, border-hairline, bg-hairline, text-volt,
  * bg-volt, bg-volt-tint) reads its color through var(--color-*) — Tailwind
  * v4 compiles utilities against the custom property, not an inlined literal
  * (confirmed in the built CSS: `.bg-black{background-color:var(--color-black)}`).
- * Redefining those same variable names inside this one scope re-skins the
- * whole homepage subtree — header, promo bar, every section, footer — with
- * zero class-name changes anywhere, while every other page (shop, PDP,
- * cart, checkout, account, admin) keeps reading the unscoped values above,
- * completely untouched.
+ * Redefining those same variable names inside this one scope re-skins an
+ * entire page's subtree — header, promo bar, every section, footer — with
+ * zero class-name changes anywhere.
  *
  * --color-black and --color-bone swap roles entirely (black becomes the
  * light page background, bone becomes the dark text) rather than just
@@ -141,15 +142,24 @@ body.theme-light {
        card surface, scoped here so the PDP/cart's still-dark gold badges
        are untouched. */
     --color-gold: #7d5a1f;
+
+    /* Same class of bug as gold above — signal-good/-bad (#6fae74/#e07a63)
+       were brightened for AA against #0F0F0F and drop to ~2.3-2.8:1 on this
+       light background (the PDP's "Added to cart" message and every form's
+       validation errors use these). Darkened for 5.5:1+ against both the
+       page and card surface. */
+    --color-signal-good: #2e6b3a;
+    --color-signal-bad: #a83d29;
 }
 
 /* CTA buttons need to be a fully rounded pill per the skill file, but the
    shared <x-ui.button> component (rounded-sm, 2px) and the quick-add
-   button (no radius class at all) are both also used on still-dark pages
-   (PDP, /shop) — editing their class strings directly would change those
-   pages' button shape too. Scoped overrides instead: harmless everywhere
-   else, pill-shaped only within this homepage scope. `.qa-cta` is an inert
-   marker class added to the quick-add button for exactly this hook. */
+   button (no radius class at all) are both also used on pages still
+   outside this scope (cart, checkout, account) — editing their class
+   strings directly would change those pages' button shape too. Scoped
+   overrides instead: harmless everywhere else, pill-shaped only within
+   this scope. `.qa-cta` is an inert marker class added to the quick-add
+   button for exactly this hook. */
 body.theme-light .rounded-sm,
 body.theme-light .qa-cta {
     border-radius: 9999px;
@@ -157,12 +167,29 @@ body.theme-light .qa-cta {
     letter-spacing: normal;
 }
 
+/* PDP wishlist button: a secondary action, not the primary CTA — outline/
+   stroke treatment, not a solid fill. The shared <livewire:wishlist-button>
+   component (also used, unmodified, on product-card's small corner icon)
+   keeps its own bg-black base class; the PDP's own call site already
+   smuggles `border border-hairline` in through the $size prop, so this
+   just needs to kill that base fill. `.wishlist-outline` is only ever
+   passed from the PDP call site, so this is de facto scoped there without
+   needing a body.theme-light gate — this rule wins over .bg-black's
+   Tailwind utility regardless of theme because it's plain unlayered CSS,
+   same mechanism as the rules above. */
+.wishlist-outline {
+    background-color: transparent;
+}
+
 /* Eyebrow/section-label typography, matching /style-preview-light's
    .eyebrow exactly — Playfair Display italic, mixed case, muted warm tone,
-   never the accent. The shared <x-ui.section-heading> component (used on
-   the still-dark PDP too) keeps its own uppercase-tracked-amber classes in
-   the markup; this scoped rule overrides them only within the homepage,
-   via the .section-eyebrow marker class added to that one <p>. */
+   never the accent. The shared <x-ui.section-heading> component keeps its
+   own uppercase-tracked-amber classes in the markup; this scoped rule
+   overrides them only within body.theme-light (now the homepage, /shop,
+   and the PDP — "Customer reviews" and "Continue the edit" pick this up
+   automatically), via the .section-eyebrow marker class added to that
+   one <p>. Pages still outside the scope (cart, checkout, account) are
+   unaffected. */
 body.theme-light .section-eyebrow {
     font-family: var(--font-eyebrow);
     font-style: italic;

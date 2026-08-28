@@ -16,6 +16,11 @@ class Cart extends Component
     public ?string $flash = null;
 
     /**
+     * @var 'success'|'error'|null
+     */
+    public ?string $flashType = null;
+
+    /**
      * @return array{items: array<string, array>, coupon: ?Coupon, coupon_code: ?string, subtotal: float, shipping: float, discount: float, total: float}
      */
     #[Computed]
@@ -56,6 +61,7 @@ class Cart extends Component
         $applied = app(CartService::class)->applyCoupon($this->couponCode);
 
         $this->flash = $applied ? 'Coupon applied.' : 'That coupon code is invalid or expired.';
+        $this->flashType = $applied ? 'success' : 'error';
         $this->couponCode = '';
 
         unset($this->cart);
@@ -66,6 +72,7 @@ class Cart extends Component
         app(CartService::class)->removeCoupon();
 
         $this->flash = 'Coupon removed.';
+        $this->flashType = 'success';
 
         unset($this->cart);
     }

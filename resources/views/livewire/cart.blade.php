@@ -1,6 +1,6 @@
 <div>
     @if (count($this->cart['items']) === 0)
-        <div class="mt-10 border border-dashed border-hairline p-12 text-center">
+        <div class="mt-10 rounded-[6px] border border-dashed border-hairline p-12 text-center">
             <p class="font-display font-semibold text-2xl text-bone">Your cart is empty</p>
             <p class="mt-2 text-sm text-smoke">Add a frame to begin your order.</p>
             <x-ui.button :href="route('shop')" class="mt-6">Shop the collection</x-ui.button>
@@ -28,11 +28,11 @@
                 @endforeach
             </div>
 
-            <aside class="border border-hairline p-6 lg:sticky lg:top-24">
+            <aside class="rounded-[6px] border border-hairline p-6 lg:sticky lg:top-24">
                 <h2 class="font-display font-semibold text-xl text-bone">Order summary</h2>
 
                 @if ($this->cart['coupon'])
-                    <div class="mt-4 flex items-center justify-between gap-3 border border-hairline bg-black px-3 py-2.5 text-sm">
+                    <div class="mt-4 flex items-center justify-between gap-3 rounded-[6px] border border-hairline bg-black px-3 py-2.5 text-sm">
                         <span class="text-signal-good">Coupon {{ $this->cart['coupon']->code }} applied</span>
                         <button type="button" wire:click="removeCoupon" class="motion-invert font-medium text-signal-good underline-offset-2 hover:underline">Remove</button>
                     </div>
@@ -46,8 +46,11 @@
                     </form>
                 @endif
 
+                {{-- Was plain text-smoke regardless of outcome — an invalid
+                     coupon code read identically to a successful one, no
+                     error signal at all. --}}
                 @if ($flash)
-                    <p class="mt-2 text-xs text-smoke">{{ $flash }}</p>
+                    <p class="mt-2 text-xs {{ $flashType === 'error' ? 'text-signal-bad' : 'text-signal-good' }}">{{ $flash }}</p>
                 @endif
 
                 <dl class="mt-6 grid gap-3 text-sm">

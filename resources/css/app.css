@@ -150,6 +150,29 @@ body.theme-light {
        page and card surface. */
     --color-signal-good: #2e6b3a;
     --color-signal-bad: #a83d29;
+
+    /* /track was still on the very first editorial-phase tokens (cream/
+       ink/stone/line/success/error) — two generations behind every other
+       page, never migrated to the athletic/light system at all. Its own
+       markup gets moved to the current token names directly (page-local,
+       safe to edit), but <x-admin.status-badge> (order status pill) is
+       shared with admin and account/orders and still reads these same
+       original tokens — can't edit that file, so its colors are corrected
+       here instead. Values reuse the exact tokens already established
+       above for the equivalent role, not new numbers: cream/cream-dim
+       mirror black/charcoal's light-bg values, ink mirrors bone's text
+       value, stone/line mirror smoke/hairline, success/error mirror
+       signal-good/signal-bad. The *-tint variants (success-tint,
+       error-tint) aren't overridden — they were already light, pale
+       colors tuned for a light background and remain appropriate as-is.
+       None of this reaches admin: admin never has body.theme-light. */
+    --color-cream: #f2f0ea;
+    --color-cream-dim: #fcfbf8;
+    --color-ink: #171717;
+    --color-stone: rgba(23, 23, 23, 0.65);
+    --color-line: rgba(23, 23, 23, 0.12);
+    --color-success: #2e6b3a;
+    --color-error: #a83d29;
 }
 
 /* CTA buttons need to be a fully rounded pill per the skill file, but the

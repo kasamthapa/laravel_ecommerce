@@ -13,14 +13,15 @@
     {{--
         The real homepage (products.index), the /shop catalog (shop), the
         PDP (products.show), the cart (cart.index), checkout
-        (checkout.create), and the order confirmation page
-        (checkout.confirmation) all get the chosen light design system now.
-        Every other storefront page (account, admin) keeps today's dark
-        tokens, completely untouched — see the body.theme-light override
-        block in app.css for how the same utility classes below re-skin
-        from one scoped class alone.
+        (checkout.create), the order confirmation page
+        (checkout.confirmation), and order tracking (track.create,
+        track.show — both routes render the same view) all get the chosen
+        light design system now. Every other storefront page (account,
+        admin) keeps today's dark tokens, completely untouched — see the
+        body.theme-light override block in app.css for how the same
+        utility classes below re-skin from one scoped class alone.
     --}}
-    <body class="storefront {{ request()->routeIs('products.index', 'shop', 'products.show', 'cart.index', 'checkout.create', 'checkout.confirmation') ? 'theme-light' : '' }} bg-black font-sans text-bone antialiased">
+    <body class="storefront {{ request()->routeIs('products.index', 'shop', 'products.show', 'cart.index', 'checkout.create', 'checkout.confirmation', 'track.create', 'track.show') ? 'theme-light' : '' }} bg-black font-sans text-bone antialiased">
         <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-volt focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-bone">Skip to content</a>
 
         <div class="flex min-h-screen flex-col">

@@ -13,6 +13,7 @@ class OrderItem extends Model
         'product_name',
         'size',
         'color',
+        'prescription',
         'quantity',
         'unit_price',
         'line_total',
@@ -24,6 +25,7 @@ class OrderItem extends Model
             'quantity' => 'integer',
             'unit_price' => 'decimal:2',
             'line_total' => 'decimal:2',
+            'prescription' => 'array',
         ];
     }
 

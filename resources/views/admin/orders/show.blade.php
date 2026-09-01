@@ -28,6 +28,18 @@
                                 <div>
                                     <p class="font-bold text-ink">{{ $item->product_name }}</p>
                                     <p class="text-sm text-stone">Qty {{ $item->quantity }} &middot; Fit {{ $item->size ?? 'Any' }} &middot; {{ $item->color ?? 'Any finish' }}</p>
+                                    @if ($item->prescription)
+                                        <div class="mt-2 rounded-xl bg-cream-dim px-3 py-2 text-xs font-medium text-stone">
+                                            @if (($item->prescription['status'] ?? null) === 'later')
+                                                Prescription: customer will provide later &mdash; follow up before shipping.
+                                            @else
+                                                SPH R {{ $item->prescription['sph_right'] ?? '—' }} / L {{ $item->prescription['sph_left'] ?? '—' }}
+                                                &middot; CYL R {{ $item->prescription['cyl_right'] ?? '—' }} / L {{ $item->prescription['cyl_left'] ?? '—' }}
+                                                &middot; Axis R {{ $item->prescription['axis_right'] ?? '—' }} / L {{ $item->prescription['axis_left'] ?? '—' }}
+                                                &middot; PD {{ $item->prescription['pd'] ?? '—' }}mm
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                             <p class="font-bold text-ink">Rs. {{ number_format((float) $item->line_total) }}</p>

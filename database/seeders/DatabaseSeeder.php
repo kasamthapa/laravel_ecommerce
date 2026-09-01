@@ -320,6 +320,14 @@ class DatabaseSeeder extends Seeder
             $product,
         ));
 
+        // Optical frames and blue-light frames are vision-correcting; plain
+        // sunglasses aren't. Set here rather than per product literal above
+        // so it stays correct if categories are added to/reordered later.
+        Product::whereIn('category_id', [
+            $categories['optical-frames']->id,
+            $categories['blue-light']->id,
+        ])->update(['requires_prescription' => true]);
+
         collect([
             ['slug' => 'noir-keyhole', 'rating' => 5, 'title' => 'Exactly as pictured', 'body' => 'Lightweight and the fit is spot on. Ordered the medium and it sits perfectly.'],
             ['slug' => 'solar-round', 'rating' => 4, 'title' => 'Great for summer', 'body' => 'Love the tint, wish the case was a bit sturdier.'],

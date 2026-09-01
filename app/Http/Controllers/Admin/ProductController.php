@@ -83,6 +83,7 @@ class ProductController extends Controller
         $validated['colors'] = $this->splitList($validated['colors']);
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['is_active'] = $request->boolean('is_active');
+        $validated['requires_prescription'] = $request->boolean('requires_prescription');
 
         return $validated;
     }

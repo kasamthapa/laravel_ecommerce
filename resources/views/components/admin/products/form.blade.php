@@ -75,6 +75,10 @@
             <input type="checkbox" name="is_active" value="1" class="h-4 w-4 rounded accent-accent" @checked(old('is_active', $product->is_active ?? true))>
             Active (visible on storefront)
         </label>
+        <label class="flex items-center gap-2 text-sm font-bold text-ink-soft">
+            <input type="checkbox" name="requires_prescription" value="1" class="h-4 w-4 rounded accent-accent" @checked(old('requires_prescription', $product->requires_prescription ?? false))>
+            Requires prescription
+        </label>
     </div>
 </div>
 

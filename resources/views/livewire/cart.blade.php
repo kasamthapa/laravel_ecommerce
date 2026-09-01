@@ -14,6 +14,11 @@
                         <div>
                             <a href="{{ route('products.show', $item['slug']) }}" class="motion-invert font-display font-semibold text-lg text-bone">{{ $item['name'] }}</a>
                             <p class="mt-1 text-sm text-smoke">Fit {{ $item['size'] ?? 'Any' }} &middot; {{ $item['color'] ?? 'Any finish' }}</p>
+                            @if (isset($item['prescription']))
+                                <p class="mt-1 text-sm {{ ($item['prescription']['status'] ?? null) === 'later' ? 'text-smoke' : 'text-signal-good' }}">
+                                    {{ ($item['prescription']['status'] ?? null) === 'later' ? "Prescription: we'll follow up by email" : 'Prescription on file' }}
+                                </p>
+                            @endif
                             <p class="mt-2 text-bone">Rs. {{ number_format($item['price']) }}</p>
                         </div>
                         <div class="flex items-center gap-3 sm:flex-col sm:items-end sm:justify-between">

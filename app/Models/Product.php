@@ -43,6 +43,7 @@ class Product extends Model
         'colors',
         'is_featured',
         'is_active',
+        'requires_prescription',
     ];
 
     protected function casts(): array
@@ -56,6 +57,7 @@ class Product extends Model
             'images' => 'array',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
+            'requires_prescription' => 'boolean',
         ];
     }
 

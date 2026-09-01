@@ -22,7 +22,19 @@
 
         @if ($product->stock >= 1)
             <div class="absolute inset-x-0 bottom-0 z-[2] translate-y-full p-3 transition-transform duration-300 ease-out group-hover:translate-y-0">
-                <livewire:quick-add-button :product="$product" :key="'quick-add-'.$product->id" />
+                @if ($product->requires_prescription)
+                    {{-- This product needs a prescription captured before it
+                         can be added — the customer should know that upfront
+                         rather than have quick-add silently skip it, so this
+                         sends them to the PDP's full form instead of
+                         one-click adding. Same qa-cta shell/scoped styling
+                         as the real quick-add button for visual consistency. --}}
+                    <a href="{{ route('products.show', $product) }}" class="qa-cta motion-invert block w-full border border-volt bg-black/90 px-3 py-2.5 text-center text-xs font-medium uppercase tracking-wide text-bone backdrop-blur-sm hover:bg-volt hover:text-bone">
+                        Select prescription
+                    </a>
+                @else
+                    <livewire:quick-add-button :product="$product" :key="'quick-add-'.$product->id" />
+                @endif
             </div>
         @endif
     </div>

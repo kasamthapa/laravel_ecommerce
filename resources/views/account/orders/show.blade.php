@@ -20,6 +20,11 @@
                         <div>
                             <p class="text-bone">{{ $item->product_name }}</p>
                             <p class="text-sm text-smoke">Qty {{ $item->quantity }} &middot; Fit {{ $item->size ?? 'Any' }} &middot; {{ $item->color ?? 'Any finish' }}</p>
+                            @if ($item->prescription)
+                                <p class="text-sm {{ ($item->prescription['status'] ?? null) === 'later' ? 'text-smoke' : 'text-signal-good' }}">
+                                    {{ ($item->prescription['status'] ?? null) === 'later' ? "Prescription: we'll follow up by email" : 'Prescription on file' }}
+                                </p>
+                            @endif
                         </div>
                     </div>
                     <p class="text-bone">Rs. {{ number_format((float) $item->line_total) }}</p>

@@ -77,6 +77,7 @@ class OrderController extends Controller
                     'product_name' => $item['name'],
                     'size' => $item['size'],
                     'color' => $item['color'],
+                    'prescription' => $item['prescription'] ?? null,
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['price'],
                     'line_total' => $item['price'] * $item['quantity'],
